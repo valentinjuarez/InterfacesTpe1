@@ -1,0 +1,412 @@
+
+/* === Reset básico === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  min-height: 100vh;
+  background: #EAEAEA;
+
+  /* Grid principal: header - main - footer */
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+  grid-template-rows: 60px 1fr 80px; /* alto fijo para header y footer */
+}
+
+/* === HEADER === */
+header {
+  grid-area: header;
+  background: #FFFFFF;
+  color: #1F1D1D;
+  padding: 0 2rem;
+  border-bottom: 1px solid #C5C2C2; /* grosor, estilo y color */
+  
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+   /* opcional, para distinguirlo */
+}
+.menu-hamburguesa{
+    display: flex;
+    
+}
+.usuario{
+    display: flex;
+}
+.icono-usuario {
+  height: 30px;
+  width: 30px;   /* si querés que sea cuadrada */
+  object-fit: contain; /* mantiene la proporción sin deformar */
+}
+
+
+header .logo {
+  display: flex;
+  align-items: center;
+  
+}
+header .logo h1 {
+    font-size: 20px;
+}
+
+header nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+header nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* === MAIN === */
+main {
+  grid-area: main;
+  padding: 2rem;
+
+  /* Grid de 2 columnas */
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas:
+    "juego premium"
+    "descripcion descripcion"
+    "jugadas jugadas"
+    "interaccion recomendados";
+  gap: 2rem;
+}
+
+.juego {
+  grid-area: juego;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(1, 1, 3, 0.6)), url("../assets/Gemini_Generated_Image_liolnrliolnrliol.png") center/cover no-repeat;
+  border-radius: 10px;
+  position: relative;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  
+}
+
+/* === BOTONERA === */
+.juego .botonera {
+  position: absolute;
+  bottom: 0;                 /* pegada al fondo */
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: #05056F;       /* violeta oscuro */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    padding: 0 2rem;
+  border-radius: 0 0 10px 10px;
+}
+
+.botonera .promo {
+  color: #fff200;            /* amarillo */
+  font-weight: bold;
+}
+
+.botonera .acciones {
+  display: flex;
+  gap: 1rem;
+}
+
+
+.accion-circulo {
+  width: 40px;
+  height: 40px;
+  background: #0808A6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: transform 0.2s;
+}
+
+.accion-circulo:hover {
+  transform: scale(1.15);
+    background: #6666FF;
+}
+
+.accion-circulo img {
+  width: 20px;
+  height: 20px;
+}
+
+.premium {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.premium img {
+    width: 35px;
+    height: 35px;
+}
+
+
+
+/* Caja flotante de controles */
+.juego .overlay {
+  background: radial-gradient(circle at center, #1D1D7D 10%, #3535E3 90%);
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 400px;
+  height: 400px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+
+.juego .overlay img {
+    width: 60px;
+    height: auto;
+    object-fit: contain;  /* ajusta dentro sin deformarse */
+}
+.juego .overlay h2 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+
+
+.juego button {
+  background: linear-gradient(45deg, #7d2ae8, #5a1da8);
+  color: #fff;
+  border: none;
+  width: 220px;
+  height: 60px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.juego button:hover {
+  background: #fff;
+  color: #000;
+  transition: 0.8s;
+}
+
+.premium-publicidad {
+  grid-area: premium;
+  background: linear-gradient(135deg, #1D1D7D 0%, #3535E3 100%);
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.contenido-premium h2, .contenido-premium p {
+  color: #fff;
+}
+.contenido-premium button {
+  background: #fff200;
+  color: #302f2f;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.contenido-premium button:hover {
+  background: #fff;
+  color: #5a1da8;
+}
+
+
+.descripcion {
+  grid-area: descripcion;
+  background: #EAEAEA;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+/* Apila icono + texto en fila */
+ .titulo {
+  display: flex;
+  align-items: center;   /* centra verticalmente */
+  gap: 10px;             /* espacio entre icono y texto */
+  margin-bottom: 1rem; 
+  border-bottom: 1px solid #b1abab9d;
+  padding-left: 1px;
+    /* separa del ul */
+}
+ .titulo h2 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.titulo img {
+  width: 40px;
+  height: 40px;
+}
+.descripcion ul {
+  margin-left: 50px;
+}
+.descripcion ul li{
+  font-size: 16px;
+}
+
+
+
+.jugadas {
+  grid-area: jugadas;
+  background: #EAEAEA;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+
+.jugadas .videos {
+  display: flex;
+  gap: 1rem;
+}
+.videos {
+  display: flex;
+  justify-content: space-evenly;
+  
+}
+.video {
+  background: #eee;
+  
+  height: 200px;
+  width: 350px;
+  border-radius: 8px;
+  
+}
+.comentarios{
+  grid-area: interaccion;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+.comentarios .titulo{
+   width: 100%;
+}
+
+
+.interaccion {
+  grid-area: interaccion;
+  display: flex;
+  justify-content: center;
+  
+  
+}
+.interaccion img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;  /* ajusta dentro sin deformarse */
+    margin-right: 10px;
+}
+.comentarios .interaccion input {
+  border: none;
+  border-bottom:1px solid #B1ABAB;
+  outline: none;
+  width: 970px;
+  height: 26px;
+  font-size: 16px;
+  background: #EAEAEA;
+}
+.comentarios .interaccion input::placeholder {
+  font-size: 12px;
+}
+
+.interaccion button img {
+    width: 22px;
+    height: 20px;
+    object-fit: contain;  /* ajusta dentro sin deformarse */
+}
+
+.interaccion button{
+  background: none;
+  height: 26px;
+  border: none;
+  border-bottom: solid 1px #B1ABAB;
+  padding-left: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.comentario-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.juego-sugerido img {
+  width: 100%;
+  height: 100%;
+    object-fit: contain;  /* ajusta dentro sin deformarse */
+    margin-right: 10px;
+    border-radius: 8px;
+}
+.juego-sugerido {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+  width: 160px;
+  height: 80px;
+}
+.juegos-sugeridos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+.sugerencias {
+  grid-area: recomendados;
+  background: #EAEAEA;
+  margin-bottom: 1rem;
+}
+
+
+/* === FOOTER === */
+footer {
+  grid-area: footer;
+  background: #222;
+  color: #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+
+
