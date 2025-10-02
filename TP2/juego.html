@@ -1,3 +1,5 @@
+
+  
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,9 +32,9 @@
   <main>
     <section class="navegacion">
        <ul class="breadcrumb">
-        <li class="home"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="home">Home</li>
-        <li>Juegos de mesa</li>
-        <li>Peg Solitaire...</li>
+        <a href="index.html"><li class="home"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="home">Home</li></a>
+        <a href="#"><li>Juegos de mesa</li></a>
+        <a href="juego.html"><li>Peg Solitaire...</li></a>
       </ul>
     </section>
     
@@ -51,7 +53,22 @@
             
             <div class="accion-circulo"><img src="./assets/icons8-star-26.png" alt="Juego"></div>
             <div class="accion-circulo"><img src="./assets/icons8-expandir-50.png" alt="expandir"></div>
-            <div class="accion-circulo"><img src="./assets/icons8-compartir-64.png" alt="compartir"></div>
+            <div class="accion-circulo compartir-btn" id="btnCompartir">
+              <img src="./assets/icons8-compartir-64.png" alt="compartir">
+            </div>
+
+              <div class="ventana-compartir" id="ventanaCompartir">
+                <a href="https://www.instagram.com/" target="_blank">
+                  <img src="./assets/icons8-instagram-48.png" alt="Instagram">
+                </a>
+                <a href="https://t.me/" target="_blank">
+                  <img src="./assets/icons8-aplicación-telegrama-96.png "alt="Telegram">
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://tusitio.com" target="_blank">
+                  <img src="./assets/icons8-facebook-96.png" alt="Facebook">
+                </a>
+            </div>
+            
         </div>
     </div>
 </section>
@@ -268,7 +285,7 @@
             <span class="nombre-usuario">MaxiRetro</span>
             <span class="fecha-comentario">Hace 1 semana</span>
           </div>
-          <p>Me recuerda a los juegos clásicos de mesa. Ideal para pasar el rato y desafiar a mis amigos. ¡Muy recomendable!</p>
+          <p>Me recuerda a los juegos clásicos de mesa, de esos que te atrapaban durante horas y que siempre generaban anécdotas divertidas. Es ideal para pasar el rato en cualquier momento, ya sea solo para entrenar la mente o acompañado para desafiar a mis amigos en una competencia amistosa. La dinámica es sencilla de entender, pero lo suficientemente estratégica como para que cada partida sea distinta y desafiante. Además, tiene ese toque nostálgico que lo hace aún más entretenido. ¡Muy recomendable para quienes disfrutan de los desafíos y la buena compañía!</p>
           <div class="reacciones">
             <button class="btn-like" title="Me gusta">
               <img src="./assets/icons8-me-gusta-100.png" alt="Like" style="width:22px;vertical-align:middle;">
@@ -320,14 +337,80 @@
   </main>
 
   <!-- FOOTER -->
-  <footer>
-    <div class="footer-info">
-      <p>&copy; 2025 PixelPlay Inc. Todos los derechos reservados.</p>
-    </div>
-    <div class="footer-links">
-      <a href="#">Términos</a> | <a href="#">Privacidad</a> | <a href="#">Contacto</a>
+
+  <!-- FATFOOTER MODERNO -->
+  <footer class="fatfooter">
+    <div class="fatfooter-container">
+      <div class="fatfooter-col col-brand">
+        
+        <div class="brand-desc">
+          <strong>Título</strong>
+          <p>Lleva tu experiencia gamer al próximo nivel con nuestra plataforma. Descubrí, jugá y compartí en un mundo conectado por la pasión por los videojuegos.</p>
+        </div>
+        <div class="brand-features">
+          <div><strong>Multiplataforma</strong><br>Accedé desde PC, consola o móvil con la misma cuenta.</div>
+          <div><strong>Comunidad Online</strong><br>Unite a torneos, clans y chats en vivo con jugadores de todo el mundo.</div>
+          <div><strong>Game Streaming</strong><br>Mirá partidas en directo o transmití tus propios juegos con un clic.</div>
+        </div>
+      </div>
+      <div class="fatfooter-col col-gamepass">
+        <div><strong>Game Pass</strong><br>Suscribite para acceder a una librería con cientos de títulos nuevos y clásicos.<br><strong>Eventos Exclusivos</strong><br>Participá en lanzamientos, betas anticipadas y promociones especiales.</div>
+      </div>
+      <div class="fatfooter-col col-links">
+        <div class="fatfooter-links-title">Juegos</div>
+        <ul>
+          <li><a href="#">Juegos</a></li>
+          <li><a href="#">Categorías</a></li>
+          <li><a href="#">Game Pass</a></li>
+          <li><a href="#">Comunidad</a></li>
+          <li><a href="#">Soporte</a></li>
+          <li><a href="#">Noticias</a></li>
+          <li><a href="#">Torneos</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      <div class="fatfooter-col col-about">
+        <div class="fatfooter-links-title">ABOUT</div>
+        <ul>
+          <li><a href="#">Nosotros</a></li>
+          <li><a href="#">Estudios asociados</a></li>
+          <li><a href="#">Prensa</a></li>
+          <li><a href="#">Oficinas</a></li>
+          <li><a href="#">Carreras</a></li>
+        </ul>
+        <a class="fatfooter-contact-btn" href="#">CONTACT US</a>
+        <div class="fatfooter-phone">1-800-GAMER-24</div>
+      </div>
+      <div class="fatfooter-col col-social">
+        <div class="fatfooter-social">
+          <a href="#"><img src="./assets/icons8-instagram-48.png" alt="Instagram"></a>
+          <a href="#"><img src="./assets/icons8-nuevo-post-50.png" alt="Mail"></a>
+          <a href="#"><img src="./assets/icons8-twitterx-50.png" alt="Twitter"></a>
+          <a href="#"><img src="./assets/icons8-youtube-play-50.png" alt="YouTube"></a>
+          <a href="#"><img src="./assets/icons8-facebook-96.png" alt="Facebook"></a>
+        </div>
+        <div class="fatfooter-copyright">
+          <div class="brand-logo">
+          <img src="./assets/logo.png" alt="PixelPlay" style="height:38px;">
+          <span class="brand-name">PixelPlay</span>
+        </div>
+          Términos de uso | Política de privacidad | Licencias<br>
+          © 2025 PixelPlay Inc. Todos los derechos reservados.
+        </div>
+      </div>
     </div>
   </footer>
 
+
+<!-- Botón Volver Arriba -->
+<button id="btnScrollTop" class="scroll-top-btn" title="Volver arriba">
+  <img src="./assets/icons8-arriba-50.png" alt="Arriba" style="width:28px;height:28px;">
+</button>
 </body>
+
+
+
+<script src="js/juego.js"></script>
+<script src="js/scrollTop.js"></script>
+
 </html>
