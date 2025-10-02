@@ -16,7 +16,7 @@
   <div class="frame">
     <main class="bg-scene" aria-label="Fondo decorativo">
       <!-- Botón 'Inicio' en la esquina superior izquierda -->
-      <a class="btn-inicio" href="#" role="button" aria-label="Ir al inicio">
+      <a class="btn-inicio" href="index.html" role="button" aria-label="Ir al inicio">
         <svg class="icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
           <path d="M15 18L9 12L15 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -24,23 +24,22 @@
       </a>
       <!-- Bloque izquierdo con degradado y recorte diagonal -->
       <div class="left-bg" aria-hidden="true">
-        <img class="plane" src="img/imgIniciarSesion.png" alt="" aria-hidden="true" />
+        <img class="plane" src="assets/imgIniciarSesion.png" alt="" aria-hidden="true" />
       </div>
 
       <!-- Área derecha: solo frame con título, sin formulario aún -->
       <section class="right-slot" aria-label="Panel de inicio de sesión">
         <h2 class="card-title">
-          <svg class="icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-            <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 5a2 2 0 1 1-2 2 2 2 0 0 1 2-2Zm3 11H9a1 1 0 0 1 0-2h1v-3H9a1 1 0 0 1 0-2h3a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" fill="currentColor"/>
-          </svg>
+          <img class="icon" src="assets/logo.png" alt="" aria-hidden="true" />
           Iniciar sesión en PixelPlay
         </h2>
         <form class="auth-form" action="#" method="post" novalidate>
-          <div class="field">
-            <input type="email" name="email" placeholder="Email" aria-label="Email" autocomplete="username" required />
+          <div class="field" id="email-field">
+            <input id="email" type="email" name="email" placeholder="Email" aria-label="Email" autocomplete="email" aria-describedby="email-error" aria-invalid="false" required />
+            <p class="error-text" id="email-error" role="alert" aria-live="polite"></p>
           </div>
-          <div class="field">
-            <input id="password" type="password" name="password" placeholder="Contraseña" aria-label="Contraseña" autocomplete="current-password" required />
+          <div class="field" id="password-field">
+            <input id="password" type="password" name="password" placeholder="Contraseña" aria-label="Contraseña" autocomplete="current-password" aria-describedby="password-error" aria-invalid="false" required />
             <button type="button" class="toggle-visibility" aria-label="Mostrar u ocultar contraseña" aria-pressed="false" data-visible="false">
               <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                 <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -50,6 +49,7 @@
                 <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.59 21.59 0 0 1 5.06-5.94m4.25-2A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.59 21.59 0 0 1-3.22 3.88M1 1l22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
+            <p class="error-text" id="password-error" role="alert" aria-live="polite"></p>
           </div>
           <a class="forgot-link" href="#">¿Has olvidado tu contraseña?</a>
           <button type="submit" class="btn-submit">Iniciar Sesión</button>
@@ -63,12 +63,12 @@
               <span>Facebook</span>
             </a>
             <a class="btn-social google" href="#" aria-label="Continuar con Google">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <!-- Ícono de Google (multi-color G simplificado) -->
-                <path fill="#EA4335" d="M12 10.2v3.6h5.1c-.2 1.1-1.2 3.1-5.1 3.1-3.1 0-5.6-2.6-5.6-5.9s2.5-5.9 5.6-5.9c1.8 0 3 .8 3.7 1.5l2.5-2.4C16.6 2.9 14.5 2 12 2 6.9 2 2.8 6.1 2.8 11.1S6.9 20.2 12 20.2c5.9 0 9.8-4.1 9.8-9.9 0-.7-.1-1.1-.2-1.6H12z"/>
-                <path fill="#34A853" d="M3.7 14.7c.8 2.4 3.1 4.1 5.7 4.1 3.3 0 4.5-1.4 5.2-2.1l-5.2-4H3.7z"/>
-                <path fill="#FBBC05" d="M3.7 9.5c-.4 1-.6 2.1-.6 3.2 0 1.1.2 2.2.6 3.2l5.9-4.5-5.9-1.9z"/>
-                <path fill="#4285F4" d="M18.8 6.3c-.8-.8-2-1.8-3.7-1.8-2.4 0-3.9 1.3-4.8 2.4L3.7 9.5l5.9 4.5c.6-.8 1.6-1.6 2.9-1.6 1.8 0 2.9.8 3.6 1.5l2.5-2.5c-1.1-1-1.8-2.4-1.8-4.1z"/>
+              <svg class="icon" viewBox="0 0 18 18" width="20" height="20" aria-hidden="true">
+                <!-- Logo de Google (G común y simple) -->
+                <path fill="#EA4335" d="M9 3.48c1.69 0 2.82.73 3.47 1.35l2.36-2.36C13.67.97 11.54 0 9 0 5.48 0 2.44 2.02 1 4.96l2.74 2.13C4.37 5.52 6.48 3.48 9 3.48z"/>
+                <path fill="#4285F4" d="M17.64 9.2c0-.8-.07-1.39-.22-2H9v3.8h4.84c-.1.98-.62 2.45-1.78 3.44l2.72 2.11c1.58-1.46 2.86-3.74 2.86-7.35z"/>
+                <path fill="#FBBC05" d="M3.73 10.99A5.52 5.52 0 0 1 3.45 9c0-.69.12-1.35.28-1.99L1 4.87A9.066 9.066 0 0 0 0 9c0 1.45.35 2.82.96 4.02l2.77-2.03z"/>
+                <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.17l-2.72-2.11c-.73.51-1.72.86-3.24.86a5.61 5.61 0 0 1-5.3-3.59L.96 13.02C2.39 15.98 5.45 18 9 18z"/>
               </svg>
               <span>Google</span>
             </a>
@@ -80,6 +80,6 @@
       <p class="legal">Al crear tu cuenta aceptas nuestras <a href="#">Condiciones de uso</a> y la <a href="#">Política de privacidad</a>.</p>
     </main>
   </div>
-  <script src="js/script.js" defer></script>
+  <script type="module" src="js/pages/login.js"></script>
 </body>
 </html>

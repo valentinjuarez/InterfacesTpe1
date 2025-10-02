@@ -1,3 +1,6 @@
+/* ========================================
+  Variables y base
+  ======================================== */
 /* Fondo "PixelPlay" (solo layout y decoración, sin formulario) */
 /*
   Buenas prácticas aplicadas:
@@ -11,17 +14,15 @@
   --pp-grad-mid:   #622CB6; /* 55% */
   --pp-grad-end:   #7C3AED; /* 100% */
 
-  /* Colores de apoyo (si necesitas variantes azules en otras pantallas) */
-  --blue-600:#1d4ed8;
-  --blue-500:#2563eb;
-
   /* Fondo general y sombra reutilizable */
   --bg:#EAEAEA;
   --shadow: 0 20px 36px rgba(0, 0, 0, 0.522);
   --accent:#000055; /* mismo color que el borde de los inputs */
 }
 
-/* Lienzo general */
+/* ========================================
+  Lienzo general
+  ======================================== */
 html,body{height:100%}
 body{
   margin:0;
@@ -29,10 +30,10 @@ body{
   font-family:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
 }
 
-/* Sistema de caja consistente para evitar desbordes por bordes/paddings */
-*,*::before,*::after{ box-sizing: border-box }
 
-/* Botón 'Inicio' (esquina superior izquierda) */
+/* ========================================
+  Botón 'Inicio'
+  ======================================== */
 .btn-inicio{
   position:absolute;
   top:64px; left:64px; /* un poco más alejado de la esquina */
@@ -53,7 +54,9 @@ body{
 .btn-inicio:hover{ filter: brightness(1.05) }
 .btn-inicio:active{ transform: translateY(2px) }
 
-/* Panel izquierdo con degradado y corte diagonal */
+/* ========================================
+  Panel izquierdo con degradado
+  ======================================== */
 .left-bg{
   position:absolute;
   inset:0 auto 0 0; /* top:0; right:auto; bottom:0; left:0 */
@@ -89,7 +92,9 @@ body{
 }
 /* Se eliminan líneas/animaciones: no hay animaciones en el fondo */
 
-/* "Frame" derecho (solo contenedor/estética, sin contenido interno) */
+/* ========================================
+  Frame derecho (contenedor principal)
+  ======================================== */
 .right-slot{
   position:absolute;
   right:10%;
@@ -108,7 +113,9 @@ body{
   overflow:hidden;            /* cualquier mínimo excedente queda recortado */
 }
 
-/* Título centrado dentro del frame derecho */
+/* ========================================
+  Título del panel
+  ======================================== */
 .card-title{
   margin:0;
   padding:12px 8px 8px;
@@ -118,11 +125,13 @@ body{
   font-size:20px;
   text-align:center;
 }
-.card-title .icon{ width:22px; height:22px; display:block }
+.card-title .icon{ width:32px; height:32px; display:block; object-fit:contain }
 
-/* Campos del formulario (solo inputs) */
+/* ========================================
+  Formulario: campos y estados
+  ======================================== */
 .auth-form{ margin-top:16px }
-.field{ position:relative; margin-top:14px }
+.field{ position:relative; margin-top:5px }
 .field input{
   width:100%;
   height:44px;
@@ -137,11 +146,24 @@ body{
   display:block;
 }
 .field input::placeholder{ color:#404040 }
+/* Estado de error accesible */
+.field input[aria-invalid="true"]{
+  border-color:#dc2626; /* rojo-600 */
+  box-shadow: 0 0 0 2px rgba(220,38,38,0.15);
+}
+.error-text{
+  margin:6px 0 0;
+  font-size:12px;
+  color:#dc2626;
+  min-height: 16px; /* reserva espacio para evitar saltos */
+}
 
 /* Botón de ver contraseña */
 .toggle-visibility{
   position:absolute;
-  right:10px; top:20%; 
+  right:10px;
+  top:34%;
+  transform: translateY(-50%);
   width:28px; height:28px;
   display:grid; place-items:center;
   border:none; background:transparent; color:#6b6b71; cursor:pointer;
@@ -153,10 +175,11 @@ body{
 .toggle-visibility[aria-pressed="true"] .icon-eye{ display:block }
 .toggle-visibility[aria-pressed="true"] .icon-eye-off{ display:none }
 
-/* Enlace: ¿Has olvidado tu contraseña? */
+/* ========================================
+  Enlaces auxiliares
+  ======================================== */
 .forgot-link{
   display:inline-block;
-  margin-top:16px;
   color:#000055;
   font-size:12px;
   font-weight: 600;
@@ -165,7 +188,9 @@ body{
 }
 .forgot-link:hover{ text-decoration: underline }
 
-/* Botón Iniciar Sesión */
+/* ========================================
+  Botón principal (submit)
+  ======================================== */
 .btn-submit{
   margin-top:16px;
   width:100%;
@@ -182,7 +207,9 @@ body{
 .btn-submit:hover{ filter:brightness(1.06) }
 .btn-submit:active{ transform: translateY(2px) }
 
-/* Texto "O continuar con" */
+/* ========================================
+  Separador de redes sociales
+  ======================================== */
 .continuar-text{
   margin:16px;
   text-align:center;
@@ -191,12 +218,16 @@ body{
   font-size:12px;
 }
 
-/* Hover consistente para todos los botones */
+/* ========================================
+  Interacciones (hover/active)
+  ======================================== */
 .btn-inicio, .btn-submit{ transition: filter .15s ease, transform .15s ease }
 .btn-inicio:hover, .btn-submit:hover, .btn-social:hover{ filter: brightness(1.06) }
 .btn-inicio:active, .btn-submit:active, .btn-social:active{ transform: translateY(2px) }
 
-/* Pie: ¿No tienes cuenta? Registrate */
+/* ========================================
+  Pie (registro sugerido)
+  ======================================== */
 .signup-hint{
   margin:30px;
   text-align:center;
@@ -211,7 +242,9 @@ body{
 }
 .signup-hint .signup-link:hover{ text-decoration: underline }
 
-/* Botones sociales (Facebook y Google) */
+/* ========================================
+  Botones sociales
+  ======================================== */
 .social-auth{
   display:grid;
   grid-template-columns: 1fr 1fr;
@@ -237,7 +270,7 @@ body{
 .btn-social.facebook{ 
     margin-top: 8px;
     background:#1877F2; 
-    color:#1d1d1f ; 
+  color:#ffffff; 
     border: 1px solid var(--accent);
 }
 
@@ -249,7 +282,9 @@ body{
   border:1px solid var(--accent);
 }
 
-/* Texto legal inferior derecho (fuera del formulario) */
+/* ========================================
+  Texto legal inferior
+  ======================================== */
 .legal{
   position:absolute;
   right:170px;
