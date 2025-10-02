@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PixelPlay · Home</title>
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="header-left">
+      <a
+        id="hamburger"
+        class="logo"
+        href="#"
+        role="button"
+        aria-label="MenuDeHamburguesa"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        <img src="img/IconosHeader/IconoMenuHamburguesa.png" alt="Abrir menú lateral" />
+      </a>
+    </div>
+
+    <div class="header-center">
+      <a class="brand" href="#" aria-label="PixelPlay">
+        <img src="img/IconosHeader/IconoLogoPixelPlay.png" alt="PixelPlay" />
+        <span>PixelPlay</span>
+      </a>
+    </div>
+
+    <div class="header-right">
+      <button class="avatar" type="button" aria-label="Usuario">
+        <img src="img/IconosHeader/IconoUsuario2.png" alt="Usuario" />
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar" class="sidebar" aria-label="Navegación principal">
+      <nav class="nav">
+        <a class="nav-btn" href="#" aria-label="Inicio">
+          <img src="img/IconosBarraLateral/IconoCasa.png" alt="Inicio" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Recientes">
+          <img src="img/IconosBarraLateral/IconoReloj.png" alt="Recientes" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Nuevos">
+          <img src="img/IconosBarraLateral/IconoEstrellas.png" alt="Nuevos" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="De moda">
+          <img src="img/IconosBarraLateral/IconoFuego.png" alt="De moda" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Multiplayer">
+          <img src="img/IconosBarraLateral/IconoPersonas.png" alt="Multiplayer" />
+        </a>
+      </nav>
+      <nav class="nav">
+        <a class="nav-btn" href="#" aria-label="Acción">
+          <img src="img/IconosBarraLateral/IconoEspada.png" alt="Acción" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Aventura">
+          <img src="img/IconosBarraLateral/IconoBrujula.png" alt="Aventura" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Baloncesto">
+          <img src="img/IconosBarraLateral/IconoPelotaBasket.png" alt="Baloncesto" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Billar">
+          <img src="img/IconosBarraLateral/IconoBolaDe8.png" alt="Billar" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Cartas">
+          <img src="img/IconosBarraLateral/IconoCartasPoker.png" alt="Cartas" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Controller">
+          <img src="img/IconosBarraLateral/IconoJoystick.png" alt="Controller" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Defensa">
+          <img src="img/IconosBarraLateral/IconoCastillo.png" alt="Defensa" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Carreras">
+          <img src="img/IconosBarraLateral/IconoAutos.png" alt="Carreras" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Fútbol">
+          <img src="img/IconosBarraLateral/IconoPelotaFutbol.png" alt="Fútbol" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Minecraft">
+          <img src="img/IconosBarraLateral/IconoMinecraft.png" alt="Minecraft" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Motos">
+          <img src="img/IconosBarraLateral/IconoMoto.png" alt="Motos" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="CS:GO">
+          <img src="img/IconosBarraLateral/IconoPistola.png" alt="CS:GO" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Terror">
+          <img src="img/IconosBarraLateral/IconoFantasma.png" alt="Terror" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Disparo">
+          <img src="img/IconosBarraLateral/IconoMira.png" alt="Disparo" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Deportes">
+          <img src="img/IconosBarraLateral/IconoPelotaRugby.png" alt="Deportes" />
+        </a>
+      </nav>
+    </aside>
+
+    <main class="page" role="main">
+      <!-- ===== HERO ESPECIAL (rotativo) ===== -->
+      <section class="hero-carousel">
+        <button class="hero-arrow left" id="hero-arrow-left" aria-label="Anterior">&#8592;</button>
+        <div class="hero-track" id="hero-track">
+          <div class="hero-slide" id="hero-slide">
+            <article class="hero-card hero-primary" id="hero-big">
+              <img alt="Banner principal" loading="lazy" />
+            </article>
+
+            <article class="hero-card hero-mosaic" id="hero-mosaic">
+              <div class="mosaic"><!-- se llena por JS --></div>
+            </article>
+
+            <article class="hero-card hero-promo" id="hero-promo">
+              <div class="promo-inner">
+                <img class="promo-ico" src="img/IconosHeader/IconoCrown.png" alt="Premium" />
+              </div>
+            </article>
+          </div>
+        </div>
+        <button class="hero-arrow right" id="hero-arrow-right" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <!-- ===== RAILS (se llenan por JS) ===== -->
+      <section class="rail" aria-label="Lo más jugado">
+        <header class="rail-head">
+          <h2>Juegos para vos!</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-pop" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-pop"></div>
+        <button class="rail-arrow right" data-rail="rail-pop" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <section class="rail" aria-label="Juegos de autos">
+        <header class="rail-head">
+          <h2>Juegos de autos</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-cars" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-cars"></div>
+        <button class="rail-arrow right" data-rail="rail-cars" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <section class="rail" aria-label="Juegos originales">
+        <header class="rail-head">
+          <h2>Juegos originales</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-orig" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-orig"></div>
+        <button class="rail-arrow right" data-rail="rail-orig" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <section class="rail rail--premium" aria-label="Sección Premium">
+        <header class="rail-head">
+          <h2>Sección Premium</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-premium" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-premium"></div>
+        <button class="rail-arrow right" data-rail="rail-premium" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div class="footer-inner">
+          <p><strong>PixelPlay</strong> · © 2025 · Todos los derechos reservados</p>
+          <nav class="footer-links">
+            <a href="#">Términos</a>
+            <a href="#">Privacidad</a>
+            <a href="#">Soporte</a>
+          </nav>
+        </div>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<!-- JS: toggle del menú (asegurate de tener js/app.js) -->
+<script src="js/app.js" defer></script>
+</body>
+</html>

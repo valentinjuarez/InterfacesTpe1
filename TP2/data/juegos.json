@@ -1,0 +1,50 @@
+{
+  "hero": [
+    { "id": "hero-1", "nombre": "Peg Soliatire", "imagen": "img/imagenesCard/pegSoliatire.jpeg" },
+    { "id": "hero-2", "nombre": "Minecraft", "imagen": "img/imagenesCard/minecraft.jpeg" },
+    { "id": "hero-3", "nombre": "Premium", "imagen": "img/imagenesCard/premium.jpeg" }
+  ],
+  "sections": {
+    "pop": [
+      { "id": "pop-1", "nombre": "FIFA 23", "imagen": "img/imagenesCard/fifa23.webp" },
+      { "id": "pop-2", "nombre": "Minecraft", "imagen": "img/imagenesCard/minecraft.jpeg" },
+      { "id": "pop-3", "nombre": "GTA V", "imagen": "img/imagenesCard/gta5.jpeg" },
+      { "id": "pop-4", "nombre": "Valorant", "imagen": "img/imagenesCard/valorant.jpeg" },
+      { "id": "pop-5", "nombre": "Fortnite", "imagen": "img/imagenesCard/fortnite.jpeg" },
+      { "id": "pop-6", "nombre": "League of Legends", "imagen": "img/imagenesCard/lol.jpeg" },
+      { "id": "pop-7", "nombre": "Counter Strike", "imagen": "img/imagenesCard/csgo.jpeg" },
+      { "id": "pop-8", "nombre": "Among Us", "imagen": "img/imagenesCard/amongus.jpeg" }
+    ],
+    "cars": [
+      { "id": "car-1", "nombre": "Gran Turismo 7", "imagen": "img/imagenesCard/granTurismo7.jpeg" },
+      { "id": "car-2", "nombre": "Forza Horizon 5", "imagen": "img/imagenesCard/forza.jpeg" },
+      { "id": "car-3", "nombre": "Need for Speed Heat", "imagen": "img/imagenesCard/nfs.jpeg" },
+      { "id": "car-4", "nombre": "F1 2022", "imagen": "img/imagenesCard/f12022.jpeg" },
+      { "id": "car-5", "nombre": "Mario Kart 8", "imagen": "img/imagenesCard/mariokart.jpeg" },
+      { "id": "car-6", "nombre": "Rocket League", "imagen": "img/imagenesCard/rl.jpeg" },
+      { "id": "car-7", "nombre": "WRC 10", "imagen": "img/imagenesCard/wrc10.jpeg" },
+      { "id": "car-8", "nombre": "Assetto Corsa", "imagen": "img/imagenesCard/acorsa.jpeg" }
+    ],
+    "orig": [
+      { "id": "ori-1", "nombre": "Hades", "imagen": "img/imagenesCard/juego12.jpeg" },
+      { "id": "ori-2", "nombre": "Celeste", "imagen": "img/imagenesCard/juego13.jpeg" },
+      { "id": "ori-3", "nombre": "Hollow Knight", "imagen": "img/imagenesCard/juego16.jpeg" },
+      { "id": "ori-4", "nombre": "Undertale", "imagen": "img/imagenesCard/juego20.jpeg" },
+      { "id": "ori-5", "nombre": "Cuphead", "imagen": "img/imagenesCard/juego18.jpeg" },
+      { "id": "ori-6", "nombre": "Ori and the Blind Forest", "imagen": "img/imagenesCard/juego19.jpeg" },
+      { "id": "ori-7", "nombre": "Stardew Valley", "imagen": "img/imagenesCard/juego3.jpeg" },
+      { "id": "ori-8", "nombre": "Ludo", "imagen": "img/imagenesCard/ludo.jpeg" }
+    ],
+    "premium": [
+      { "id": "prem-1", "nombre": "God of War Ragnarok", "imagen": "img/imagenesCard/gwr.jpeg" },
+      { "id": "prem-2", "nombre": "The Last of Us Part II", "imagen": "img/imagenesCard/theLast2.jpeg" },
+      { "id": "prem-3", "nombre": "Red Dead Redemption 2", "imagen": "img/imagenesCard/juego21.jpeg" },
+      { "id": "prem-4", "nombre": "Elden Ring", "imagen": "img/imagenesCard/elden.jpeg" },
+      { "id": "prem-5", "nombre": "Cyberpunk 2077", "imagen": "img/imagenesCard/cyberpunk.jpeg" },
+      { "id": "prem-6", "nombre": "Horizon Forbidden West", "imagen": "img/imagenesCard/horizonfw.jpeg" },
+      { "id": "prem-7", "nombre": "Spider-Man Miles Morales", "imagen": "img/imagenesCard/spidermanmm.jpeg" },
+      { "id": "prem-8", "nombre": "Resident Evil Village", "imagen": "img/imagenesCard/rev.jpeg" }
+    ]
+  }
+}
+
