@@ -1,0 +1,546 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f4f4f4;
+}
+
+.breadcrumb {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 10px;
+}
+
+.breadcrumb li {
+  background: linear-gradient(135deg, #7A3EF0, #B84EF2);
+  color: white;
+  font-weight: 500;
+  padding: 10px 30px;
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  /* Flecha hacia adelante */
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%, 15px 50%);
+
+  white-space: nowrap;         
+  overflow: hidden;            
+  text-overflow: ellipsis;     
+}
+
+/* Primer item (Home) con fondo cuadrado atrás */
+.breadcrumb li.home {
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%);
+  border-radius: 6px 0 0 6px; /* opcional: esquinas redondeadas */
+}
+
+.breadcrumb li img {
+  margin-right: 8px;
+  width: 18px;
+}
+
+
+
+
+
+
+.ranking .tabla-ranking-wrapper {
+  width: 100%;
+ 
+}
+.ranking {
+  grid-area: ranking;
+  background: #EAEAEA;
+  border-radius: 10px;
+  
+  text-align: center;
+}
+.ranking table {
+  width: 100%;
+  max-width: 500px;
+  border-collapse: collapse;
+  font-size: 1.1rem;
+  background: #fafafa;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+.ranking thead {
+  background: #f5c542;
+}
+.ranking th, .ranking td {
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+.ranking th {
+  color: #222;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e0c96b;
+}
+.ranking tbody tr {
+  border-bottom: 1px solid #ececec;
+  transition: background 0.2s;
+}
+.ranking tbody tr:hover {
+  background: #f9f6e7;
+}
+.ranking tbody tr:first-child {
+  background: #ffe9a7;
+  font-weight: bold;
+}
+.ranking td {
+  color: #444;
+}
+.ranking td:nth-child(2) {
+  font-weight: 500;
+  color: #f5a623;
+}
+.ranking td:nth-child(1) {
+  font-weight: bold;
+  color: #bfa100;
+}
+
+
+
+
+/* === Reset básico === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  min-height: 100vh;
+  background: #EAEAEA;
+
+  /* Grid principal: header - main - footer */
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+  grid-template-rows: 60px 1fr 80px; /* alto fijo para header y footer */
+}
+
+
+/* === HEADER === */
+header {
+  grid-area: header;
+  background: #FFFFFF;
+  color: #1F1D1D;
+  padding: 0 2rem;
+  border-bottom: 1px solid #C5C2C2; /* grosor, estilo y color */
+  
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+   /* opcional, para distinguirlo */
+}
+.menu-hamburguesa{
+    display: flex;
+    
+}
+.usuario{
+    display: flex;
+}
+.icono-usuario {
+  height: 30px;
+  width: 30px;   /* si querés que sea cuadrada */
+  object-fit: contain; /* mantiene la proporción sin deformar */
+}
+
+
+header .logo {
+  display: flex;
+  align-items: center;
+  
+}
+header .logo h1 {
+    font-size: 20px;
+}
+
+header nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+header nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* === MAIN === */
+main {
+  grid-area: main;
+  padding: 2rem;
+
+  /* Grid de 2 columnas */
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas:
+    "navegacion navegacion"
+    "juego juego"
+    "controles controles"
+    "descripcion descripcion"
+    "jugadas jugadas"
+    "comentarios premium";
+  gap: 2rem;
+}
+
+.juego {
+  grid-area: juego;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(1, 1, 3, 0.6)), url("../assets/Gemini_Generated_Image_liolnrliolnrliol.png") center/cover no-repeat;
+  border-radius: 10px;
+  position: relative;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  
+}
+
+/* === BOTONERA === */
+.juego .botonera {
+  position: absolute;
+  bottom: 0;                 /* pegada al fondo */
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: #05056F;       /* violeta oscuro */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    padding: 0 2rem;
+  border-radius: 0 0 10px 10px;
+}
+
+.botonera .promo {
+  color: #fff200;            /* amarillo */
+  font-weight: bold;
+}
+
+.botonera .acciones {
+  display: flex;
+  gap: 1rem;
+}
+
+
+.accion-circulo {
+  width: 40px;
+  height: 40px;
+  background: #0808A6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: transform 0.2s;
+}
+
+.accion-circulo:hover {
+  transform: scale(1.15);
+    background: #6666FF;
+}
+
+.accion-circulo img {
+  width: 20px;
+  height: 20px;
+}
+
+.premium {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.premium img {
+    width: 35px;
+    height: 35px;
+}
+.controles {
+    grid-area: controles;
+    background: #EAEAEA;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    
+}
+
+
+
+
+.instrucciones {
+  display: flex;
+  justify-content: space-evenly;
+  
+}
+.instruccion{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.instruccion img {
+  width: 60px;
+  height: 60px;
+}
+
+
+
+
+.premium-publicidad {
+  grid-area: premium;
+  background: linear-gradient(135deg, #1D1D7D 0%, #3535E3 100%);
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.contenido-premium h2, .contenido-premium p {
+  color: #fff;
+}
+.contenido-premium button {
+  background: #fff200;
+  color: #302f2f;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.contenido-premium button:hover {
+  background: #fff;
+  color: #5a1da8;
+}
+
+
+.descripcion {
+  grid-area: descripcion;
+  background: #EAEAEA;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+/* Apila icono + texto en fila */
+ .titulo {
+  display: flex;
+  align-items: center;   /* centra verticalmente */
+  gap: 10px;             /* espacio entre icono y texto */
+  margin-bottom: 1rem; 
+  border-bottom: 1px solid #b1abab9d;
+  padding-left: 1px;
+    /* separa del ul */
+}
+ .titulo h2 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.titulo img {
+  width: 40px;
+  height: 40px;
+}
+.descripcion ul {
+  margin-left: 50px;
+}
+.descripcion ul li{
+  font-size: 16px;
+}
+
+
+
+.jugadas {
+  grid-area: jugadas;
+  background: #EAEAEA;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+
+.jugadas .videos {
+  display: flex;
+  gap: 1rem;
+}
+.videos {
+  display: flex;
+  justify-content: space-evenly;
+  
+}
+.video {
+  background: #eee;
+  
+  height: 200px;
+  width: 350px;
+  border-radius: 8px;
+  
+}
+.comentarios{
+  grid-area: comentarios;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+.comentarios .titulo{
+   width: 100%;
+}
+
+
+.interaccion {
+  grid-area: interaccion;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1.5rem;
+  
+  
+}
+.interaccion img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;  /* ajusta dentro sin deformarse */
+    margin-right: 10px;
+}
+.comentarios .interaccion input {
+  border: none;
+  border-bottom:1px solid #B1ABAB;
+  outline: none;
+  width: 970px;
+  height: 26px;
+  font-size: 16px;
+  background: #EAEAEA;
+}
+.comentarios .interaccion input::placeholder {
+  font-size: 12px;
+}
+
+.interaccion button img {
+    width: 22px;
+    height: 20px;
+    object-fit: contain;  /* ajusta dentro sin deformarse */
+}
+
+.interaccion button{
+  background: none;
+  height: 26px;
+  border: none;
+  border-bottom: solid 1px #B1ABAB;
+  padding-left: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.comentario-header {
+  display: flex;
+  align-items: center;
+  
+}
+.comentario-header .icono-usuario {
+  width: 32px;
+  height: 32px;
+  margin-right: 6px;
+}
+.comentario-header .nombre-usuario {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+.comentario-header .fecha-comentario {
+  font-size: 12px;
+  color: #888;
+  margin-left: 8px;
+}
+.comentario p {
+  margin-left: 40px;
+  margin-top: 0;
+  margin-bottom: 0.2em;
+  font-size: 14px;
+  color: #222;
+}
+
+.reacciones {
+  display: flex;
+  align-items: center;
+  
+  margin-left: 40px;
+  margin-bottom: 1.2em;
+}
+.btn-like, .btn-dislike {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.like-count {
+  margin-left: 4px;
+  font-weight: 600;
+  color: #f5a623;
+  font-size: 1rem;
+}
+.btn-like img, .btn-dislike img {
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+}
+.btn-dislike img {
+  transform: rotate(180deg);
+  filter: grayscale(1);
+  vertical-align: middle;
+  margin-right: 0;
+}
+
+.juego-sugerido img {
+  width: 100%;
+  height: 100%;
+    object-fit: contain;  /* ajusta dentro sin deformarse */
+    margin-right: 10px;
+    border-radius: 8px;
+}
+.juego-sugerido {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+  
+}
+
+
+
+/* === FOOTER === */
+footer {
+  grid-area: footer;
+  background: #222;
+  color: #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+
+
