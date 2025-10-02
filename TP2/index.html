@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PixelPlay · Home</title>
-  <!-- CSS principal -->
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -108,7 +107,7 @@
 
     <main class="page" role="main">
       <!-- ===== HERO ESPECIAL (rotativo) ===== -->
-      <section class="hero-carousel">
+      <section class="hero-carousel" style="margin-bottom: 2rem;">
         <button class="hero-arrow left" id="hero-arrow-left" aria-label="Anterior">&#8592;</button>
         <div class="hero-track" id="hero-track">
           <div class="hero-slide" id="hero-slide">
@@ -171,20 +170,76 @@
 
       <!-- Footer -->
       <footer class="site-footer">
-        <div class="footer-inner">
-          <p><strong>PixelPlay</strong> · © 2025 · Todos los derechos reservados</p>
-          <nav class="footer-links">
-            <a href="#">Términos</a>
-            <a href="#">Privacidad</a>
-            <a href="#">Soporte</a>
-          </nav>
+        <div class="footer-main">
+          <div class="footer-col footer-desc">
+            <h4>Título</h4>
+            <p>Llevá tu experiencia gamer al próximo nivel con nuestra plataforma. Descubrí, jugá y compartí en un mundo conectado por la pasión por los videojuegos.</p>
+            <ul>
+              <li><strong>Multiplataforma</strong><br>Accedé desde PC, consola o móvil con la misma cuenta.</li>
+              <li><strong>Comunidad Online</strong><br>Unite a torneos, clanes y chats en vivo con jugadores de todo el mundo.</li>
+              <li><strong>Game Streaming</strong><br>Mirá partidas en directo o transmití tus propios juegos con un clic.</li>
+            </ul>
+          </div>
+          <div class="footer-col footer-features">
+            <ul>
+              <li><strong>Game Pass</strong><br>Suscribite para acceder a una librería con cientos de títulos nuevos y clásicos.</li>
+              <li><strong>Eventos Exclusivos</strong><br>Participá en lanzamientos, betas anticipadas y promociones especiales.</li>
+            </ul>
+          </div>
+          <div class="footer-col footer-links">
+            <h4>Juegos</h4>
+            <ul>
+              <li><a href="#">Juegos</a></li>
+              <li><a href="#">Categorías</a></li>
+              <li><a href="#">Game Pass</a></li>
+              <li><a href="#">Comunidad</a></li>
+              <li><a href="#">Soporte</a></li>
+              <li><a href="#">Noticias</a></li>
+              <li><a href="#">Torneos</a></li>
+              <li><a href="#">Blog</a></li>
+            </ul>
+          </div>
+          <div class="footer-col footer-about">
+            <h4>ABOUT</h4>
+            <ul>
+              <li><a href="#">Nosotros</a></li>
+              <li><a href="#">Estudios asociados</a></li>
+              <li><a href="#">Prensa</a></li>
+              <li><a href="#">Oficinas</a></li>
+              <li><a href="#">Carreras</a></li>
+            </ul>
+          </div>
+          <div class="footer-col footer-contact">
+            <a href="#" class="footer-btn">CONTACTANOS</a>
+            <div class="footer-phone">
+              <span>📞</span> 1-800-GAMER-24
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-brand">
+            <img src="img/IconosHeader/IconoLogoPixelPlay.png" alt="PixelPlay" style="height:32px;vertical-align:middle;">
+            <span class="footer-brand-name">PixelPlay</span>
+          </div>
+          <div class="footer-legal">
+            <a href="#">Términos de uso</a> |
+            <a href="#">Política de privacidad</a> |
+            <a href="#">Licencias</a>
+            <span>© 2025 GamerWorld Inc. Todos los derechos reservados.</span>
+          </div>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><img src="img/social/Instagram.png" alt="Instagram" /></a>
+            <a href="#" aria-label="Email"><img src="img/social/Mail.png" alt="Email" /></a>
+            <a href="#" aria-label="Twitter"><img src="img/social/Twitter.png" alt="Twitter" /></a>
+            <a href="#" aria-label="YouTube"><img src="img/social/Youtube.png" alt="YouTube" /></a>
+            <a href="#" aria-label="Facebook"><img src="img/social/Facebook.png" alt="Facebook" /></a>
+          </div>
         </div>
       </footer>
     </main>
   </div>
 </div>
 
-<!-- JS: toggle del menú (asegurate de tener js/app.js) -->
 <script src="js/app.js" defer></script>
 </body>
 </html>

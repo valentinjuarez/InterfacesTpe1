@@ -1,11 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
   const sidebar   = document.getElementById('sidebar');
   const hamburger = document.getElementById('hamburger');
-  if (sidebar && hamburger) {
+  // Nuevo: referencia al <img> dentro del botón hamburguesa
+  const hamburgerImg = hamburger?.querySelector('img');
+  // Ruta del icono cancelar
+  const iconCancel = 'img/IconosHeader/IconoCancelar.png';
+  const iconHamburguesa = 'img/IconosHeader/IconoMenuHamburguesa.png';
+
+  if (sidebar && hamburger && hamburgerImg) {
     const toggle = () => {
       const willOpen = !sidebar.classList.contains('open');
       sidebar.classList.toggle('open', willOpen);
       hamburger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      // Cambia el icono
+      hamburgerImg.src = willOpen ? iconCancel : iconHamburguesa;
+      hamburgerImg.alt = willOpen ? 'Cerrar menú lateral' : 'Abrir menú lateral';
+      // En mobile, bloquea el scroll del body cuando el menú está abierto
+      if (window.innerWidth <= 700) {
+        document.body.style.overflow = willOpen ? 'hidden' : '';
+      }
     };
     hamburger.addEventListener('click', (e) => { e.preventDefault(); toggle(); });
     hamburger.addEventListener('keydown', (e) => {
@@ -15,12 +28,31 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
         sidebar.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        // Restaura el icono hamburguesa
+        hamburgerImg.src = iconHamburguesa;
+        hamburgerImg.alt = 'Abrir menú lateral';
       }
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         sidebar.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        // Restaura el icono hamburguesa
+        hamburgerImg.src = iconHamburguesa;
+        hamburgerImg.alt = 'Abrir menú lateral';
+      }
+    });
+    // Cierra el menú si cambia el tamaño de pantalla a desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 700) {
+        sidebar.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        // Restaura el icono hamburguesa
+        hamburgerImg.src = iconHamburguesa;
+        hamburgerImg.alt = 'Abrir menú lateral';
       }
     });
   }
@@ -156,20 +188,48 @@ document.addEventListener('DOMContentLoaded', () => {
     avatarBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       userMenu.classList.toggle('open');
-      // Posicionar debajo del avatar
-      const rect = avatarBtn.getBoundingClientRect();
-      let left = rect.left + window.scrollX - 60;
-      // Evita que el menú se salga por la derecha
-      const menuWidth = 220;
-      const maxLeft = window.innerWidth - menuWidth - 12;
-      if (left > maxLeft) left = maxLeft;
-      if (left < 8) left = 8;
-      userMenu.style.top = `${rect.bottom + window.scrollY + 8}px`;
-      userMenu.style.left = `${left}px`;
+      // MOBILE: menú usuario tipo modal centrado, igual que hamburguesa
+      if (window.innerWidth <= 700) {
+        userMenu.style.position = 'fixed';
+        userMenu.style.left = '2vw';
+        userMenu.style.right = 'auto';
+        userMenu.style.top = (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')) + 4) + 'px';
+        userMenu.style.width = '96vw';
+        userMenu.style.maxWidth = '96vw';
+        userMenu.style.minWidth = '0';
+        userMenu.style.borderRadius = '0 0 12px 12px';
+        userMenu.style.zIndex = 2100;
+        userMenu.style.boxShadow = '0 8px 32px rgba(0,0,0,0.18)';
+      } else {
+        // Desktop: menú alineado al avatar
+        const rect = avatarBtn.getBoundingClientRect();
+        const menuWidth = 306; // fijo
+        let left = rect.right + window.scrollX - menuWidth;
+        if (left < 8) left = 8;
+        const maxLeft = window.innerWidth - menuWidth - 8;
+        if (left > maxLeft) left = maxLeft;
+        userMenu.style.position = 'absolute';
+        userMenu.style.top = `${rect.bottom + window.scrollY + 8}px`;
+        userMenu.style.left = `${left}px`;
+        userMenu.style.right = 'auto';
+        userMenu.style.width = '306px';
+        userMenu.style.maxWidth = '306px';
+        userMenu.style.minWidth = '306px';
+        userMenu.style.borderRadius = '0';
+        userMenu.style.zIndex = 2000;
+        userMenu.style.boxShadow = '0 8px 32px rgba(0,0,0,0.13)';
+      }
     });
 
     document.addEventListener('click', (e) => {
       if (!userMenu.contains(e.target) && e.target !== avatarBtn) {
+        userMenu.classList.remove('open');
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      // Cierra el menú usuario si cambia de tamaño a desktop
+      if (userMenu && userMenu.classList.contains('open')) {
         userMenu.classList.remove('open');
       }
     });
@@ -222,6 +282,9 @@ function renderRail(selector, items = []) {
   if (!track) return;
   track.innerHTML = '';
 
+  // Detecta si es la sección premium
+  const isPremiumSection = selector === '#rail-premium';
+
   items.forEach(item => {
     const card = document.createElement('article');
     card.className = 'game-card';
@@ -233,25 +296,35 @@ function renderRail(selector, items = []) {
     img.alt = item.nombre;
     img.loading = 'lazy';
     img.className = 'card-img';
+    card.appendChild(img);
+
+    // Si es premium, agrega el badge con fondo y el icono adentro
+    if (isPremiumSection) {
+      const badge = document.createElement('div');
+      badge.className = 'premium-badge';
+      const icon = document.createElement('img');
+      icon.src = 'img/IconosCard/IconoPremium.png';
+      icon.alt = 'Premium';
+      badge.appendChild(icon);
+      card.appendChild(badge);
+    }
 
     // Icono centrado (ajusta el nombre si tu icono es diferente)
     const icon = new Image();
     icon.src = 'img/IconosCard/IconoPlay.png';
     icon.alt = 'Jugar';
     icon.className = 'card-hover-icon';
+    card.appendChild(icon);
 
     // Título abajo a la derecha
     const title = document.createElement('div');
     title.className = 'card-title';
     title.textContent = item.nombre;
-
-    card.appendChild(img);
-    card.appendChild(icon);
     card.appendChild(title);
+
     track.appendChild(card);
   });
 }
-
   // Small
   const smallImg = document.querySelector('#hero-small img');
   if (smallImg && hero.small) {
@@ -266,6 +339,9 @@ function renderRail(selector, items = []) {
   if (!track) return;
   track.innerHTML = '';
 
+  // Detecta si es la sección premium
+  const isPremiumSection = selector === '#rail-premium';
+
   items.forEach(item => {
     const card = document.createElement('article');
     card.className = 'game-card';
@@ -278,20 +354,30 @@ function renderRail(selector, items = []) {
     img.loading = 'lazy';
     img.className = 'card-img';
 
+    card.appendChild(img);
+
+    // Si es premium, agrega el icono arriba a la derecha
+    if (isPremiumSection) {
+      const premiumIcon = document.createElement('img');
+      premiumIcon.src = 'img/IconosCard/IconoPremium.png';
+      premiumIcon.alt = 'Premium';
+      premiumIcon.className = 'premium-badge';
+      card.appendChild(premiumIcon);
+    }
+
     // Icono centrado (ajusta el nombre si tu icono es diferente)
     const icon = new Image();
     icon.src = 'img/IconosCard/IconoPlay.png';
     icon.alt = 'Jugar';
     icon.className = 'card-hover-icon';
+    card.appendChild(icon);
 
     // Título abajo a la derecha
     const title = document.createElement('div');
     title.className = 'card-title';
     title.textContent = item.nombre;
-
-    card.appendChild(img);
-    card.appendChild(icon);
     card.appendChild(title);
+
     track.appendChild(card);
   });
 }
