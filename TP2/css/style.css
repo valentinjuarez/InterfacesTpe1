@@ -1,0 +1,268 @@
+/* Fondo "PixelPlay" (solo layout y decoración, sin formulario) */
+/*
+  Buenas prácticas aplicadas:
+  - Variables CSS (custom properties) para colores de marca y sombras.
+  - Nombres claros de variables y comentarios por bloque para facilitar mantenimiento.
+  - Sin reglas innecesarias ni valores mágicos duplicados.
+*/
+:root{
+  /* Colores exactos del degradado (según Figma): 0% → 55% → 100% */
+  --pp-grad-start: #4A1F85; /* 0% */
+  --pp-grad-mid:   #622CB6; /* 55% */
+  --pp-grad-end:   #7C3AED; /* 100% */
+
+  /* Colores de apoyo (si necesitas variantes azules en otras pantallas) */
+  --blue-600:#1d4ed8;
+  --blue-500:#2563eb;
+
+  /* Fondo general y sombra reutilizable */
+  --bg:#EAEAEA;
+  --shadow: 0 20px 36px rgba(0, 0, 0, 0.522);
+  --accent:#000055; /* mismo color que el borde de los inputs */
+}
+
+/* Lienzo general */
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+}
+
+/* Sistema de caja consistente para evitar desbordes por bordes/paddings */
+*,*::before,*::after{ box-sizing: border-box }
+
+/* Botón 'Inicio' (esquina superior izquierda) */
+.btn-inicio{
+  position:absolute;
+  top:64px; left:64px; /* un poco más alejado de la esquina */
+  display:inline-flex; align-items:center; gap:10px;
+  padding:20px 36px;   /* un poco más grande */
+  border-radius:14px;  /* redondeado suave */
+  color:#EAEAEA; text-decoration:none; font-weight:700; font-size:16px; /* Poppins Bold y un poco más grande */
+  /* Gradiente vertical: arriba oscuro → abajo claro, usando los 3 stops */
+  background: linear-gradient(180deg,
+    var(--pp-grad-start) 0%,
+    var(--pp-grad-mid) 55%,
+    var(--pp-grad-end) 100%
+  );
+  box-shadow: 0 10px 28px rgba(26,26,44,.25);
+  z-index:2; /* por encima del panel izquierdo */
+}
+.btn-inicio .icon{ display:block; width:20px; height:20px }
+.btn-inicio:hover{ filter: brightness(1.05) }
+.btn-inicio:active{ transform: translateY(2px) }
+
+/* Panel izquierdo con degradado y corte diagonal */
+.left-bg{
+  position:absolute;
+  inset:0 auto 0 0; /* top:0; right:auto; bottom:0; left:0 */
+  width:100%;
+  /* Degradado exacto del diseño, vertical (arriba oscuro → abajo claro) */
+  background: linear-gradient(180deg,
+    var(--pp-grad-start) 0%,
+    var(--pp-grad-mid) 55%,
+    var(--pp-grad-end) 100%
+  );
+  /* Recorte diagonal hacia la derecha */
+  /* Más cerrado/angosto */
+  clip-path: polygon(0 0, 58% 0, 34% 100%, 0% 100%);
+  z-index:0; /* bajo el botón */
+}
+
+
+
+/* Avión (la imagen proporcionada) */
+.plane{
+  position:absolute;
+  inset:0;           /* ocupa todo el panel izquierdo */
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;  /* se estira para cubrir */
+  object-position:center; /* centra la composición */
+  transform:none;
+  filter:none;       /* sin sombras al cubrir toda el área */
+  pointer-events:none;
+  user-select:none;
+}
+/* Se eliminan líneas/animaciones: no hay animaciones en el fondo */
+
+/* "Frame" derecho (solo contenedor/estética, sin contenido interno) */
+.right-slot{
+  position:absolute;
+  right:10%;
+  top:24%;
+  width:440px;
+  min-height:480px;
+  padding:24px;               /* margen interior básico */
+  border-radius:14px;         /* esquinas redondeadas como el botón */
+  background: linear-gradient(180deg,
+    var(--pp-grad-start) 0%,
+    var(--pp-grad-mid) 55%,
+    var(--pp-grad-end) 100%
+  );
+  box-shadow: var(--shadow);
+  z-index:1;                  /* sobre el fondo, bajo overlays futuros */
+  overflow:hidden;            /* cualquier mínimo excedente queda recortado */
+}
+
+/* Título centrado dentro del frame derecho */
+.card-title{
+  margin:0;
+  padding:12px 8px 8px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  color:#EAEAEA;
+  font-weight:700; /* Poppins Bold */
+  font-size:20px;
+  text-align:center;
+}
+.card-title .icon{ width:22px; height:22px; display:block }
+
+/* Campos del formulario (solo inputs) */
+.auth-form{ margin-top:16px }
+.field{ position:relative; margin-top:14px }
+.field input{
+  width:100%;
+  height:44px;
+  padding:0 44px 0 14px; /* espacio para el ojo a la derecha */
+  border-radius:8px;
+  border: 1px solid var(--accent);
+  outline:none;
+  background:#EAEAEA;
+  color:#1d1d1f;
+  font-size:14px;
+  box-sizing:border-box; /* el 100% incluye el borde: no se desborda */
+  display:block;
+}
+.field input::placeholder{ color:#404040 }
+
+/* Botón de ver contraseña */
+.toggle-visibility{
+  position:absolute;
+  right:10px; top:20%; 
+  width:28px; height:28px;
+  display:grid; place-items:center;
+  border:none; background:transparent; color:#6b6b71; cursor:pointer;
+}
+/* Por defecto (oculto): mostrar ojo tachado y ocultar ojo abierto */
+.toggle-visibility .icon-eye{ display:none }
+.toggle-visibility .icon-eye-off{ display:block }
+/* Visible (aria-pressed=true): mostrar ojo abierto y ocultar tachado */
+.toggle-visibility[aria-pressed="true"] .icon-eye{ display:block }
+.toggle-visibility[aria-pressed="true"] .icon-eye-off{ display:none }
+
+/* Enlace: ¿Has olvidado tu contraseña? */
+.forgot-link{
+  display:inline-block;
+  margin-top:16px;
+  color:#000055;
+  font-size:12px;
+  font-weight: 600;
+  text-decoration: none;
+  
+}
+.forgot-link:hover{ text-decoration: underline }
+
+/* Botón Iniciar Sesión */
+.btn-submit{
+  margin-top:16px;
+  width:100%;
+  height:44px;
+  border-radius:8px;
+  border:1px solid var(--accent);
+  background: #9E68F7;
+  color:#EAEAEA;
+  font-weight:700; /* Poppins Bold */
+  font-size:14px;
+  cursor:pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+}
+.btn-submit:hover{ filter:brightness(1.06) }
+.btn-submit:active{ transform: translateY(2px) }
+
+/* Texto "O continuar con" */
+.continuar-text{
+  margin:16px;
+  text-align:center;
+  color:#EAEAEA;
+  font-weight:400; /* Poppins Regular */
+  font-size:12px;
+}
+
+/* Hover consistente para todos los botones */
+.btn-inicio, .btn-submit{ transition: filter .15s ease, transform .15s ease }
+.btn-inicio:hover, .btn-submit:hover, .btn-social:hover{ filter: brightness(1.06) }
+.btn-inicio:active, .btn-submit:active, .btn-social:active{ transform: translateY(2px) }
+
+/* Pie: ¿No tienes cuenta? Registrate */
+.signup-hint{
+  margin:30px;
+  text-align:center;
+  color:#EAEAEA;
+  font-size:12px;
+  font-weight:400;
+}
+.signup-hint .signup-link{
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.signup-hint .signup-link:hover{ text-decoration: underline }
+
+/* Botones sociales (Facebook y Google) */
+.social-auth{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+  margin-top:8px;
+}
+.btn-social{
+  display:grid;
+  grid-auto-flow: column;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  height:44px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight: 700; /* Poppins Bold */
+  font-size:14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+}
+.btn-social .icon{ width:18px; height:18px; display:block }
+
+/* Facebook: azul con texto blanco */
+.btn-social.facebook{ 
+    margin-top: 8px;
+    background:#1877F2; 
+    color:#1d1d1f ; 
+    border: 1px solid var(--accent);
+}
+
+/* Google: claro con borde sutil y texto oscuro */
+.btn-social.google{
+    margin-top: 8px;
+  background:#EAEAEA;
+  color:#1d1d1f;
+  border:1px solid var(--accent);
+}
+
+/* Texto legal inferior derecho (fuera del formulario) */
+.legal{
+  position:absolute;
+  right:170px;
+  bottom:18px;
+  margin:0;
+  color:#1d1d1f;
+  font-size:12px;
+  text-align:right;
+}
+.legal a{
+  color:#000055;
+  text-decoration:none;
+  font-weight:600;
+}
+.legal a:hover{ text-decoration:underline }
+
