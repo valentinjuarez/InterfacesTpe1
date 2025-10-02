@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PixelPlay · Iniciar Sesion</title>
+  <!-- Carga de fuente Poppins (400,700) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+
+  
+</head>
+<body>
+  <div class="frame">
+    <main class="bg-scene" aria-label="Fondo decorativo">
+      <!-- Botón 'Inicio' en la esquina superior izquierda -->
+      <a class="btn-inicio" href="#" role="button" aria-label="Ir al inicio">
+        <svg class="icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+          <path d="M15 18L9 12L15 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Inicio
+      </a>
+      <!-- Bloque izquierdo con degradado y recorte diagonal -->
+      <div class="left-bg" aria-hidden="true">
+        <img class="plane" src="img/imgIniciarSesion.png" alt="" aria-hidden="true" />
+      </div>
+
+      <!-- Área derecha: solo frame con título, sin formulario aún -->
+      <section class="right-slot" aria-label="Panel de inicio de sesión">
+        <h2 class="card-title">
+          <svg class="icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm0 5a2 2 0 1 1-2 2 2 2 0 0 1 2-2Zm3 11H9a1 1 0 0 1 0-2h1v-3H9a1 1 0 0 1 0-2h3a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" fill="currentColor"/>
+          </svg>
+          Iniciar sesión en PixelPlay
+        </h2>
+        <form class="auth-form" action="#" method="post" novalidate>
+          <div class="field">
+            <input type="email" name="email" placeholder="Email" aria-label="Email" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <input id="password" type="password" name="password" placeholder="Contraseña" aria-label="Contraseña" autocomplete="current-password" required />
+            <button type="button" class="toggle-visibility" aria-label="Mostrar u ocultar contraseña" aria-pressed="false" data-visible="false">
+              <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              </svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.59 21.59 0 0 1 5.06-5.94m4.25-2A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.59 21.59 0 0 1-3.22 3.88M1 1l22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <a class="forgot-link" href="#">¿Has olvidado tu contraseña?</a>
+          <button type="submit" class="btn-submit">Iniciar Sesión</button>
+          <p class="continuar-text">O continuar con</p>
+          <div class="social-auth">
+            <a class="btn-social facebook" href="#" aria-label="Continuar con Facebook">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <!-- Ícono de Facebook (app mark) -->
+                <path fill="currentColor" d="M22.675 0h-21.35C.597 0 0 .597 0 1.337v21.326C0 23.403.597 24 1.325 24H12.82v-9.294H9.692V11.09h3.128V8.414c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24h-1.918c-1.504 0-1.795.716-1.795 1.767v2.316h3.59l-.467 3.616h-3.123V24h6.127C23.403 24 24 23.403 24 22.663V1.337C24 .597 23.403 0 22.675 0z"/>
+              </svg>
+              <span>Facebook</span>
+            </a>
+            <a class="btn-social google" href="#" aria-label="Continuar con Google">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <!-- Ícono de Google (multi-color G simplificado) -->
+                <path fill="#EA4335" d="M12 10.2v3.6h5.1c-.2 1.1-1.2 3.1-5.1 3.1-3.1 0-5.6-2.6-5.6-5.9s2.5-5.9 5.6-5.9c1.8 0 3 .8 3.7 1.5l2.5-2.4C16.6 2.9 14.5 2 12 2 6.9 2 2.8 6.1 2.8 11.1S6.9 20.2 12 20.2c5.9 0 9.8-4.1 9.8-9.9 0-.7-.1-1.1-.2-1.6H12z"/>
+                <path fill="#34A853" d="M3.7 14.7c.8 2.4 3.1 4.1 5.7 4.1 3.3 0 4.5-1.4 5.2-2.1l-5.2-4H3.7z"/>
+                <path fill="#FBBC05" d="M3.7 9.5c-.4 1-.6 2.1-.6 3.2 0 1.1.2 2.2.6 3.2l5.9-4.5-5.9-1.9z"/>
+                <path fill="#4285F4" d="M18.8 6.3c-.8-.8-2-1.8-3.7-1.8-2.4 0-3.9 1.3-4.8 2.4L3.7 9.5l5.9 4.5c.6-.8 1.6-1.6 2.9-1.6 1.8 0 2.9.8 3.6 1.5l2.5-2.5c-1.1-1-1.8-2.4-1.8-4.1z"/>
+              </svg>
+              <span>Google</span>
+            </a>
+          </div>
+          <p class="signup-hint">¿No tienes cuenta? <a class="signup-link" href="#">Registrate</a></p>
+        </form>
+      </section>
+      <!-- Texto legal inferior derecho (fuera del formulario) -->
+      <p class="legal">Al crear tu cuenta aceptas nuestras <a href="#">Condiciones de uso</a> y la <a href="#">Política de privacidad</a>.</p>
+    </main>
+  </div>
+  <script src="js/script.js" defer></script>
+</body>
+</html>
