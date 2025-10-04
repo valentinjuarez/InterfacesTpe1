@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPlay · Registrarse </title>
+     <!-- Carga de fuente Poppins (400,700) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="frame">
+    <main class="bg-scene" aria-label="Fondo decorativo">
+      <!-- Botón 'Atrás' en la esquina superior izquierda -->
+      <a class="btn-inicio" href="#" role="button" aria-label="Volver">
+        <svg class="icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+          <path d="M15 18L9 12L15 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Atrás
+      </a>
+      <!-- Fondo con gradiente y recorte diagonal en el lado derecho -->
+      <div class="right-bg" aria-hidden="true">
+        <img class="plane" src="assets/imgIniciarSesion.png" alt="" aria-hidden="true" />
+      </div>
+      <!-- Frame izquierdo con gradiente (contenedor) -->
+      <section class="left-slot" aria-label="Panel de registro">
+        <h2 class="card-title">
+          <img class="icon" src="assets/logo.png" alt="" aria-hidden="true" />
+          Crea tu cuenta en PixelPlay
+        </h2>
+        <form class="auth-form" action="#" method="post" novalidate>
+          <!-- Paso 1: Email y Username -->
+          <div class="step step-1 is-active" data-step="1">
+            <div class="field" id="reg-email-field">
+              <label for="email">Email <span aria-hidden="true">*</span></label>
+              <input id="email" type="email" name="email" placeholder="Email" autocomplete="email" aria-describedby="email-error" aria-invalid="false" required />
+              <p class="error-text" id="email-error" role="alert" aria-live="polite"></p>
+            </div>
+            <div class="field" id="reg-username-field">
+              <label for="reg-username">Username</label>
+              <input id="reg-username" type="text" name="username" placeholder="Username" autocomplete="username" />
+            </div>
+          </div>
+
+          <!-- Paso 2: Datos personales -->
+          <div class="step step-2" data-step="2" hidden>
+            <div class="field" id="first-name-field">
+              <label for="first-name">Nombre <span aria-hidden="true"></span></label>
+              <input id="first-name" type="text" name="firstName" placeholder="Nombre" aria-invalid="false" />
+            </div>
+            <div class="field" id="last-name-field">
+              <label for="last-name">Apellido <span aria-hidden="true"></span></label>
+              <input id="last-name" type="text" name="lastName" placeholder="Apellido" aria-invalid="false" />
+            </div>
+            <div class="field" id="age-field">
+              <label for="age">Edad <span aria-hidden="true">*</span></label>
+              <input id="age" type="number" name="age" placeholder="Edad" min="1" step="1" aria-describedby="age-error" aria-invalid="false" required />
+              <p class="error-text" id="age-error" role="alert" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <button type="button" class="btn-submit">Siguiente</button>
+          <p class="signup-hint">¿Ya tienes cuenta? <a class="forgot-link" href="login.html">Inicia sesión.</a></p>
+        </form>
+        <!-- Progreso del registro -->
+        <div class="progress" aria-label="Progreso del registro">
+          <div class="progress-status" aria-live="polite"><strong>1 de 3</strong></div>
+          <div class="progress-bar" role="progressbar" aria-label="Paso actual" aria-valuemin="0" aria-valuemax="100" aria-valuenow="33">
+            <span class="progress-fill step-1"></span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+      <script type="module" src="js/pages/register.js"></script>
+</body>
+</html>
