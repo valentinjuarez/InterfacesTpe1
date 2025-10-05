@@ -5,9 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PixelPlay · Home</title>
   <link rel="stylesheet" href="css/style.css" />
-  <script src="js/app.js" defer></script>
+  <link rel="stylesheet" href="css/mobile.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
 </head>
 <body>
+<div id="loading-overlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <div class="loading-percent" id="loading-percent">0%</div>
+    <div class="loading-text">Cargando...</div>
+  </div>
+</div>
 <div class="app">
   <header class="topbar">
     <div class="header-left">
@@ -37,6 +46,7 @@
       </button>
     </div>
   </header>
+
   <!-- Menú de usuario: ahora en el HTML -->
   <div id="user-menu" class="user-menu">
     <div class="user-menu-avatar">
@@ -91,7 +101,7 @@
           <img src="img/IconosBarraLateral/IconoCastillo.png" alt="Defensa" />
         </a>
         <a class="nav-btn" href="#" aria-label="Carreras">
-          <img src="img/IconosBarraLateral/IconoAutos.png" alt="Carreras" />
+          <img src="img/IconosBarraLateral/IconoAuto.png" alt="Carreras" />
         </a>
         <a class="nav-btn" href="#" aria-label="Fútbol">
           <img src="img/IconosBarraLateral/IconoPelotaFutbol.png" alt="Fútbol" />
@@ -116,22 +126,23 @@
         </a>
       </nav>
     </aside>
+
     <main class="page" role="main">
-      <!-- ===== HERO ESPECIAL (rotativo) ===== -->
       <section class="hero-carousel" style="margin-bottom: 2rem;">
         <button class="hero-arrow left" id="hero-arrow-left" aria-label="Anterior">&#8592;</button>
         <div class="hero-track" id="hero-track">
           <div class="hero-slide" id="hero-slide">
             <article class="hero-card hero-primary" id="hero-big">
               <img src="img/imagenesCard/pegSoliatire.jpeg" alt="Peg Soliatire" loading="lazy" />
-              <!-- ...iconos y títulos si corresponde... -->
+              <div class="hero-title">Peg Soliatire</div>
             </article>
             <article class="hero-card hero-primary">
               <img src="img/imagenesCard/minecraft.jpeg" alt="Minecraft" loading="lazy" />
+              <div class="hero-title">Minecraft</div>
             </article>
             <article class="hero-card hero-promo">
               <img src="img/imagenesCard/premium.jpeg" alt="Premium" loading="lazy" />
-              <!-- ...puedes agregar el icono premium aquí si lo deseas... -->
+              <div class="hero-title">Premium</div>
             </article>
           </div>
         </div>
@@ -145,7 +156,6 @@
         </header>
         <button class="rail-arrow left" data-rail="rail-pop" aria-label="Anterior">&#8592;</button>
         <div class="rail-track" id="rail-pop">
-          <!-- POP -->
           <article class="game-card" data-id="pop-1">
             <img class="card-img" src="img/imagenesCard/fifa23.webp" alt="FIFA 23" loading="lazy" />
             <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
@@ -299,52 +309,76 @@
         <button class="rail-arrow left" data-rail="rail-premium" aria-label="Anterior">&#8592;</button>
         <div class="rail-track" id="rail-premium">
           <!-- PREMIUM -->
-          <article class="game-card" data-id="prem-1">
+          <article class="game-card premium-hover" data-id="prem-1">
             <img class="card-img" src="img/imagenesCard/gwr.jpeg" alt="God of War Ragnarok" loading="lazy" />
             <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
-            
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">God of War Ragnarok</span>
+            </div>
             <div class="card-title">God of War Ragnarok</div>
           </article>
-          <article class="game-card" data-id="prem-2">
+          <article class="game-card premium-hover" data-id="prem-2">
             <img class="card-img" src="img/imagenesCard/theLast2.jpeg" alt="The Last of Us Part II" loading="lazy" />
-            <!-- <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" /> -->
-            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">The Last of Us Part II</span>
+            </div>
             <div class="card-title">The Last of Us Part II</div>
           </article>
-          <article class="game-card" data-id="prem-3">
+          <article class="game-card premium-hover" data-id="prem-3">
             <img class="card-img" src="img/imagenesCard/juego21.jpeg" alt="Red Dead Redemption 2" loading="lazy" />
-            <!-- <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" /> -->
-            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Red Dead Redemption 2</span>
+            </div>
             <div class="card-title">Red Dead Redemption 2</div>
           </article>
-          <article class="game-card" data-id="prem-4">
+          <article class="game-card premium-hover" data-id="prem-4">
             <img class="card-img" src="img/imagenesCard/elden.jpeg" alt="Elden Ring" loading="lazy" />
-            <!-- <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" /> -->
-            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Elden Ring</span>
+            </div>
             <div class="card-title">Elden Ring</div>
           </article>
-          <article class="game-card" data-id="prem-5">
+          <article class="game-card premium-hover" data-id="prem-5">
             <img class="card-img" src="img/imagenesCard/cyberpunk.jpeg" alt="Cyberpunk 2077" loading="lazy" />
-            <!-- <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" /> -->
-            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Cyberpunk 2077</span>
+            </div>
             <div class="card-title">Cyberpunk 2077</div>
           </article>
-          <article class="game-card" data-id="prem-6">
+          <article class="game-card premium-hover" data-id="prem-6">
             <img class="card-img" src="img/imagenesCard/horizonfw.jpeg" alt="Horizon Forbidden West" loading="lazy" />
-            <!-- <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" /> -->
-            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Horizon Forbidden West</span>
+            </div>
             <div class="card-title">Horizon Forbidden West</div>
           </article>
-          <article class="game-card" data-id="prem-7">
+          <article class="game-card premium-hover" data-id="prem-7">
             <img class="card-img" src="img/imagenesCard/spidermanmm.jpeg" alt="Spider-Man Miles Morales" loading="lazy" />
-            <!-- <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" /> -->
-            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Spider-Man Miles Morales</span>
+            </div>
             <div class="card-title">Spider-Man Miles Morales</div>
           </article>
-          <article class="game-card" data-id="prem-8">
+          <article class="game-card premium-hover" data-id="prem-8">
             <img class="card-img" src="img/imagenesCard/rev.jpeg" alt="Resident Evil Village" loading="lazy" />
-            <!-- <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" /> -->
-            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Resident Evil Village</span>
+            </div>
             <div class="card-title">Resident Evil Village</div>
           </article>
         </div>
@@ -422,5 +456,6 @@
     </main>
   </div>
 </div>
+<script src="js/app.js" defer></script>
 </body>
 </html>
