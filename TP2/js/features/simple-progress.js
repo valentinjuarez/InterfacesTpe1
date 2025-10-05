@@ -13,6 +13,7 @@ export function setupSimpleProgress({
   totalSteps = 3,
   initialStep = 1,
   exitUrl = 'login.html',
+  onComplete,
 } = {}) {
   const form = document.querySelector(formSelector);
   const nextBtn = document.querySelector(nextBtnSelector);
@@ -76,7 +77,14 @@ export function setupSimpleProgress({
       const evt = new Event('submit', { cancelable: true });
       const cancelled = !form.dispatchEvent(evt);
       if (cancelled) return; // alguna validación bloqueó
-      next();
+      if (currentStep < totalSteps) {
+        next();
+      } else {
+        // Último paso: completar
+        if (typeof onComplete === 'function') {
+          try { onComplete({ form, currentStep, totalSteps }); } catch {}
+        }
+      }
     });
   }
 
