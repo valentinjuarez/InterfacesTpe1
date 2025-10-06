@@ -1,4 +1,4 @@
-// Feature: Progreso simple (3 pasos) sin cosas raras
+// Feature: Progreso (3 pasos)
 // - Actualiza texto/porcentaje
 // - Muestra/oculta pasos por data-step
 // - "Siguiente" dispara un submit sintético cancelable; si no lo cancelan, avanza
@@ -71,7 +71,7 @@ export function setupSimpleProgress({
     return currentStep;
   }
 
-  // Botón Siguiente: submit sintético básico, sin bubbles ni extras
+  // Botón Siguiente: 
   if (nextBtn && form) {
     nextBtn.addEventListener('click', () => {
       const evt = new Event('submit', { cancelable: true });

@@ -1,4 +1,4 @@
-// Módulo: Mostrar/ocultar contraseña de forma accesible
+// Mostrar/ocultar contraseña de forma accesible
 export function setupPasswordVisibility({ buttonSelector = '.toggle-visibility', inputSelector = '#password' } = {}) {
   const btn = document.querySelector(buttonSelector);
   const input = document.querySelector(inputSelector);

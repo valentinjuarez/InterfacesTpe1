@@ -1,4 +1,4 @@
-// Módulo: Validación de contraseña (al menos 1 mayúscula)
+// Validación de contraseña (al menos 1 mayúscula)
 export function hasUppercase(value) {
   return /[A-ZÁÉÍÓÚÑ]/.test(value || '');
 }

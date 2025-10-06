@@ -1,4 +1,4 @@
-// Feature: Validación de edad (> 5 años)
+// Validación de edad (> 5 años)
 export function setupAgeValidation({
   formSelector = '.auth-form',
   inputSelector = '#age',

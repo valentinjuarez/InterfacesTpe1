@@ -36,12 +36,12 @@ body{
   ======================================== */
 .btn-inicio{
   position:absolute;
-  top:64px; left:64px; /* un poco más alejado de la esquina */
+  top:64px; left:64px; 
   display:inline-flex; align-items:center; gap:10px;
-  padding:20px 36px;   /* un poco más grande */
-  border-radius:14px;  /* redondeado suave */
-  color:#EAEAEA; text-decoration:none; font-weight:700; font-size:16px; /* Poppins Bold y un poco más grande */
-  /* Gradiente vertical: arriba oscuro → abajo claro, usando los 3 stops */
+  padding:20px 36px;   
+  border-radius:14px;  
+  color:#EAEAEA; text-decoration:none; font-weight:700; font-size:16px; 
+  
   background: linear-gradient(180deg,
     var(--pp-grad-start) 0%,
     var(--pp-grad-mid) 55%,
@@ -50,11 +50,26 @@ body{
   background-size: 200% 200%;
   background-position: 0% 0%;
   box-shadow: 0 10px 28px rgba(26,26,44,.25);
-  z-index:2; /* por encima del panel izquierdo */
+  z-index:2; 
+  /* Transiciones y estados (hover/active) agrupados con el componente */
+  transition: filter .2s ease, transform .2s ease, box-shadow .2s ease, background-position .35s ease;
 }
 .btn-inicio .icon{ display:block; width:20px; height:20px }
 
-/* ====== COMUNES (ambas páginas) · Elementos compartidos ====== */
+/* Estados de interacción (btn-inicio) */
+.btn-inicio:hover{
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  background-position: 100% 100%;
+  box-shadow: 0 16px 36px rgba(26,26,44,.28), 0 0 0 2px rgba(124,58,237,.25);
+}
+
+/* Asegura que el estado presionado tenga prioridad sobre hover */
+.btn-inicio:active{
+  transform: translateY(2px);
+  box-shadow: 0 10px 28px rgba(26,26,44,.25);
+}
+
 
 .plane{
   position:absolute;
@@ -69,7 +84,7 @@ body{
 
 /* (Los degradados y sombras de paneles se aplican por página: ver secciones LOGIN/REGISTER) */
 
-/* COMUNES · Título de panel */
+/* Título de panel */
 .card-title{
   margin:0;
   padding:12px 8px 8px;
@@ -81,13 +96,29 @@ body{
 }
 .card-title .icon{ width:32px; height:32px; display:block; object-fit:contain }
 
-/* COMUNES · Formulario (inputs, estados, errores) */
+/* Formulario (inputs, estados, errores) */
 .auth-form{ margin-top:16px }
 .field{ position:relative; margin-top:5px }
+.auth-form .field{
+  display: grid;
+  grid-template-rows: 44px auto; /* input, error */
+  grid-template-areas:
+    "input"
+    "error";
+  align-items: center;
+}
+/* Cuando el campo tiene label, agrego fila extra arriba */
+.auth-form .field:has(label){
+  grid-template-rows: auto 44px auto; /* label, input, error */
+  grid-template-areas:
+    "label"
+    "input"
+    "error";
+}
 .field input{
   width:100%;
   height:44px;
-  padding:0 44px 0 14px; /* espacio para el ojo a la derecha */
+  padding-left:14px; /* espacio para el ojo a la derecha */
   border-radius:8px;
   border: 1px solid var(--secondary);
   outline:none;
@@ -97,11 +128,12 @@ body{
   box-sizing:border-box; /* el 100% incluye el borde: no se desborda */
   display:block;
 }
+.auth-form .field input{ grid-area: input }
 .field input::placeholder{ color:#404040 }
 /* (labels específicos para register se definen en la sección REGISTER) */
 /* Estado de error accesible */
 .field input[aria-invalid="true"]{
-  border-color:#dc2626; /* rojo-600 */
+  border-color:#dc2626; 
   box-shadow: 0 0 0 2px rgba(220,38,38,0.15);
 }
 .error-text{
@@ -110,16 +142,21 @@ body{
   color:#dc2626;
   min-height: 16px; /* reserva espacio para evitar saltos */
 }
+.auth-form .field .error-text{ grid-area: error }
 
-/* COMUNES · Botón para ver/ocultar contraseña */
+/* Botón para ver/ocultar contraseña */
 .toggle-visibility{
-  position:absolute;
-  right:10px;
-  top:34%;
-  transform: translateY(-50%);
+  margin-right: 10px;
   width:28px; height:28px;
   display:grid; place-items:center;
   border:none; background:transparent; color:#6b6b71; cursor:pointer;
+}
+.auth-form .field .toggle-visibility{
+  grid-area: input;
+  position: relative; /* usar grid con control de stacking */
+  justify-self: end;
+  align-self: center;
+  z-index: 1; /* sobre el input */
 }
 /* Por defecto (oculto): mostrar ojo tachado y ocultar ojo abierto */
 .toggle-visibility .icon-eye{ display:none }
@@ -128,7 +165,7 @@ body{
 .toggle-visibility[aria-pressed="true"] .icon-eye{ display:block }
 .toggle-visibility[aria-pressed="true"] .icon-eye-off{ display:none }
 
-/* COMUNES · Enlaces auxiliares */
+/* Enlaces auxiliares */
 .forgot-link{
   display:inline-block;
   font-size:12px;
@@ -145,9 +182,7 @@ body{
 .signup-hint .signup-link:hover,
 .legal a:hover{ text-decoration: underline }
 
-/* ========================================
-  COMUNES · Botón principal (Submit)
-  ======================================== */
+/* Botón principal (Submit)*/
 .btn-submit{
   margin-top:16px;
   width:100%;
@@ -166,14 +201,7 @@ body{
   transition: transform .18s ease, box-shadow .2s ease;
 }
 
-/* (Separador de redes sociales se usa en login: ver sección LOGIN) */
-
-/* ========================================
-  Interacciones comunes (hover/active)
-  ======================================== */
-
-
-/* Efecto "shine sweep" para Submit */
+/* Efecto "shine sweep" y estados agrupados (btn-submit) */
 .btn-submit::after{
   content: '';
   position: absolute;
@@ -185,41 +213,18 @@ body{
   transform: translateX(-120%) skewX(-20deg);
   transition: transform .5s ease;
 }
-.btn-submit:hover{
-  filter: none; /* estilo distinto al de inicio */
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 12px 24px rgba(26,26,44,.28), 0 0 0 2px rgba(124,58,237,.25);
-}
+
 .btn-submit:hover::after{
   transform: translateX(220%) skewX(-20deg);
 }
-
 /* Prioridad al estado presionado sobre hover */
 .btn-submit:active{
   transform: translateY(2px);
   box-shadow: 0 6px 16px rgba(0,0,0,.25);
 }
 
-/* Hover específico y más vistoso para el botón de Inicio */
-.btn-inicio{
-  transition: filter .2s ease, transform .2s ease, box-shadow .2s ease, background-position .35s ease;
-}
-.btn-inicio:hover{
-  filter: brightness(1.08);
-  transform: translateY(-2px);
-  background-position: 100% 100%;
-  box-shadow: 0 16px 36px rgba(26,26,44,.28), 0 0 0 2px rgba(124,58,237,.25);
-}
 
-/* Asegura que el estado presionado tenga prioridad sobre hover */
-.btn-inicio:active{
-  transform: translateY(2px);
-  box-shadow: 0 10px 28px rgba(26,26,44,.25);
-}
-
-/* (Pie de login en sección LOGIN) */
-
-/* ====== LOGIN (solo login.html) · Estilos exclusivos ====== */
+/* ====== LOGIN  ====== */
 
 /* Panel izquierdo con degradado (login) */
 .left-bg{
@@ -279,7 +284,6 @@ body{
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:12px;
-  margin-top:8px;
 }
 .btn-social{
   display:grid;
@@ -295,8 +299,8 @@ body{
   box-shadow: 0 4px 12px rgba(0,0,0,.18);
   margin-top:8px;
   border:1px solid var(--secondary);
+  
 }
-.btn-social{ transition: filter .15s ease, transform .15s ease }
 .btn-social:hover{ filter: brightness(1.06) }
 .btn-social:active{ transform: translateY(2px) }
 .btn-social .icon{ width:18px; height:18px; display:block }
@@ -316,9 +320,8 @@ body{
   font-size:12px;
   text-align:right;
 }
-/* (estilos de .legal a consolidados arriba) */
 
-/* ====== REGISTER (solo register.html) · Estilos exclusivos ====== */
+/* ====== REGISTER ====== */
 
 /* Panel derecho con degradado (register) */
 .right-bg{
@@ -379,35 +382,14 @@ body{
 .progress-fill.step-1{ width:33% }
 
 /* Labels de campos (register) */
-.left-slot .field{
-  margin-top:5px;
-  display:grid;
-  grid-template-rows: auto 44px auto; /* label, input, error */
-  grid-template-areas:
-    "label"
-    "input"
-    "error";
-  row-gap: 6px;
-}
+.left-slot .field{ margin-top:5px }
 .left-slot .field label{
   display:block;
-  margin:0;
+  margin:0 0 6px 0;
   font-weight:700;
   color:#EAEAEA;
   font-size:14px;
-  grid-area: label;
 }
-.left-slot .field input{ grid-area: input }
-
-/* Alinea el botón "ojo" al centro del input en register */
-.left-slot .field .toggle-visibility{
-  grid-area: input;
-  position: relative; /* usar grid con control de stacking */
-  justify-self: end;
-  align-self: center;
-  z-index: 1; /* sobre el input */
-}
-.left-slot .field .error-text{ grid-area: error }
 
 /* Steps (register) */
 .left-slot .auth-form .step[hidden]{ display:none }
@@ -449,7 +431,7 @@ body{
 
 
 
-/* ====== REGISTER · Overlay de éxito (al completar registro) ====== */
+/* === Overlay de éxito (al completar registro) === */
 .register-success{
   position: absolute;
   inset: 0;

@@ -1,4 +1,4 @@
-// Módulo: Validación de email (requerido + formato)
+// Validación de email (requerido + formato)
 export function isValidEmail(value) {
   // Valida estructura básica: algo@algo.dominio (sin espacios)
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value || '');
