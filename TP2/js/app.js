@@ -157,9 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
         userMenu.classList.toggle('open');
       });
 
-      // Cierra el menú usuario si se hace click fuera
+      // Cierra el menú usuario si se hace click fuera (incluye hijos del avatar)
       document.addEventListener('click', (e) => {
-        if (!userMenu.contains(e.target) && e.target !== avatarBtn) {
+        if (!userMenu.contains(e.target) && !avatarBtn.contains(e.target)) {
           userMenu.classList.remove('open');
         }
       });
