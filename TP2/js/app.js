@@ -122,10 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
       // Si no hay datos, busca las cards existentes en el DOM y las usa como fallback
       const slide = document.getElementById('hero-slide');
       if (slide) {
-        heroData = Array.from(slide.children).map(card => ({
-          nombre: card.querySelector('.hero-title')?.textContent || card.getAttribute('data-nombre') || '',
-          imagen: card.querySelector('img')?.src || card.getAttribute('data-imagen') || '',
-        }));
+        // Toma también el href si la card está envuelta en <a>
+        heroData = Array.from(slide.children).map(node => {
+          const container = node; // puede ser <a> o <article>
+          const a = container.tagName === 'A' ? container : container.querySelector('a');
+          return {
+            nombre: container.querySelector('.hero-title')?.textContent || container.getAttribute('data-nombre') || '',
+            imagen: container.querySelector('img')?.src || container.getAttribute('data-imagen') || '',
+            link: a ? a.getAttribute('href') : (container.getAttribute('data-link') || null),
+          };
+        });
         if (heroData.length >= 3) {
           heroReady = true;
           renderHeroRotativo();
@@ -210,30 +216,40 @@ document.addEventListener('DOMContentLoaded', () => {
         heroData[(heroIndex + 2) % heroData.length]
       ];
       slide.innerHTML = '';
-      order.forEach(card => {
+      order.forEach(item => {
+        const isPremium = item.nombre && item.nombre.toLowerCase().includes('premium');
         const cardElem = document.createElement('article');
-        // Detecta si es la card de premium para no poner hover ni título
-        const isPremium = card.nombre && card.nombre.toLowerCase().includes('premium');
         cardElem.className = 'hero-card' + (isPremium ? ' hero-promo' : ' hero-primary');
+
         const img = new Image();
-        img.src = card.imagen;
-        img.alt = card.nombre;
+        img.src = item.imagen;
+        img.alt = item.nombre || '';
         img.loading = 'lazy';
         cardElem.appendChild(img);
+
         if (!isPremium) {
-          // Icono hover
           const icon = new Image();
           icon.src = 'img/IconosCard/IconoPlay.png';
           icon.alt = 'Jugar';
           icon.className = 'hero-hover-icon';
           cardElem.appendChild(icon);
-          // Título
+
           const title = document.createElement('div');
           title.className = 'hero-title';
-          title.textContent = card.nombre;
+          title.textContent = item.nombre;
           cardElem.appendChild(title);
         }
-        slide.appendChild(cardElem);
+
+        if (item.link) {
+          const link = document.createElement('a');
+          link.href = item.link;
+          link.className = 'hero-link';
+          link.setAttribute('aria-label', `Abrir ${item.nombre}`);
+          link.appendChild(cardElem);
+          slide.appendChild(link);
+        } else {
+          slide.appendChild(cardElem);
+        }
       });
     }
   }

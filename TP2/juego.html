@@ -1,5 +1,3 @@
-
-  
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,34 +7,131 @@
   <link rel="stylesheet" href="css/juego.css">
   
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
-  
-  <!-- HEADER -->
-  <header>
-    <div class="menu-hamburguesa">
-        <img src="./assets/icons8-menu-papas-fritas-48.png" alt="" class="icono-usuario">
-    </div>
-    <div class="logo">
-      <img src="assets/logo.png">
-      <h1>PixelPlay</h1>
-    </div>
-       
-    <div class="usuario">
-        <img src="./assets/usuario.png" alt="Usuario" class="icono-usuario">
-    </div>
 
-  </header>
+  <!-- HEADER -->
+  
+ <header>
+  <div class="menu-hamburguesa" id="btnHamburguesa">
+    <img src="./assets/icons8-menu-papas-fritas-48.png" alt="Menú">
+  </div>
+
+  <div class="logo">
+    <img src="assets/logo.png" alt="">
+    <h1>PixelPlay</h1>
+  </div>
+
+  <div class="usuario">
+    <img src="./assets/usuario.png" alt="Usuario" class="icono-usuario avatar-trigger" role="button" tabindex="0" aria-controls="user-menu" aria-expanded="false">
+  </div>
+</header>
+
+<header>
+  <div class="menu-hamburguesa" id="btnHamburguesa">
+    <img src="./assets/icons8-menu-papas-fritas-48.png" alt="Menú" id="iconoMenu">
+  </div>
+
+  <div class="logo">
+    <img src="assets/logo.png" alt="">
+    <h1>PixelPlay</h1>
+  </div>
+
+  <div class="usuario">
+    <img src="./assets/usuario.png" alt="Usuario" class="icono-usuario avatar-trigger" role="button" tabindex="0" aria-controls="user-menu" aria-expanded="false">
+  </div>
+</header>
+
+<!-- Menú de usuario -->
+<div id="user-menu" class="user-menu" role="menu" aria-hidden="true">
+  <ul class="user-menu-list">
+    <li><a href="#" role="menuitem">Perfil</a></li>
+    <li><a href="#" role="menuitem">Configuración</a></li>
+    <li><a href="#" role="menuitem">Unirse al premium</a></li>
+    <li><a href="./login.html" role="menuitem" class="cerrar-sesion">Cerrar sesión</a></li>
+  </ul>
+</div>
+
+<!-- Barra de navegación izquierda (íconos apilados) -->
+<aside class="left-nav" aria-label="Navegación izquierda">
+  <nav class="nav">
+    <a class="nav-btn" href="home.html" aria-label="Inicio">
+      <img src="img/IconosBarraLateral/IconoCasa.png" alt="Inicio" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Recientes">
+      <img src="img/IconosBarraLateral/IconoReloj.png" alt="Recientes" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Nuevos">
+      <img src="img/IconosBarraLateral/IconoEstrellas.png" alt="Nuevos" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="De moda">
+      <img src="img/IconosBarraLateral/IconoFuego.png" alt="De moda" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Multiplayer">
+      <img src="img/IconosBarraLateral/IconoPersonas.png" alt="Multiplayer" />
+    </a>
+  </nav>
+  <nav class="nav">
+    <a class="nav-btn" href="#" aria-label="Acción">
+      <img src="img/IconosBarraLateral/IconoEspada.png" alt="Acción" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Aventura">
+      <img src="img/IconosBarraLateral/IconoBrujula.png" alt="Aventura" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Baloncesto">
+      <img src="img/IconosBarraLateral/IconoPelotaBasket.png" alt="Baloncesto" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Billar">
+      <img src="img/IconosBarraLateral/IconoBolaDe8.png" alt="Billar" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Cartas">
+      <img src="img/IconosBarraLateral/IconoCartasPoker.png" alt="Cartas" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Controller">
+      <img src="img/IconosBarraLateral/IconoJoystick.png" alt="Controller" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Defensa">
+      <img src="img/IconosBarraLateral/IconoCastillo.png" alt="Defensa" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Carreras">
+      <img src="img/IconosBarraLateral/IconoAuto.png" alt="Carreras" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Fútbol">
+      <img src="img/IconosBarraLateral/IconoPelotaFutbol.png" alt="Fútbol" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Minecraft">
+      <img src="img/IconosBarraLateral/IconoMinecraft.png" alt="Minecraft" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="CS:GO">
+          <img src="img/IconosBarraLateral/IconoPistola.png" alt="CS:GO" />
+        </a>
+    <a class="nav-btn" href="#" aria-label="Terror">
+          <img src="img/IconosBarraLateral/IconoFantasma.png" alt="Terror" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Disparo">
+          <img src="img/IconosBarraLateral/IconoMira.png" alt="Disparo" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Deportes">
+          <img src="img/IconosBarraLateral/IconoPelotaRugby.png" alt="Deportes" />
+        </a>
+  </nav>
+</aside>
+
+
+
+
+
 
   <!-- MAIN -->
   <main>
     <section class="navegacion">
        <ul class="breadcrumb">
-        <a href="index.html"><li class="home"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="home">Home</li></a>
+        <a href="home.html"><li class="home"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="home">Home</li></a>
         <a href="#"><li>Juegos de mesa</li></a>
         <a href="juego.html"><li>Peg Solitaire...</li></a>
       </ul>
-    </section>
+    </section> 
     
     <!-- Juego -->
     <section class="juego">
@@ -235,67 +330,75 @@
   <!-- FOOTER -->
 
   <!-- FATFOOTER MODERNO -->
-  <footer class="fatfooter">
-    <div class="fatfooter-container">
-      <div class="fatfooter-col col-brand">
-        
-        <div class="brand-desc">
-          <strong>Título</strong>
-          <p>Lleva tu experiencia gamer al próximo nivel con nuestra plataforma. Descubrí, jugá y compartí en un mundo conectado por la pasión por los videojuegos.</p>
+  <footer class="site-footer">
+        <div class="footer-main">
+          <div class="footer-col footer-desc">
+            <h4>Título</h4>
+            <p>Llevá tu experiencia gamer al próximo nivel con nuestra plataforma. Descubrí, jugá y compartí en un mundo conectado por la pasión por los videojuegos.</p>
+            <ul>
+              <li><strong>Multiplataforma</strong><br>Accedé desde PC, consola o móvil con la misma cuenta.</li>
+              <li><strong>Comunidad Online</strong><br>Unite a torneos, clanes y chats en vivo con jugadores de todo el mundo.</li>
+              <li><strong>Game Streaming</strong><br>Mirá partidas en directo o transmití tus propios juegos con un clic.</li>
+            </ul>
+          </div>
+          <div class="footer-col footer-features">
+            <ul>
+              <li><strong>Game Pass</strong><br>Suscribite para acceder a una librería con cientos de títulos nuevos y clásicos.</li>
+              <li><strong>Eventos Exclusivos</strong><br>Participá en lanzamientos, betas anticipadas y promociones especiales.</li>
+            </ul>
+          </div>
+          <div class="footer-flex">
+            <div class="footer-col footer-links">
+              <h4>Juegos</h4>
+              <ul>
+                <li><a href="#">Juegos</a></li>
+                <li><a href="#">Categorías</a></li>
+                <li><a href="#">Game Pass</a></li>
+                <li><a href="#">Comunidad</a></li>
+                <li><a href="#">Soporte</a></li>
+                <li><a href="#">Noticias</a></li>
+                <li><a href="#">Torneos</a></li>
+                <li><a href="#">Blog</a></li>
+              </ul>
+            </div>
+            <div class="footer-col footer-about">
+              <h4>ABOUT</h4>
+              <ul>
+                <li><a href="#">Nosotros</a></li>
+                <li><a href="#">Estudios asociados</a></li>
+                <li><a href="#">Prensa</a></li>
+                <li><a href="#">Oficinas</a></li>
+                <li><a href="#">Carreras</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-col footer-contact">
+            <a href="#" class="footer-btn">CONTACTANOS</a>
+            <div class="footer-phone">
+              <span>📞</span> 1-800-GAMER-24
+            </div>
+          </div>
         </div>
-        <div class="brand-features">
-          <div><strong>Multiplataforma</strong><br>Accedé desde PC, consola o móvil con la misma cuenta.</div>
-          <div><strong>Comunidad Online</strong><br>Unite a torneos, clans y chats en vivo con jugadores de todo el mundo.</div>
-          <div><strong>Game Streaming</strong><br>Mirá partidas en directo o transmití tus propios juegos con un clic.</div>
+        <div class="footer-bottom">
+          <div class="footer-brand">
+            <img src="img/IconosHeader/IconoLogoPixelPlay.png" alt="PixelPlay" style="height:32px;vertical-align:middle;">
+            <span class="footer-brand-name">PixelPlay</span>
+          </div>
+          <div class="footer-legal">
+            <a href="#">Términos de uso</a> |
+            <a href="#">Política de privacidad</a> |
+            <a href="#">Licencias</a>
+            <span>© 2025 GamerWorld Inc. Todos los derechos reservados.</span>
+          </div>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><img src="img/social/Instagram.png" alt="Instagram" /></a>
+            <a href="#" aria-label="Email"><img src="img/social/Mail.png" alt="Email" /></a>
+            <a href="#" aria-label="Twitter"><img src="img/social/Twitter.png" alt="Twitter" /></a>
+            <a href="#" aria-label="YouTube"><img src="img/social/Youtube.png" alt="YouTube" /></a>
+            <a href="#" aria-label="Facebook"><img src="img/social/Facebook.png" alt="Facebook" /></a>
+          </div>
         </div>
-      </div>
-      <div class="fatfooter-col col-gamepass">
-        <div><strong>Game Pass</strong><br>Suscribite para acceder a una librería con cientos de títulos nuevos y clásicos.<br><strong>Eventos Exclusivos</strong><br>Participá en lanzamientos, betas anticipadas y promociones especiales.</div>
-      </div>
-      <div class="fatfooter-col col-links">
-        <div class="fatfooter-links-title">Juegos</div>
-        <ul>
-          <li><a href="#">Juegos</a></li>
-          <li><a href="#">Categorías</a></li>
-          <li><a href="#">Game Pass</a></li>
-          <li><a href="#">Comunidad</a></li>
-          <li><a href="#">Soporte</a></li>
-          <li><a href="#">Noticias</a></li>
-          <li><a href="#">Torneos</a></li>
-          <li><a href="#">Blog</a></li>
-        </ul>
-      </div>
-      <div class="fatfooter-col col-about">
-        <div class="fatfooter-links-title">ABOUT</div>
-        <ul>
-          <li><a href="#">Nosotros</a></li>
-          <li><a href="#">Estudios asociados</a></li>
-          <li><a href="#">Prensa</a></li>
-          <li><a href="#">Oficinas</a></li>
-          <li><a href="#">Carreras</a></li>
-        </ul>
-        <a class="fatfooter-contact-btn" href="#">CONTACT US</a>
-        <div class="fatfooter-phone">1-800-GAMER-24</div>
-      </div>
-      <div class="fatfooter-col col-social">
-        <div class="fatfooter-social">
-          <a href="#"><img src="./assets/icons8-instagram-48.png" alt="Instagram"></a>
-          <a href="#"><img src="./assets/icons8-nuevo-post-50.png" alt="Mail"></a>
-          <a href="#"><img src="./assets/icons8-twitterx-50.png" alt="Twitter"></a>
-          <a href="#"><img src="./assets/icons8-youtube-play-50.png" alt="YouTube"></a>
-          <a href="#"><img src="./assets/icons8-facebook-96.png" alt="Facebook"></a>
-        </div>
-        <div class="fatfooter-copyright">
-          <div class="brand-logo">
-          <img src="./assets/logo.png" alt="PixelPlay" style="height:38px;">
-          <span class="brand-name">PixelPlay</span>
-        </div>
-          Términos de uso | Política de privacidad | Licencias<br>
-          © 2025 PixelPlay Inc. Todos los derechos reservados.
-        </div>
-      </div>
-    </div>
-  </footer>
+      </footer>
 
 
 <!-- Botón Volver Arriba -->
@@ -307,6 +410,6 @@
 
 
 <script src="js/juego.js"></script>
-<script src="js/scrollTop.js"></script>
+
 
 </html>

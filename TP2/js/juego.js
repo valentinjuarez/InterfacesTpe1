@@ -118,4 +118,100 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   setupScrollTop();
+
+  // Toggle barra izquierda: expandir a la derecha y mostrar textos
+  const leftNav = document.querySelector('.left-nav');
+  const hamButtons = document.querySelectorAll('#btnHamburguesa');
+  const iconoMenu = document.getElementById('iconoMenu'); // si existiera un único img
+
+  // Rutas principales y de fallback (por si falta el ícono)
+  const ICON_MENU_PRIMARY  = 'assets/icons8-menu-papas-fritas-48.png';
+  const ICON_CLOSE_PRIMARY = 'assets/icons8-close-48.png';
+  const ICON_MENU_FALLBACK = 'img/IconosHeader/IconoMenuHamburguesa.png';
+  const ICON_CLOSE_FALLBACK= 'img/IconosHeader/IconoCancelar.png';
+
+  function setImgWithFallback(imgEl, srcPrimary, altText, srcFallback) {
+    if (!imgEl) return;
+    imgEl.onerror = function () {
+      // Evita bucle si también falla el fallback
+      imgEl.onerror = null;
+      imgEl.src = srcFallback;
+    };
+    imgEl.src = srcPrimary;
+    imgEl.alt = altText;
+  }
+
+  function setLeftNav(open) {
+    if (!leftNav) return;
+    leftNav.classList.toggle('open', open);
+    document.body.classList.toggle('nav-open', open);
+    hamButtons.forEach(btn => btn.setAttribute('aria-expanded', open ? 'true' : 'false'));
+
+    // Actualiza todos los <img> dentro de los botones hamburguesa
+    hamButtons.forEach(btn => {
+      const img = btn.querySelector('img');
+      if (open) {
+        setImgWithFallback(img, ICON_CLOSE_PRIMARY, 'Cerrar menú', ICON_CLOSE_FALLBACK);
+      } else {
+        setImgWithFallback(img, ICON_MENU_PRIMARY, 'Abrir menú', ICON_MENU_FALLBACK);
+      }
+    });
+
+    // Si existe un ícono único con id, también lo actualizamos
+    if (iconoMenu) {
+      if (open) {
+        setImgWithFallback(iconoMenu, ICON_CLOSE_PRIMARY, 'Cerrar menú', ICON_CLOSE_FALLBACK);
+      } else {
+        setImgWithFallback(iconoMenu, ICON_MENU_PRIMARY, 'Abrir menú', ICON_MENU_FALLBACK);
+      }
+    }
+  }
+
+  if (leftNav && hamButtons.length) {
+    const toggle = () => setLeftNav(!leftNav.classList.contains('open'));
+    hamButtons.forEach(btn => {
+      btn.setAttribute('role', 'button');
+      btn.setAttribute('tabindex', '0');
+      btn.addEventListener('click', (e) => { e.preventDefault(); toggle(); });
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+      btn.addEventListener('touchend', (e) => { e.preventDefault(); toggle(); }, { passive: false });
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setLeftNav(false); });
+  }
+
+  
+  // Menú de usuario (popup)
+  const avatarBtns = document.querySelectorAll('.avatar-trigger');
+  const userMenu = document.getElementById('user-menu');
+
+  function setUserMenu(open) {
+    if (!userMenu) return;
+    userMenu.classList.toggle('open', open);
+    userMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    avatarBtns.forEach(btn => btn.setAttribute('aria-expanded', open ? 'true' : 'false'));
+  }
+
+  if (userMenu && avatarBtns.length) {
+    const toggle = () => setUserMenu(!userMenu.classList.contains('open'));
+    avatarBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggle(); }
+      });
+    });
+    document.addEventListener('click', (e) => {
+      if (!userMenu.contains(e.target)) setUserMenu(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setUserMenu(false);
+    });
+    window.addEventListener('resize', () => setUserMenu(false));
+  }
 });
+
+
+
+
+
