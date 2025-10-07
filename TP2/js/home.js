@@ -213,23 +213,53 @@ document.addEventListener('DOMContentLoaded', () => {
         // Detecta si es la card de premium para no poner hover ni título
         const isPremium = card.nombre && card.nombre.toLowerCase().includes('premium');
         cardElem.className = 'hero-card' + (isPremium ? ' hero-promo' : ' hero-primary');
+
+        // Crea la imagen
         const img = new Image();
         img.src = card.imagen;
         img.alt = card.nombre;
         img.loading = 'lazy';
-        cardElem.appendChild(img);
-        if (!isPremium) {
+
+        const normalizedName = (card.nombre || '').trim().toLowerCase();
+        const isPeg = normalizedName === 'peg soliatire' || normalizedName === 'peg solitaire';
+        const shouldLink = !isPremium && isPeg;
+
+        if (shouldLink) {
+          // Solo la card de Peg Soliatire debe enlazar a juego.html
+          const link = document.createElement('a');
+          link.href = 'juego.html';
+          link.className = 'hero-link';
+          link.setAttribute('aria-label', `Abrir ${card.nombre || 'juego'}`);
+
           // Icono hover
           const icon = new Image();
           icon.src = 'img/IconosCard/IconoPlay.png';
           icon.alt = 'Jugar';
           icon.className = 'hero-hover-icon';
-          cardElem.appendChild(icon);
+
           // Título
           const title = document.createElement('div');
           title.className = 'hero-title';
           title.textContent = card.nombre;
-          cardElem.appendChild(title);
+
+          link.appendChild(img);
+          link.appendChild(icon);
+          link.appendChild(title);
+          cardElem.appendChild(link);
+        } else {
+          // Sin enlace (o premium)
+          cardElem.appendChild(img);
+          if (!isPremium) {
+            const icon = new Image();
+            icon.src = 'img/IconosCard/IconoPlay.png';
+            icon.alt = 'Jugar';
+            icon.className = 'hero-hover-icon';
+            const title = document.createElement('div');
+            title.className = 'hero-title';
+            title.textContent = card.nombre;
+            cardElem.appendChild(icon);
+            cardElem.appendChild(title);
+          }
         }
         slide.appendChild(cardElem);
       });
