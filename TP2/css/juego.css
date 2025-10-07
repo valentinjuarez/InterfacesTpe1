@@ -18,12 +18,22 @@
   /* colores */
   --bg-page: #EAEAEA;
   --card-bg: #FFFFFF;
-  --accent-1: #7A3EF0;
-  --accent-2: #B84EF2;
-  --accent-dark: #05056F;
-  --accent-mid: #3535E3;
-  --promo-yellow: #f5c542;
-  --promo-strong: #fff200;
+  /* Paleta principal */
+  --primary: #7C3AED; /* principal */
+  --primary-light-1: #9E68F7; /* luz1 */
+  --primary-light-2: #C19AF9; /* luz2 */
+  --primary-shadow-1: #622CB6; /* sombra1 */
+  --primary-shadow-2: #4A1F85; /* sombra2 */
+
+  /* Paleta secundaria */
+  --secondary: #0000AA; /* secundario */
+  --secondary-light-1: #6666FF; /* luz1 */
+  --secondary-light-2: #3333FF; /* luz2 */
+  --secondary-shadow-1: #000088; /* sombra1 */
+  --secondary-shadow-2: #000055; /* sombra2 */
+
+  /* Acento */
+  --accent: #F5A623;
   --text: #1F1D1D;
   --muted: #888;
   --shadow-1: 0 4px 16px rgba(0,0,0,0.07);
@@ -75,7 +85,7 @@ body {
   right: 32px;
   bottom: 32px;
   z-index: 999;
-  background: var(--accent-1);
+  background: var(--primary);
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -88,7 +98,7 @@ body {
   cursor: pointer;
   transition: background 0.18s, transform 0.18s;
 }
-.scroll-top-btn:hover { background: var(--accent-dark); transform: scale(1.08); }
+.scroll-top-btn:hover { background: var(--primary-shadow-1); transform: scale(1.08); }
 
 /* =========================
    HEADER
@@ -124,7 +134,7 @@ header nav a { color: #fff; text-decoration: none; font-weight: bold; }
 }
 .navegacion a { text-decoration: none; }
 .breadcrumb li {
-  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  background: linear-gradient(135deg, var(--primary), var(--primary-light-1));
   color: white;
   font-weight: 500;
   padding: 10px 30px;
@@ -203,7 +213,7 @@ main {
   align-items: center;
 }
 .button-jugar button {
-  background: linear-gradient(135deg, #1D1D7D 0%, var(--accent-mid) 100%);
+  background: linear-gradient(135deg, #1D1D7D 0%, var(--secondary-light-1) 100%);
   color: #fff;
   font-family: 'Poppins', sans-serif;
   font-size: 1.5rem;
@@ -240,14 +250,14 @@ main {
   left: 0;
   width: 100%;
   height: 60px;
-  background: var(--accent-dark);
+  background: var(--secondary-shadow-1);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
   border-radius: 0 0 var(--border-radius) var(--border-radius);
 }
-.botonera .promo { color: var(--promo-yellow); font-weight: bold; }
+.botonera .promo { color: var(--accent); font-weight: bold; }
 .botonera .acciones { display: flex; gap: 1rem; }
 .accion-circulo {
   width: 40px; height: 40px;
@@ -279,7 +289,7 @@ main {
   position: absolute;
   bottom: 70px;
   right: 20px;
-  background: #0808A6;
+  background:var(--secondary-shadow-1);
   padding: 10px 15px;
   border-radius: 12px;
   display: flex;
@@ -305,7 +315,7 @@ main {
    ========================= */
 .premium-publicidad {
   grid-area: premium;
-  background: linear-gradient(135deg, #1D1D7D 0%, var(--accent-mid) 100%);
+  background: linear-gradient(135deg, #1D1D7D 0%, var(--secondary-light-1) 100%);
   border-radius: 18px;
   display: flex;
   justify-content: center;
@@ -313,17 +323,18 @@ main {
   text-align: center;
   padding: 2rem 1.5rem;
   box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  
 }
 .contenido-premium h2, .contenido-premium p { color: #fff; }
 .contenido-premium button {
-  background: var(--promo-strong);
+  background: var(--accent);
   color: #302f2f;
   border: none; border-radius: 8px; padding: 10px 24px;
   font-weight: bold; font-family: 'Poppins', sans-serif; font-size: 1.1rem;
   margin-top: 1rem; cursor: pointer; transition: background 0.2s, color 0.2s;
 }
 .contenido-premium button:hover {
-  background: linear-gradient(270deg, var(--promo-strong) 0%, #ffe066 50%, var(--promo-strong) 100%);
+  background: linear-gradient(270deg, var(--accent) 0%, #ffe066 50%, var(--accent) 100%);
   background-size: 200% 100%; background-position: right center;
   color: #302f2f; box-shadow: 0 8px 32px #ffe06699, 0 0 16px #fff20055;
   filter: brightness(1.08) drop-shadow(0 0 8px #fff20088);
@@ -364,6 +375,7 @@ main {
   border: none; border-bottom:1px solid #B1ABAB; outline: none; width: 970px; height: 26px; font-size: 14px; font-family: poppins, sans-serif; background: var(--bg-page);
 }
 .comentarios .interaccion input::placeholder { font-size: 12px; }
+.comentarios .interaccion input:focus { border-bottom: 1px solid var(--primary); }
 
 .interaccion button {
   background: none; height: 26px; border: none; border-bottom: solid 1px #B1ABAB; padding-left: 5px; cursor: pointer;
@@ -371,6 +383,14 @@ main {
 }
 .interaccion button img { width: 22px; height: 20px; object-fit: contain; filter: grayscale(1) brightness(0.7); transition: filter 0.2s; }
 .interaccion button.activo img { filter: none; }
+
+/* cuando el input dentro de .interaccion tiene foco, resaltar el botón enviar */
+.interaccion:focus-within button {
+  border-bottom-color: var(--primary);
+  
+  
+}
+
 
 .interaccion {
   display: flex;
@@ -438,30 +458,9 @@ main {
 .fatfooter-social a img:hover { filter: none; transform: scale(1.13); }
 .fatfooter-copyright { display: flex; color: #aaa; font-size: 0.93rem; margin-top: 8px; line-height: 1.5; gap: 12px; }
 
-/* =========================
-   MEDIA QUERIES
-   ========================= */
-@media (max-width: 900px) {
-  .fatfooter-container { flex-direction: column; gap: 0; padding: 0 12px 32px 12px; }
-  .fatfooter-col { max-width: 100%; margin-bottom: 32px; }
-  /* Main grid collapse suggestion: (puede añadirse si se desea) */
-  main { grid-template-columns: 1fr; grid-template-areas:
-    "navegacion"
-    "juego"
-    "controles"
-    "descripcion"
-    "jugadas"
-    "comentarios"
-    "premium"; gap: 1rem; }
-}
 
-/* =========================
-   NOTAS DE MANTENIMIENTO
-   =========================
-   - Para cambiar la paleta global, editar :root.
-   - Mantener las áreas de grid (grid-area) si se reordenan componentes.
-   - Añadir focus styles adicionales para accesibilidad según necesidad.
-   ========================= */
+
+
 
 
 
