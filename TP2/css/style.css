@@ -1,15 +1,7 @@
-/* ========================================
-  Variables y base
-  ======================================== */
-/* Fondo "PixelPlay" (solo layout y decoración, sin formulario) */
-/*
-  Buenas prácticas aplicadas:
-  - Variables CSS (custom properties) para colores de marca y sombras.
-  - Nombres claros de variables y comentarios por bloque para facilitar mantenimiento.
-  - Sin reglas innecesarias ni valores mágicos duplicados.
-*/
+/*Variables y base */
+
 :root{
-  /* Colores exactos del degradado (según Figma): 0% → 55% → 100% */
+
   --pp-grad-start: #4A1F85; /* 0% */
   --pp-grad-mid:   #622CB6; /* 55% */
   --pp-grad-end:   #7C3AED; /* 100% */
@@ -17,12 +9,10 @@
   /* Fondo general y sombra reutilizable */
   --bg:#EAEAEA;
   --shadow: 0 20px 36px rgba(0, 0, 0, 0.522);
-  --secondary:#000055; /* mismo color que el borde de los inputs */
+  --secondary:#000055; 
 }
 
-/* ========================================
-  Lienzo general
-  ======================================== */
+/* Lienzo general*/
 html,body{height:100%}
 body{
   margin:0;
@@ -31,9 +21,7 @@ body{
 }
 
 
-/* ========================================
-  COMUNES · Botón 'Inicio'
-  ======================================== */
+/* Botón 'Inicio' */
 .btn-inicio{
   position:absolute;
   top:64px; left:64px; 
