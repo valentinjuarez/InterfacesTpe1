@@ -122,7 +122,7 @@ header {
 }
 .menu-hamburguesa { display: flex; }
 .usuario { display: flex; }
-.icono-usuario { height: 30px; width: 30px; object-fit: contain; }
+.icono-usuario { height: 38px; width: 38px; object-fit: contain; }
 header .logo { display: flex; align-items: center; }
 header .logo h1 { font-size: 20px; }
 header nav ul { display: flex; list-style: none; gap: 2rem; }
