@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.style.display = 'flex';
     progress = 0;
     percent.textContent = '0%';
-    // Asegura que el overlay esté visible antes de iniciar el intervalo
     setTimeout(() => {
       interval = setInterval(() => {
         progress += 2;
@@ -20,16 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
           setTimeout(() => {
             overlay.classList.add('hide');
             setTimeout(() => { overlay.style.display = 'none'; }, 400);
-            // Inicia la app después del loading
             startApp();
           }, 400);
         }
-      }, 100); // 100ms * 50 = 5s
-    }, 50); // Pequeño delay para asegurar el render
+      }, 100);
+    }, 50);
   }
 
   function startApp() {
-    // --- Sidebar y menú hamburguesa ---
+    // Sidebar y menú hamburguesa 
     // Maneja la apertura/cierre del menú lateral y el cambio de icono del botón hamburguesa
     const sidebar   = document.getElementById('sidebar');
     const hamburger = document.getElementById('hamburger');
@@ -122,16 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Si no hay datos, busca las cards existentes en el DOM y las usa como fallback
       const slide = document.getElementById('hero-slide');
       if (slide) {
-        // Toma también el href si la card está envuelta en <a>
-        heroData = Array.from(slide.children).map(node => {
-          const container = node; // puede ser <a> o <article>
-          const a = container.tagName === 'A' ? container : container.querySelector('a');
-          return {
-            nombre: container.querySelector('.hero-title')?.textContent || container.getAttribute('data-nombre') || '',
-            imagen: container.querySelector('img')?.src || container.getAttribute('data-imagen') || '',
-            link: a ? a.getAttribute('href') : (container.getAttribute('data-link') || null),
-          };
-        });
+        heroData = Array.from(slide.children).map(card => ({
+          nombre: card.querySelector('.hero-title')?.textContent || card.getAttribute('data-nombre') || '',
+          imagen: card.querySelector('img')?.src || card.getAttribute('data-imagen') || '',
+        }));
         if (heroData.length >= 3) {
           heroReady = true;
           renderHeroRotativo();
@@ -216,40 +208,30 @@ document.addEventListener('DOMContentLoaded', () => {
         heroData[(heroIndex + 2) % heroData.length]
       ];
       slide.innerHTML = '';
-      order.forEach(item => {
-        const isPremium = item.nombre && item.nombre.toLowerCase().includes('premium');
+      order.forEach(card => {
         const cardElem = document.createElement('article');
+        // Detecta si es la card de premium para no poner hover ni título
+        const isPremium = card.nombre && card.nombre.toLowerCase().includes('premium');
         cardElem.className = 'hero-card' + (isPremium ? ' hero-promo' : ' hero-primary');
-
         const img = new Image();
-        img.src = item.imagen;
-        img.alt = item.nombre || '';
+        img.src = card.imagen;
+        img.alt = card.nombre;
         img.loading = 'lazy';
         cardElem.appendChild(img);
-
         if (!isPremium) {
+          // Icono hover
           const icon = new Image();
           icon.src = 'img/IconosCard/IconoPlay.png';
           icon.alt = 'Jugar';
           icon.className = 'hero-hover-icon';
           cardElem.appendChild(icon);
-
+          // Título
           const title = document.createElement('div');
           title.className = 'hero-title';
-          title.textContent = item.nombre;
+          title.textContent = card.nombre;
           cardElem.appendChild(title);
         }
-
-        if (item.link) {
-          const link = document.createElement('a');
-          link.href = item.link;
-          link.className = 'hero-link';
-          link.setAttribute('aria-label', `Abrir ${item.nombre}`);
-          link.appendChild(cardElem);
-          slide.appendChild(link);
-        } else {
-          slide.appendChild(cardElem);
-        }
+        slide.appendChild(cardElem);
       });
     }
   }
