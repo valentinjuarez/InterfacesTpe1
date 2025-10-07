@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PixelPlay · Home</title>
-  <link rel="stylesheet" href="css/mobile-app.css" />
+  <link rel="stylesheet" href="css/home.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
 </head>
@@ -41,7 +41,9 @@
 
     <div class="header-right">
       <button class="avatar" type="button" aria-label="Usuario">
-        <img src="img/IconosHeader/IconoUsuario2.png" alt="Usuario" />
+        <!-- antes había un solo <img>; ahora agregamos ambos -->
+        <img id="IconoUsuario2" src="img/IconosHeader/IconoUsuario2.png" alt="Usuario" />
+        <img id="IconoUsuario"  src="img/IconosHeader/IconoUsuario.png"  alt="Usuario activo" />
       </button>
     </div>
   </header>

@@ -154,13 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (avatarBtn && userMenu) {
       avatarBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        userMenu.classList.toggle('open');
+        const willOpen = !userMenu.classList.contains('open');
+        userMenu.classList.toggle('open', willOpen);
+        // simula el hover al tocar
+        avatarBtn.classList.toggle('is-hover', willOpen);
       });
 
       // Cierra el menú usuario si se hace click fuera (incluye hijos del avatar)
       document.addEventListener('click', (e) => {
         if (!userMenu.contains(e.target) && !avatarBtn.contains(e.target)) {
           userMenu.classList.remove('open');
+          avatarBtn.classList.remove('is-hover');
         }
       });
 
@@ -169,12 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userMenu.classList.contains('open')) {
           userMenu.classList.remove('open');
         }
+        avatarBtn.classList.remove('is-hover');
       });
 
       // Cierra con Escape
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           userMenu.classList.remove('open');
+          avatarBtn.classList.remove('is-hover');
         }
       });
     }

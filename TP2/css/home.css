@@ -35,6 +35,20 @@ img{max-width:100%; display:block}
 .avatar{ width:40px; height:40px; display:grid; place-items:center; border:none; box-shadow:none; overflow:hidden; background-color: #ffffff; }
 .avatar img{ width:30px; height:30px; }
 
+/* Hover: mostrar IconoUsuario y ocultar IconoUsuario2 (desde línea 37) */
+.avatar #IconoUsuario,
+.avatar #IconoUsuario2 {
+  width: 30px;
+  height: 30px;
+}
+.avatar #IconoUsuario { display: none; }   /* oculto por defecto */
+.avatar:hover #IconoUsuario { display: block; }
+.avatar:hover #IconoUsuario2 { display: none; }
+/* Click/touch: aplicar el mismo estado que hover con clase .is-hover */
+.avatar.is-hover #IconoUsuario { display: block; }
+.avatar.is-hover #IconoUsuario2 { display: none; }
+/* ...existing code... */
+
 /* Sidebar tipo overlay (toggle con .open) */
 .sidebar{
   position:fixed; top:var(--topbar-h); left:0; width:100%; height:0;
@@ -118,6 +132,7 @@ img{max-width:100%; display:block}
 .rail-arrow.right { right: 6px; }
 .rail-arrow:active { transform: translateY(-50%) scale(.98); }
 .rail-arrow:hover { background: #efeaff; opacity: 1; }
+.rail-arrow { display: none; }
 
 .hero-card img,
 .hero-card .promo-ico {
@@ -189,13 +204,13 @@ img{max-width:100%; display:block}
 /* Icono Premium siempre visible por encima del contenido */
 .premium-badge {
   position: absolute;
-  top: 0;          /* pegado arriba */
-  right: 0;        /* pegado a la derecha */
+  top: 0;          
+  right: 0;        
   width: 40px;
   height: 40px;
-  z-index: 20;              /* por encima del overlay (z-index:10) */
+  z-index: 20;              
   display: block;
-  pointer-events: none;      /* no bloquea clicks */
+  pointer-events: none;      
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
 }
 
@@ -707,10 +722,11 @@ img{max-width:100%; display:block}
 
   /* Footer en grilla (estilo desktop) */
   .footer-main{
-    display: grid;
-    grid-template-columns: 2.2fr 1.5fr 1.1fr 1.1fr 1.5fr;
-    gap: 2.5rem;
+    display: flex;
+    flex-direction: row;
     align-items: flex-start;
+    justify-content: space-between; /* distribuye columnas */
+    gap: 2.5rem;
     padding: 2.1rem 2.5rem 1.2rem 2.5rem;
     max-width: 100vw;
     margin: 0 auto;
@@ -723,4 +739,7 @@ img{max-width:100%; display:block}
     padding: 1.1rem 2.5rem;
     font-size: .97rem;
   }
+
+  /* Mostrar flechas solo en desktop */
+  .rail-arrow { display: flex; }
 }
