@@ -281,10 +281,9 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.733), rgba(0, 0, 0, 0.813)),
-    url('../assets/fondojuego.png') center/cover no-repeat; 
- 
+  background-image: url('../assets/fondoIngame2.png');
+  background-size: cover;
+  background-position: center;
 }
 
 /* Botón grande centrado (JUGAR) */
