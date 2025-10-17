@@ -275,12 +275,16 @@ main {
    ========================= */
 .juego {
   grid-area: juego;
-  border: 5px solid black;
+  border: 2px solid black;
   position: relative;
-  height: 600px;
+  height: 800px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.733), rgba(0, 0, 0, 0.813)),
+    url('../assets/fondojuego.png') center/cover no-repeat; 
+ 
 }
 
 /* Botón grande centrado (JUGAR) */
