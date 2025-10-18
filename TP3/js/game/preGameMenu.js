@@ -1,18 +1,26 @@
 'use strict';
 
+// Helpers de normalización y piezas
+function normalizeText(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+function piecesFromDifficulty(diff) {
+  const d = normalizeText(diff);
+  if (d.startsWith('fac')) return 4;
+  if (d.startsWith('dif')) return 8;
+  return 6; // normal
+}
+
 function loadMenu() {
   // Bootstrap canvas
   const canvas = document.getElementById('myCanvas');
   if (!canvas) return;
-  // Fondo simple por CSS (cubre todo el canvas)
   canvas.style.background = 'center / cover no-repeat url("assets/fondoIngame2.png")';
   const ctx = canvas.getContext('2d');
 
-  // Estado UI básico
+  // Estado UI básico (limpiado)
   const ui = {
-    selectedTime: 120, // mantiene valor por compatibilidad (sin selector)
-    selectedDifficulty: 'normal',
-    selectedPieces: 6,
+    selectedDifficulty: 'Normal',
     imagesSrc: [
       'assets/rompecabezasDesierto.png',
       'assets/rompecabezasJungla.png',
@@ -32,21 +40,19 @@ function loadMenu() {
     panel.x = Math.round((canvas.width - panel.w) / 2);
     panel.y = Math.round((canvas.height - panel.h) / 2);
   }
-  function centerX(w) {
-    return Math.round(panel.x + panel.w / 2 - w / 2);
-  }
+  function centerX(w) { return Math.round(panel.x + panel.w / 2 - w / 2); }
 
-  // Variables de layout/inputs
+  // Layout/inputs
   let diffButtons = [];
-  let thumbsArea = { x: 0, y: 0, w: panel.w, h: 180 };
+  let thumbsArea; // se recalcula en recalcLayout
   let thumbTiles = [];
   let hoverIndex = -1;
   let btnJugar = { x: 0, y: 0, w: 200, h: 46, label: 'JUGAR' };
 
-  // Agregar flag de carga para evitar doble inicio
+  // Evitar doble inicio del panel de juego
   let gamePanelLoaded = false;
 
-  // Helper: resolver índice de imagen (maneja "Random")
+  // Resolver índice de imagen (maneja "Random")
   function resolveSelectedImageIndex() {
     const isRandomIndex = ui.imageIndex === ui.imagesSrc.length - 1;
     const isRandomName = (ui.imagesSrc[ui.imageIndex] || '').toLowerCase().includes('random');
@@ -58,12 +64,11 @@ function loadMenu() {
     return ui.imageIndex;
   }
 
-  // Cargar gamePanel.js y arrancar con la configuración
+  // Cargar gamePanel.js y arrancar
   function loadGamePanel(config) {
     if (gamePanelLoaded) return;
     gamePanelLoaded = true;
 
-    // Detener listeners del menú
     const canvas = document.getElementById('myCanvas');
     if (canvas) {
       canvas.removeEventListener('click', onCanvasClick);
@@ -71,7 +76,6 @@ function loadMenu() {
       canvas.removeEventListener('mouseleave', onCanvasLeave);
     }
 
-    // Mostrar un breve estado de carga
     try {
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -84,16 +88,12 @@ function loadMenu() {
       ctx.fillText('Cargando juego...', canvas.width / 2, canvas.height / 2);
     } catch {}
 
-    // Exponer config para gamePanel.js
     window.__gameConfig = config;
     try { sessionStorage.setItem('gameConfig', JSON.stringify(config)); } catch {}
 
-    // Inyectar el script del panel de juego
     const script = document.createElement('script');
-    // Ruta relativa al HTML (misma carpeta que preGameMenu.js)
     script.src = 'js/game/gamePanel.js';
     script.onload = () => {
-      // Si gamePanel.js expone una función de arranque, llamarla
       if (typeof window.startGamePanel === 'function') {
         try {
           const ctx = canvas.getContext('2d');
@@ -108,7 +108,6 @@ function loadMenu() {
   }
 
   function recalcLayout() {
-    // Dificultad (3 botones centrados)
     const dW = 120, dH = 40, dGap = 30, dY = panel.y + 200;
     const dMidX = centerX(dW);
     diffButtons = [
@@ -117,15 +116,13 @@ function loadMenu() {
       { x: dMidX + (dW + dGap), y: dY, w: dW, h: dH, label: 'Difícil', value: 'Difícil', group: 'diff' },
     ];
 
-    // Thumbnails centrados con margen lateral
     const marginX = 40;
     thumbsArea = { x: panel.x + marginX, y: panel.y + 320, w: panel.w - marginX * 2, h: 180 };
 
-    // Botón JUGAR centrado
     btnJugar = { x: centerX(200), y: panel.y + 550, w: 200, h: 46, label: 'JUGAR' };
   }
 
-  // Carga de imágenes (primero)
+  // Carga de imágenes
   let imagesLoaded = 0;
   const imgTitulo = new Image();
   const totalToLoad = 1 + ui.imagesSrc.length;
@@ -145,7 +142,7 @@ function loadMenu() {
     return im;
   });
 
-  // Funciones principales
+  // Arranque del menú
   function iniciarMenu() {
     centerPanel();
     recalcLayout();
@@ -164,27 +161,23 @@ function loadMenu() {
     }
   }
 
+  // Dibujo principal del formulario
   function drawForm() {
     centerPanel();
     recalcLayout();
 
     ctx.save();
-    // Limpiar para que se vea el fondo desde CSS
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Panel semitransparente
     ctx.fillStyle = 'rgba(25, 99, 195, 0.85)';
     ctx.fillRect(panel.x, panel.y, panel.w, panel.h);
 
-    // Título (imagen) arriba
     drawTitleImage();
 
-    // Subtítulos cerca de sus controles
     const subtPad = 24;
     drawSubtitulo(diffButtons[0] ? diffButtons[0].y - subtPad : panel.y + 150, 'Dificultad');
     drawSubtitulo(thumbsArea.y - subtPad, 'Rompecabezas');
 
-    // Controles
     diffButtons.forEach(b => drawButton(b, ui.selectedDifficulty === b.value));
     drawThumbnailsGrid();
     drawButtonJugar();
@@ -208,7 +201,6 @@ function loadMenu() {
     for (const b of diffButtons) {
       if (pointInRect(mx, my, b)) {
         ui.selectedDifficulty = b.value;
-        ui.selectedPieces = (b.value === 'facil') ? 4 : (b.value === 'dificil') ? 8 : 6;
         drawForm();
         return;
       }
@@ -226,7 +218,7 @@ function loadMenu() {
       const chosenImageIndex = resolveSelectedImageIndex();
       const config = {
         difficulty: ui.selectedDifficulty,
-        pieces: ui.selectedPieces,
+        pieces: piecesFromDifficulty(ui.selectedDifficulty),
         imageIndex: chosenImageIndex,
         image: ui.imagesSrc[chosenImageIndex]
       };
@@ -277,7 +269,6 @@ function loadMenu() {
     ctx.textAlign = 'center';
     ctx.fillText(text, panel.x + panel.w / 2, y);
   }
-
   function drawRoundedRect(x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -287,7 +278,6 @@ function loadMenu() {
     ctx.arcTo(x, y, x + w, y, r);
     ctx.closePath();
   }
-
   function drawButton(b, selected) {
     ctx.save();
     drawRoundedRect(b.x, b.y, b.w, b.h, 10);
@@ -303,7 +293,6 @@ function loadMenu() {
     ctx.fillText(b.label, b.x + b.w / 2, b.y + b.h / 2);
     ctx.restore();
   }
-
   function drawButtonJugar() {
     ctx.save();
     drawRoundedRect(btnJugar.x, btnJugar.y, btnJugar.w, btnJugar.h, 12);
@@ -319,12 +308,9 @@ function loadMenu() {
     ctx.fillText(btnJugar.label, btnJugar.x + btnJugar.w / 2, btnJugar.y + btnJugar.h / 2);
     ctx.restore();
   }
-
   function drawTitleImage() {
     if (!imgTitulo || !imgTitulo.naturalWidth) return;
-    const paddingX = 40;
-    const topPad = 40;
-    const maxH = 100;
+    const paddingX = 40, topPad = 40, maxH = 100;
     const availW = panel.w - paddingX * 2;
     const scale = Math.min(availW / imgTitulo.width, maxH / imgTitulo.height);
     const destW = Math.round(imgTitulo.width * scale);
@@ -338,7 +324,6 @@ function loadMenu() {
     ctx.imageSmoothingEnabled = prev;
     ctx.restore();
   }
-
   function drawThumbnailsGrid() {
     const n = ui.images.length;
     const cols = Math.min(4, Math.max(2, n));
@@ -368,7 +353,7 @@ function loadMenu() {
         ctx.drawImage(img, sx, sy, sw, sh, x, y, tileW, tileH);
       } else {
         ctx.fillStyle = '#ccc';
-        ctx.fillRect(x, y, tileW, tileH);
+        ctx.fillRect(x, y, tileH, tileH);
       }
       ctx.restore();
 
