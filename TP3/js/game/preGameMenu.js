@@ -4,6 +4,8 @@ function loadMenu() {
   // Bootstrap canvas
   const canvas = document.getElementById('myCanvas');
   if (!canvas) return;
+  // Fondo simple por CSS (cubre todo el canvas)
+  canvas.style.background = 'center / cover no-repeat url("assets/fondoIngame2.png")';
   const ctx = canvas.getContext('2d');
 
   // Estado UI básico
@@ -110,9 +112,9 @@ function loadMenu() {
     const dW = 120, dH = 40, dGap = 30, dY = panel.y + 200;
     const dMidX = centerX(dW);
     diffButtons = [
-      { x: dMidX - (dW + dGap), y: dY, w: dW, h: dH, label: 'Fácil',   value: 'facil',   group: 'diff' },
-      { x: dMidX,               y: dY, w: dW, h: dH, label: 'Normal',  value: 'normal',  group: 'diff' },
-      { x: dMidX + (dW + dGap), y: dY, w: dW, h: dH, label: 'Difícil', value: 'dificil', group: 'diff' },
+      { x: dMidX - (dW + dGap), y: dY, w: dW, h: dH, label: 'Fácil',   value: 'Fácil',   group: 'diff' },
+      { x: dMidX,               y: dY, w: dW, h: dH, label: 'Normal',  value: 'Normal',  group: 'diff' },
+      { x: dMidX + (dW + dGap), y: dY, w: dW, h: dH, label: 'Difícil', value: 'Difícil', group: 'diff' },
     ];
 
     // Thumbnails centrados con margen lateral
