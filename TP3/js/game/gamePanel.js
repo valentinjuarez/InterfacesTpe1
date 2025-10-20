@@ -1,26 +1,54 @@
 'use strict';
 
-// Estado global y constantes
+// Estado global y constantes del panel y el juego
 let iniciado = false;
 const panel = { x: 0, y: 0, w: 800, h: 680 };
 let estadoPuzzle = null;
+let rafTimerBarra = null;
+// NUEVO: icono de ayuda global
+let iconoAyudita = null;
 
-// Utilidades generales
+/** Constantes de UI y juego (reutilizables) */
+const COLORS = {
+  panelBg: 'rgba(25, 99, 195, 0.85)',
+  btnPrimary: '#7C3AED',
+  btnPrimaryStroke: '#4A1F85',
+  successStroke: '#22C55E',
+  overlayStroke: '#e81111ff',
+  badgeBg: 'rgba(0,0,0,0.55)',
+  text: '#fff'
+};
+const FONT = {
+  bold18: '700 18px Poppins, sans-serif',
+  bold24: '700 24px Poppins, sans-serif',
+  semibold16: '600 16px Poppins, sans-serif'
+};
+const ICON = { pad: 12, gap: 8, size: 38 };
+const GRID_GAP = 4;
+const TIMER_LVL3_SECONDS = 60;
+
+// Normaliza texto a minúsculas y sin acentos
 function normalizarTexto(s) {
   return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
+
+// Devuelve el filtro de Canvas según el nivel actual
 function obtenerFiltroPorNivel(nivel) {
   if (nivel === 1) return 'grayscale(100%)';
   if (nivel === 2) return 'brightness(30%)';
   if (nivel === 3) return 'invert(100%)';
   return 'none';
 }
+
+// Determina columnas/filas de la grilla a partir de la dificultad
 function determinarDimensionesGrilla(dificultad) {
   const d = normalizarTexto(dificultad);
   if (d.startsWith('fac')) return { cols: 2, rows: 2 }; // 4 piezas
   if (d.startsWith('dif')) return { cols: 4, rows: 2 }; // 8 piezas
   return { cols: 3, rows: 2 }; // 6 piezas
 }
+
+// Convierte coordenadas del mouse a coordenadas del canvas
 function obtenerPosMouse(canvas, ev) {
   const r = canvas.getBoundingClientRect();
   return {
@@ -28,32 +56,40 @@ function obtenerPosMouse(canvas, ev) {
     y: (ev.clientY - r.top) * (canvas.height / r.height)
   };
 }
+
+// Verifica si un punto está dentro de un rectángulo
 function puntoEnRect(x, y, r) {
   return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
 }
 
-// Layout base del panel
+// Centra el panel en el canvas
 function centrarPanel(canvas) {
   panel.x = Math.round((canvas.width - panel.w) / 2);
   panel.y = Math.round((canvas.height - panel.h) / 2);
 }
+
+// Dibuja el panel de fondo (semisólido) centrado
 function dibujarPanel(ctx, canvas) {
   centrarPanel(canvas);
-  ctx.fillStyle = 'rgba(25, 99, 195, 0.85)';
+  ctx.fillStyle = COLORS.panelBg;
   ctx.fillRect(panel.x, panel.y, panel.w, panel.h);
 }
+
+// Escribe "Nivel X - dificultad" en la esquina superior izquierda
 function dibujarInfoSuperiorIzquierda(ctx, nivel, dificultad) {
   const pad = 24;
   ctx.save();
-  ctx.fillStyle = '#fff';
-  ctx.font = '600 16px Poppins, sans-serif';
+  ctx.fillStyle = COLORS.text;
+  ctx.font = FONT.semibold16;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
   ctx.fillText(`Nivel ${nivel} - ${dificultad}`, panel.x + pad, panel.y + pad);
   ctx.restore();
 }
-function dibujarIconosSuperiorDerecha(ctx, iconoHome, iconoReset, tam = 38) {
-  const pad = 12, gap = 8;
+
+// Dibuja los íconos (home, reset) en la esquina superior derecha y guarda rects
+function dibujarIconosSuperiorDerecha(ctx, iconoHome, iconoReset, tam = ICON.size) {
+  const pad = ICON.pad, gap = ICON.gap;
   const y = panel.y + pad;
   const xHome = panel.x + panel.w - pad - tam;
   const xReset = xHome - gap - tam;
@@ -64,29 +100,43 @@ function dibujarIconosSuperiorDerecha(ctx, iconoHome, iconoReset, tam = 38) {
   if (!(iconoHome?.complete && iconoHome.naturalWidth)) iconoHome.onload = dibujar;
   if (!(iconoReset?.complete && iconoReset.naturalWidth)) iconoReset.onload = dibujar;
   dibujar();
+  if (estadoPuzzle) {
+    estadoPuzzle.rectHome = { x: xHome, y, w: tam, h: tam };
+    estadoPuzzle.rectReset = { x: xReset, y, w: tam, h: tam };
+  }
 }
+
+// Dibuja la barra superior (texto izquierda + iconos derecha)
+function dibujarBarraSuperior(ctx, nivel, dificultad, iconoHome, iconoReset) {
+  dibujarInfoSuperiorIzquierda(ctx, nivel, dificultad);
+  dibujarIconosSuperiorDerecha(ctx, iconoHome, iconoReset);
+}
+
+// Calcula la posición y tamaño de la imagen dentro del panel
 function calcularPosicionImagen(imagen) {
   const iw = imagen.naturalWidth, ih = imagen.naturalHeight;
-  const maxW = panel.w * 0.5, maxH = panel.h * 0.5;
+  const maxW = panel.w * 0.8, maxH = panel.h * 0.8;
   const s = Math.min(maxW / iw, maxH / ih);
   const w = Math.round(iw * s), h = Math.round(ih * s);
   const dx = Math.round(panel.x + (panel.w - w) / 2);
   const dy = Math.round(panel.y + (panel.h - h) / 2);
   return { dx, dy, w, h };
 }
+
+// Dibuja la imagen con borde y alpha opcional
 function dibujarImagenConBorde(ctx, imagen, pos, alpha = 1) {
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.drawImage(imagen, pos.dx, pos.dy, pos.w, pos.h);
   ctx.lineWidth = 3;
-  ctx.strokeStyle = '#4A1F85';
+  ctx.strokeStyle = COLORS.btnPrimaryStroke;
   ctx.strokeRect(pos.dx, pos.dy, pos.w, pos.h);
   ctx.restore();
 }
 
-// Dibujo de grilla (con filtro por nivel y piezas rotadas)
+// Dibuja la imagen en grilla (sin filtro para piezas ayudadas/bloqueadas)
 function dibujarImagenEnGrilla(ctx, imagen, pos, cols, rows, rotaciones, nivel) {
-  const separacion = 4;
+  const separacion = GRID_GAP;
   const iw = imagen.naturalWidth, ih = imagen.naturalHeight;
   const anchoCelda = (pos.w - (cols - 1) * separacion) / cols;
   const altoCelda = (pos.h - (rows - 1) * separacion) / rows;
@@ -117,6 +167,7 @@ function dibujarImagenEnGrilla(ctx, imagen, pos, cols, rows, rotaciones, nivel) 
       const destH = Math.round((k % 2) ? anchoCelda : altoCelda);
 
       ctx.save();
+      if (estadoPuzzle?.piezasBloqueadas?.has(idx)) ctx.filter = 'none';
       ctx.translate(cx, cy);
       ctx.rotate(ang);
       ctx.drawImage(imagen, sx0, sy0, sw, sh, Math.round(-destW / 2), Math.round(-destH / 2), destW, destH);
@@ -126,10 +177,10 @@ function dibujarImagenEnGrilla(ctx, imagen, pos, cols, rows, rotaciones, nivel) 
   ctx.restore();
 }
 
-// Temporizador (nivel 3)
+// Inicia el temporizador de nivel 3 (cuenta regresiva)
 function iniciarTimerNivel3() {
   if (!estadoPuzzle || estadoPuzzle.nivel !== 3 || estadoPuzzle.timerId) return;
-  estadoPuzzle.tiempoRestante = 120;
+  estadoPuzzle.tiempoRestante = TIMER_LVL3_SECONDS;
   estadoPuzzle.timerId = setInterval(() => {
     if (!estadoPuzzle || estadoPuzzle.completado) {
       clearInterval(estadoPuzzle?.timerId);
@@ -137,40 +188,121 @@ function iniciarTimerNivel3() {
       return;
     }
     estadoPuzzle.tiempoRestante = Math.max(0, (estadoPuzzle.tiempoRestante || 0) - 1);
+    if (estadoPuzzle.tiempoRestante === 0) {
+      clearInterval(estadoPuzzle.timerId);
+      estadoPuzzle.timerId = null;
+      estadoPuzzle.timeUp = true;
+      // Dibuja el overlay de tiempo agotado
+      mostrarTiempoAgotado();
+      return;
+    }
     redibujarPuzzle();
   }, 1000);
 }
-function dibujarTimerSuperior(ctx) {
-  if (!estadoPuzzle || estadoPuzzle.nivel !== 3) return;
-  const s = Math.max(0, estadoPuzzle.tiempoRestante ?? 120);
-  const mm = String(Math.floor(s / 60)).padStart(2, '0');
-  const ss = String(s % 60).padStart(2, '0');
+
+// Dibuja un badge unificado (posición/estilo) para cualquier timer
+function dibujarTimerBadge(ctx, txt) {
+  const cx = panel.x + panel.w / 2;
+  const y = panel.y + 16;
   ctx.save();
-  ctx.fillStyle = '#fff';
-  ctx.font = '700 20px Poppins, sans-serif';
+  ctx.font = FONT.bold18;
+  const w = Math.max(64, Math.ceil(ctx.measureText(txt).width) + 16);
+  const h = 28;
+  drawRoundedRect(ctx, Math.round(cx - w / 2), y, w, h, 8);
+  ctx.fillStyle = COLORS.badgeBg;
+  ctx.fill();
+  ctx.fillStyle = COLORS.text;
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText(`${mm}:${ss}`, panel.x + panel.w / 2, panel.y + 12);
+  ctx.textBaseline = 'middle';
+  ctx.fillText(txt, cx, y + h / 2);
   ctx.restore();
 }
 
-// Interacción y render del puzzle
+// Dibuja el icono de ayuda centrado debajo de la imagen y guarda su rect
+function dibujarIconoAyudita(ctx, pos, tam = 60) {
+  if (!iconoAyudita) return;
+  const x = Math.round(panel.x + (panel.w - tam) / 2);
+  const y = Math.round(pos.dy + pos.h + 10);
+  if (iconoAyudita.complete && iconoAyudita.naturalWidth) {
+    ctx.drawImage(iconoAyudita, x, y, tam, tam);
+    // Guarda rect clickeable para el handler
+    if (estadoPuzzle) estadoPuzzle.rectAyudita = { x, y, w: tam, h: tam };
+  }
+}
+
+// Dibuja el timer (nivel 3): muestra tiempo restante
+function dibujarTimerSuperior(ctx) {
+  if (!estadoPuzzle || estadoPuzzle.nivel !== 3) return;
+  const s = Math.max(0, estadoPuzzle.tiempoRestante ?? TIMER_LVL3_SECONDS);
+  const ms = s * 1000;
+  dibujarTimerBadge(ctx, formatearTiempo(ms));
+}
+
+// Dibuja el timer inicial (cuenta atrás 5s y luego cronómetro con penalización)
+function dibujarTimerInicioBarra(ctx, ms = 5000) {
+  const t0 = performance.now();
+  function paso(t) {
+    if (estadoPuzzle?.completado) {
+      if (rafTimerBarra) cancelAnimationFrame(rafTimerBarra);
+      rafTimerBarra = null;
+      return;
+    }
+    const dt = t - t0;
+    const restante = Math.max(0, ms - dt);
+    // Penalización (suma) solo en fase ascendente
+    const extra = (restante > 0) ? 0 : (estadoPuzzle?.penalizacionMs || 0);
+    const msToDraw = restante > 0 ? restante : (dt - ms + extra);
+    dibujarTimerBadge(ctx, formatearTiempo(msToDraw));
+    rafTimerBarra = requestAnimationFrame(paso);
+  }
+  rafTimerBarra = requestAnimationFrame(paso);
+}
+
+// Redibuja toda la escena (panel, grilla, barra, iconos, timers)
 function redibujarPuzzle() {
   const { ctx, canvas, nivel, dificultad, imagen, pos, cols, rows, rotaciones, iconoHome, iconoReset } = estadoPuzzle;
   ctx.clearRect(panel.x, panel.y, panel.w, panel.h);
   dibujarPanel(ctx, canvas);
-  dibujarInfoSuperiorIzquierda(ctx, nivel, dificultad);
+  // Dibujo contenido y luego barra superior para que quede por encima
   dibujarImagenEnGrilla(ctx, imagen, pos, cols, rows, rotaciones, nivel);
-  dibujarIconosSuperiorDerecha(ctx, iconoHome, iconoReset);
+  dibujarBarraSuperior(ctx, nivel, dificultad, iconoHome, iconoReset);
+  // NUEVO: icono ayudita centrado abajo
+  dibujarIconoAyudita(ctx, pos);
   if (nivel === 3) {
+    if (rafTimerBarra) { cancelAnimationFrame(rafTimerBarra); rafTimerBarra = null; }
     dibujarTimerSuperior(ctx);
     iniciarTimerNivel3();
+    if (estadoPuzzle.timeUp) mostrarTiempoAgotado();
   }
 }
+
+// Corrige una pieza aleatoria con ayudita, la bloquea y penaliza tiempo
+function aplicarAyuda() {
+  if (!estadoPuzzle || estadoPuzzle.completado || estadoPuzzle.timeUp) return;
+  const { rotaciones, nivel } = estadoPuzzle;
+  const incorrectos = [];
+  for (let i = 0; i < rotaciones.length; i++) {
+    if ((((rotaciones[i] % 4) + 4) % 4) !== 0) incorrectos.push(i);
+  }
+  if (incorrectos.length === 0) return;
+  const idx = incorrectos[Math.floor(Math.random() * incorrectos.length)];
+  rotaciones[idx] = 0;
+  if (!estadoPuzzle.piezasBloqueadas) estadoPuzzle.piezasBloqueadas = new Set();
+  estadoPuzzle.piezasBloqueadas.add(idx);
+  if (nivel === 3) {
+    estadoPuzzle.tiempoRestante = Math.max(0, (estadoPuzzle.tiempoRestante || 0) - 5);
+  } else {
+    estadoPuzzle.penalizacionMs = (estadoPuzzle.penalizacionMs || 0) + 5000;
+  }
+  redibujarPuzzle();
+  verificarPuzzleCorrecto();
+}
+
+// Rota una pieza si no está bloqueada y revalida el puzzle
 function girarPieza(x, y, dir) {
-  if (!estadoPuzzle || estadoPuzzle.completado) return;
+  if (!estadoPuzzle || estadoPuzzle.completado || estadoPuzzle.timeUp) return;
   const { pos, cols, rows, rotaciones } = estadoPuzzle;
-  const sep = 4;
+  const sep = GRID_GAP;
   const tw = (pos.w - (cols - 1) * sep) / cols;
   const th = (pos.h - (rows - 1) * sep) / rows;
 
@@ -183,15 +315,18 @@ function girarPieza(x, y, dir) {
   if (offx > tw || offy > th) return;
 
   const idx = f * cols + c;
+  if (estadoPuzzle.piezasBloqueadas && estadoPuzzle.piezasBloqueadas.has(idx)) return;
   rotaciones[idx] = ((rotaciones[idx] + dir) % 4 + 4) % 4;
   redibujarPuzzle();
   verificarPuzzleCorrecto();
 }
 
-// Verificación y botones
+// Verifica si todas las piezas están orientadas correctamente
 function esPuzzleCorrecto(rotaciones) {
   return rotaciones.every(v => (((v % 4) + 4) % 4) === 0);
 }
+
+// Dibuja un rectángulo redondeado (path listo para fill/stroke)
 function drawRoundedRect(ctx, x, y, w, h, r = 12) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -201,95 +336,303 @@ function drawRoundedRect(ctx, x, y, w, h, r = 12) {
   ctx.arcTo(x, y, x + w, y, r);
   ctx.closePath();
 }
-function dibujarBotonSiguiente(ctx, rect) {
+
+// Dibuja un botón violeta reutilizable
+function dibujarBotonVioleta(ctx, rect, label) {
   drawRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 12);
-  ctx.fillStyle = '#7C3AED';
+  ctx.fillStyle = COLORS.btnPrimary;
   ctx.fill();
-  ctx.strokeStyle = '#4A1F85';
+  ctx.strokeStyle = COLORS.btnPrimaryStroke;
   ctx.lineWidth = 2;
   ctx.stroke();
-  ctx.fillStyle = '#fff';
-  ctx.font = '700 18px Poppins, sans-serif';
+  ctx.fillStyle = COLORS.text;
+  ctx.font = FONT.bold18;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('Siguiente nivel', rect.x + rect.w / 2, rect.y + rect.h / 2);
+  ctx.fillText(label, rect.x + rect.w / 2, rect.y + rect.h / 2);
 }
+
+// Dibuja el botón “Siguiente nivel”
+function dibujarBotonSiguiente(ctx, rect) {
+  dibujarBotonVioleta(ctx, rect, 'Siguiente nivel');
+}
+
+// Formatea milisegundos a "mm:ss"
+function formatearTiempo(ms) {
+  const m = Math.floor(ms / 60000);
+  const s = Math.floor((ms % 60000) / 1000);
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+// Dibuja tiempo de completado y botón debajo
+function dibujarTiempoCompletadoYBoton(ctx, pos, elapsedMs) {
+  const texto = `Nivel completado en: ${formatearTiempo(elapsedMs)}`;
+  const bw = 200, bh = 46;
+  const lineH = 22, marginTop = 16, gap = 10;
+
+  // Posición centrada del texto: debajo de la imagen y garantizando espacio para el botón
+  let textY = pos.dy + pos.h + marginTop;
+  const maxBy = panel.y + panel.h - bh - 12; // botón dentro del panel
+  textY = Math.min(textY, maxBy - (lineH + gap)); // asegura que el botón no se salga
+
+  const cx = panel.x + panel.w / 2;
+  ctx.save();
+  ctx.fillStyle = COLORS.text;
+  ctx.font = FONT.bold18;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText(texto, cx, textY);
+  ctx.restore();
+
+  // Botón debajo del texto
+  const bx = Math.round(panel.x + (panel.w - bw) / 2);
+  const by = Math.round(textY + lineH + gap);
+  const rect = { x: bx, y: by, w: bw, h: bh };
+  dibujarBotonSiguiente(ctx, rect);
+  return rect;
+}
+
+// Dibuja felicitación final y botón “Volver al menú”
+function dibujarFelicitacionesYBotonVolver(ctx, pos) {
+  const texto = '¡Felicitaciones! Completaste el juego';
+  const bw = 200, bh = 46;
+  const lineH = 22, marginTop = 16, gap = 10;
+
+  let textY = pos.dy + pos.h + marginTop;
+  const maxBy = panel.y + panel.h - bh - 12;
+  textY = Math.min(textY, maxBy - (lineH + gap));
+
+  const cx = panel.x + panel.w / 2;
+  ctx.save();
+  ctx.fillStyle = COLORS.text;
+  ctx.font = FONT.bold18;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText(texto, cx, textY);
+  ctx.restore();
+
+  const bx = Math.round(panel.x + (panel.w - bw) / 2);
+  const by = Math.round(textY + lineH + gap);
+  const rect = { x: bx, y: by, w: bw, h: bh };
+  dibujarBotonVioleta(ctx, rect, 'Volver al menú');
+  return rect;
+}
+
+// Muestra overlay de tiempo agotado con botón “Reintentar”
+function mostrarTiempoAgotado() {
+  if (!estadoPuzzle) return;
+  const { ctx } = estadoPuzzle;
+  const cx = Math.round(panel.x + panel.w / 2);
+  const cy = Math.round(panel.y + panel.h / 2);
+  const label = 'Se terminó el tiempo';
+
+  // Medidas y overlay
+  const bw = 200, bh = 46, gap = 8, padX = 24, padY = 24, lineH = 28;
+  ctx.save();
+  ctx.font = FONT.bold24;
+  const textW = Math.ceil(ctx.measureText(label).width);
+  const overlayW = Math.max(textW + padX * 2, bw + padX * 2);
+  const textBottom = cy - 4;              // misma posición de texto
+  const textTop = textBottom - lineH;
+  const buttonY = cy + gap;                // misma posición del botón
+  const overlayH = lineH + gap + bh + padY * 2;
+  const overlayX = Math.round(cx - overlayW / 2);
+  const overlayY = Math.round(textTop - padY);
+
+  // Fondo del overlay
+  drawRoundedRect(ctx, overlayX, overlayY, overlayW, overlayH, 12);
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.fill();
+  ctx.strokeStyle = COLORS.overlayStroke;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Texto centrado
+  ctx.fillStyle = COLORS.text;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(label, cx, textBottom);
+  ctx.restore();
+
+  // Botón “Reintentar” debajo del texto
+  const rect = { x: Math.round(cx - bw / 2), y: buttonY, w: bw, h: bh };
+  dibujarBotonVioleta(ctx, rect, 'Reintentar');
+  estadoPuzzle.botonReintentar = rect;
+}
+
+// Reinicia el nivel actual (estado, timers y penalizaciones)
+function reiniciarNivelActual() {
+  if (!estadoPuzzle) return;
+  const { cols, rows } = estadoPuzzle;
+  if (estadoPuzzle.timerId) { clearInterval(estadoPuzzle.timerId); estadoPuzzle.timerId = null; }
+  if (rafTimerBarra) { cancelAnimationFrame(rafTimerBarra); rafTimerBarra = null; }
+  estadoPuzzle.rotaciones = Array.from({ length: cols * rows }, () => Math.floor(Math.random() * 4));
+  estadoPuzzle.completado = false;
+  estadoPuzzle.timeUp = false;
+  estadoPuzzle.botonReintentar = null;
+  estadoPuzzle.botonSiguiente = null;
+  estadoPuzzle.botonVolver = null;
+  estadoPuzzle.tiempoRestante = TIMER_LVL3_SECONDS;
+  estadoPuzzle.penalizacionMs = 0;
+  estadoPuzzle.piezasBloqueadas = new Set();
+  estadoPuzzle.inicioPuzzleMs = performance.now();
+  redibujarPuzzle();
+  if (estadoPuzzle.nivel < 3) dibujarTimerInicioBarra(estadoPuzzle.ctx, 0);
+}
+
+// Muestra imagen correcta y UI de fin de nivel
 function mostrarPuzzleCorrecto() {
   const { ctx, canvas, nivel, dificultad, imagen, pos, iconoHome, iconoReset } = estadoPuzzle;
   if (estadoPuzzle.timerId) { clearInterval(estadoPuzzle.timerId); estadoPuzzle.timerId = null; }
+  if (rafTimerBarra) { cancelAnimationFrame(rafTimerBarra); rafTimerBarra = null; }
   ctx.clearRect(panel.x, panel.y, panel.w, panel.h);
   dibujarPanel(ctx, canvas);
-  dibujarInfoSuperiorIzquierda(ctx, nivel, dificultad);
   ctx.filter = 'none';
   ctx.drawImage(imagen, pos.dx, pos.dy, pos.w, pos.h);
   ctx.lineWidth = 4;
-  ctx.strokeStyle = '#22C55E';
+  ctx.strokeStyle = COLORS.successStroke;
   ctx.strokeRect(pos.dx, pos.dy, pos.w, pos.h);
-  dibujarIconosSuperiorDerecha(ctx, iconoHome, iconoReset);
-
+  dibujarBarraSuperior(ctx, nivel, dificultad, iconoHome, iconoReset);
   if (nivel < 3) {
-    const bw = 200, bh = 46;
-    const bx = Math.round(panel.x + (panel.w - bw) / 2);
-    const by = Math.min(Math.round(pos.dy + pos.h + 20), panel.y + panel.h - bh - 12);
-    estadoPuzzle.botonSiguiente = { x: bx, y: by, w: bw, h: bh };
-    dibujarBotonSiguiente(ctx, estadoPuzzle.botonSiguiente);
+    const ahora = performance.now();
+    const base = Math.max(0, estadoPuzzle.inicioPuzzleMs ? (ahora - estadoPuzzle.inicioPuzzleMs) : 0);
+    const extra = Number(estadoPuzzle.penalizacionMs || 0);
+    const elapsedMs = base + extra;
+    estadoPuzzle.botonSiguiente = dibujarTiempoCompletadoYBoton(ctx, pos, elapsedMs);
+    estadoPuzzle.botonVolver = null;
   } else {
     estadoPuzzle.botonSiguiente = null;
+    estadoPuzzle.botonVolver = dibujarFelicitacionesYBotonVolver(ctx, pos);
   }
   estadoPuzzle.completado = true;
 }
+
+// Llama a mostrarPuzzleCorrecto() cuando todas las piezas están OK
 function verificarPuzzleCorrecto() {
   if (!estadoPuzzle || estadoPuzzle.completado) return;
   if (esPuzzleCorrecto(estadoPuzzle.rotaciones)) {
     mostrarPuzzleCorrecto();
   }
 }
+
+// Avanza al siguiente nivel y reinicia estado/timers
 function avanzarNivel() {
   const { cols, rows } = estadoPuzzle;
   if (estadoPuzzle.timerId) { clearInterval(estadoPuzzle.timerId); estadoPuzzle.timerId = null; }
+  if (rafTimerBarra) { cancelAnimationFrame(rafTimerBarra); rafTimerBarra = null; }
   estadoPuzzle.nivel = Math.min(3, (estadoPuzzle.nivel || 1) + 1);
   estadoPuzzle.rotaciones = Array.from({ length: cols * rows }, () => Math.floor(Math.random() * 4));
   estadoPuzzle.completado = false;
+  estadoPuzzle.timeUp = false;
   estadoPuzzle.botonSiguiente = null;
+  estadoPuzzle.botonVolver = null;
+  estadoPuzzle.botonReintentar = null;
+  estadoPuzzle.penalizacionMs = 0;
+  estadoPuzzle.piezasBloqueadas = new Set();
+  estadoPuzzle.inicioPuzzleMs = performance.now();
   redibujarPuzzle();
+  if (estadoPuzzle.nivel < 3) dibujarTimerInicioBarra(estadoPuzzle.ctx, 0);
 }
 
-// Transición desde imagen completa a la grilla (tras 5s)
-function desvanecerImagen(ctx, canvas, imagen, pos, duracion, iconoHome, iconoReset, nivel, dificultad, cols, rows) {
-  // No se usa fade animado: una vez que pasan 5s, entra directamente al estado del puzzle
-  const rotaciones = Array.from({ length: cols * rows }, () => Math.floor(Math.random() * 4));
-  estadoPuzzle = {
-    ctx, canvas, imagen, pos,
-    cols, rows, rotaciones,
-    nivel, dificultad,
-    iconoHome, iconoReset,
-    completado: false,
-    botonSiguiente: null,
-    timerId: null,
-    tiempoRestante: undefined
-  };
-  redibujarPuzzle();
-
-  // Listeners de interacción (una sola vez)
-  if (!canvas.__rotHandlers) {
-    canvas.addEventListener('click', (ev) => {
-      const { x, y } = obtenerPosMouse(canvas, ev);
-      if (estadoPuzzle?.completado && estadoPuzzle.botonSiguiente && puntoEnRect(x, y, estadoPuzzle.botonSiguiente)) {
-        avanzarNivel();
-        return;
-      }
-      girarPieza(x, y, -1);
-    });
-    canvas.addEventListener('contextmenu', (ev) => {
-      ev.preventDefault();
-      const { x, y } = obtenerPosMouse(canvas, ev);
-      girarPieza(x, y, +1);
-    });
-    canvas.__rotHandlers = true;
+// Vuelve al preGameMenu (libera timers/rAF)
+function volverAlMenu() {
+  try {
+    if (estadoPuzzle?.timerId) { clearInterval(estadoPuzzle.timerId); }
+    if (rafTimerBarra) { cancelAnimationFrame(rafTimerBarra); }
+  } catch {}
+  rafTimerBarra = null;
+  iniciado = false;
+  if (typeof window.loadMenu === 'function') {
+    try {
+      const { ctx, canvas } = estadoPuzzle || {};
+      if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      window.loadMenu();
+      return;
+    } catch {}
   }
+  window.location.reload();
 }
 
-// Arranque público
+// Transición: hace fade-out y pasa a la grilla, setea estado y listeners
+function desvanecerImagen(ctx, canvas, imagen, pos, duracion, iconoHome, iconoReset, nivel, dificultad, cols, rows) {
+  const t0 = performance.now();
+  const d = duracion || 700;
+  (function paso(t) {
+    const p = Math.min(1, (t - t0) / d);
+    ctx.clearRect(panel.x, panel.y, panel.w, panel.h);
+    dibujarPanel(ctx, canvas);
+    dibujarBarraSuperior(ctx, nivel, dificultad, iconoHome, iconoReset);
+    dibujarImagenConBorde(ctx, imagen, pos, 1 - p);
+    if (p < 1) return requestAnimationFrame(paso);
+
+    const rotaciones = Array.from({ length: cols * rows }, () => Math.floor(Math.random() * 4));
+    estadoPuzzle = {
+      ctx, canvas, imagen, pos,
+      cols, rows, rotaciones,
+      nivel, dificultad,
+      iconoHome, iconoReset,
+      completado: false,
+      botonSiguiente: null,
+      botonVolver: null,
+      botonReintentar: null,
+      timeUp: false,
+      timerId: null,
+      tiempoRestante: undefined,
+      penalizacionMs: 0,
+      piezasBloqueadas: new Set(),
+      inicioPuzzleMs: performance.now()
+    };
+    redibujarPuzzle();
+
+    if (!canvas.__rotHandlers) {
+      canvas.addEventListener('click', (ev) => {
+        const { x, y } = obtenerPosMouse(canvas, ev);
+
+        // Click en íconos de barra superior
+        if (estadoPuzzle?.rectReset && puntoEnRect(x, y, estadoPuzzle.rectReset)) {
+          reiniciarNivelActual();
+          return;
+        }
+        if (estadoPuzzle?.rectHome && puntoEnRect(x, y, estadoPuzzle.rectHome)) {
+          volverAlMenu();
+          return;
+        }
+
+        // NUEVO: click en icono de ayuda
+        if (estadoPuzzle?.rectAyudita && puntoEnRect(x, y, estadoPuzzle.rectAyudita)) {
+          aplicarAyuda();
+          return;
+        }
+
+        // Click en "Volver al menú" (nivel 3 final)
+        if (estadoPuzzle?.completado && estadoPuzzle.botonVolver && puntoEnRect(x, y, estadoPuzzle.botonVolver)) {
+          volverAlMenu();
+          return;
+        }
+        // Click en "Siguiente nivel"
+        if (estadoPuzzle?.completado && estadoPuzzle.botonSiguiente && puntoEnRect(x, y, estadoPuzzle.botonSiguiente)) {
+          avanzarNivel();
+          return;
+        }
+        // Click en "Reintentar" (tiempo agotado nivel 3)
+        if (estadoPuzzle?.timeUp && estadoPuzzle.botonReintentar && puntoEnRect(x, y, estadoPuzzle.botonReintentar)) {
+          reiniciarNivelActual();
+          return;
+        }
+
+        girarPieza(x, y, -1);
+      });
+      canvas.addEventListener('contextmenu', (ev) => {
+        ev.preventDefault();
+        const { x, y } = obtenerPosMouse(canvas, ev);
+        girarPieza(x, y, +1);
+      });
+      canvas.__rotHandlers = true;
+    }
+  })(performance.now());
+}
+
+// Arranque: carga imagen, muestra 5s a color y luego inicia el puzzle
 window.startGamePanel = function (canvas, ctx, config) {
   if (iniciado || !canvas || !ctx) return;
   iniciado = true;
@@ -300,10 +643,11 @@ window.startGamePanel = function (canvas, ctx, config) {
   const nivel = Number(config?.level) || 1;
   const dificultad = config?.difficulty || 'normal';
   const { cols, rows } = determinarDimensionesGrilla(dificultad);
-  dibujarInfoSuperiorIzquierda(ctx, nivel, dificultad);
-
   const iconoHome = new Image(); iconoHome.src = 'assets/iconoHomeJuego.png';
   const iconoReset = new Image(); iconoReset.src = 'assets/iconoResetJuego.png';
+  // NUEVO: cargar icono de ayuda
+  iconoAyudita = new Image(); iconoAyudita.src = 'assets/iconoAyudita.png';
+  dibujarBarraSuperior(ctx, nivel, dificultad, iconoHome, iconoReset);
 
   const ruta = config?.image;
   if (!ruta) return;
@@ -311,9 +655,13 @@ window.startGamePanel = function (canvas, ctx, config) {
   imagen.onload = () => {
     ctx.clearRect(panel.x, panel.y, panel.w, panel.h);
     dibujarPanel(ctx, canvas);
-    dibujarInfoSuperiorIzquierda(ctx, nivel, dificultad);
+    dibujarBarraSuperior(ctx, nivel, dificultad, iconoHome, iconoReset);
     const pos = calcularPosicionImagen(imagen);
     dibujarImagenConBorde(ctx, imagen, pos, 1);
+    // NUEVO: mostrar icono de ayuda en la pantalla de presentación
+    dibujarIconoAyudita(ctx, pos);
+    // Contador simple en la barra superior por 5s (luego sigue como cronómetro)
+    dibujarTimerInicioBarra(ctx, 5000);
     setTimeout(() => desvanecerImagen(ctx, canvas, imagen, pos, 700, iconoHome, iconoReset, nivel, dificultad, cols, rows), 5000);
   };
   imagen.src = ruta;

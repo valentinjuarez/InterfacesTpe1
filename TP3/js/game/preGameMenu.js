@@ -48,6 +48,7 @@ function loadMenu() {
   let thumbTiles = [];
   let hoverIndex = -1;
   let btnJugar = { x: 0, y: 0, w: 200, h: 46, label: 'JUGAR' };
+  let linkInstruccionesRect = null; // rect clickable del link "Instrucciones"
 
   // Evitar doble inicio del panel de juego
   let gamePanelLoaded = false;
@@ -104,6 +105,29 @@ function loadMenu() {
       }
     };
     script.onerror = () => console.error('No se pudo cargar js/game/gamePanel.js');
+    document.head.appendChild(script);
+  }
+
+  // Cargar instructionsPanel.js y arrancar
+  function loadInstructionsPanel() {
+    // quitar listeners del menú
+    const canvas = document.getElementById('myCanvas');
+    if (canvas) {
+      canvas.removeEventListener('click', onCanvasClick);
+      canvas.removeEventListener('mousemove', onCanvasMove);
+      canvas.removeEventListener('mouseleave', onCanvasLeave);
+    }
+    const script = document.createElement('script');
+    script.src = 'js/game/instructionsPanel.js';
+    script.onload = () => {
+      if (typeof window.startInstructionsPanel === 'function') {
+        try {
+          const ctx = canvas.getContext('2d');
+          window.startInstructionsPanel(canvas, ctx);
+        } catch (e) { console.error('Error al iniciar instrucciones:', e); }
+      }
+    };
+    script.onerror = () => console.error('No se pudo cargar js/game/instructionsPanel.js');
     document.head.appendChild(script);
   }
 
@@ -180,6 +204,10 @@ function loadMenu() {
 
     diffButtons.forEach(b => drawButton(b, ui.selectedDifficulty === b.value));
     drawThumbnailsGrid();
+
+    // Link "Instrucciones" sobre el botón JUGAR
+    drawLinkInstrucciones();
+
     drawButtonJugar();
 
     ctx.restore();
@@ -212,6 +240,12 @@ function loadMenu() {
         drawForm();
         return;
       }
+    }
+
+    // Click en "Instrucciones"
+    if (linkInstruccionesRect && pointInRect(mx, my, linkInstruccionesRect)) {
+      loadInstructionsPanel();
+      return;
     }
 
     if (pointInRect(mx, my, btnJugar)) {
@@ -387,7 +421,40 @@ function loadMenu() {
       thumbTiles.push({ index: i, rect: { x, y, w: tileW, h: tileH } });
     }
   }
+
+  // Dibuja el link "Instrucciones" centrado y guarda su rect para clicks
+  function drawLinkInstrucciones() {
+    const label = '¿Cómo jugar?';
+    const y = btnJugar.y - 28;
+    const cx = panel.x + panel.w / 2;
+
+    ctx.save();
+    ctx.font = '600 16px Poppins, sans-serif';
+    const textW = Math.ceil(ctx.measureText(label).width);
+    const padX = 8, padY = 6;
+    const rect = { x: Math.round(cx - textW / 2) - padX, y: y - padY, w: textW + padX * 2, h: 22 + padY * 2 };
+
+    // texto
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(label, cx, y);
+
+    // subrayado sutil
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - textW / 2, y + 18);
+    ctx.lineTo(cx + textW / 2, y + 18);
+    ctx.stroke();
+
+    ctx.restore();
+    linkInstruccionesRect = rect;
+  }
 }
+
+// Exponer loadMenu globalmente para volver desde otros paneles
+window.loadMenu = loadMenu;
 
 // Ejecutar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
