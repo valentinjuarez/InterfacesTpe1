@@ -112,11 +112,13 @@
   <!-- MAIN -->
   <main>
     <section class="navegacion">
-       <ul class="breadcrumb">
-        <a href="index.html"><li class="home"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="home">Home</li></a>
-        <a href="#"><li>Juegos de mesa</li></a>
-        <a href="juego.html"><li>Peg Solitaire...</li></a>
-      </ul>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#">Juegos de mesa</a></li>
+          <li aria-current="page">Blocka</li>
+        </ol>
+      </nav>
     </section> 
     
     <!-- Juego -->
@@ -177,20 +179,17 @@
         <h2>Controles del Juego</h2>    
 
     </div>
-    <div class="instrucciones"> 
-            <div class="instruccion">
-                <h3>Moverse</h3>
-                <img src="./assets/icons8-wasd-100.png" alt="">
-            </div>
-            <div class="instruccion">
-                <h3>Pausar</h3>
-                <img src="./assets/icons8-esc-100.png" alt="">
-            </div>
-            <div class="instruccion">
-                <h3>Seleccionar</h3>
-                <img src="./assets/icons8-left-click-100.png" alt="">
-            </div>
-      </div> 
+  <div class="instrucciones"> 
+      <div class="instruccion">
+        <h3>Rotar imagen a la izquierda</h3>
+        <img src="./assets/icons8-left-click-100.png" alt="Rotar a la izquierda">
+      </div>
+          
+      <div class="instruccion">
+        <h3>Rotar imagen a la derecha</h3>
+        <img src="./assets/icons8-right-click-100.png" alt="Rotar a la derecha">
+      </div>
+    </div> 
 
 </section>
 
@@ -202,14 +201,14 @@
     <img src="./assets/icono-informacion.png" alt="icono información">
     <h2>¿Cómo jugar?</h2>
   </div>
-
-
   <ul>
-    <li><strong>Elegí a tu héroe:</strong> ¿Sos Batman con su mente calculadora o Superman con su fuerza arrolladora?</li>
-    <li><strong>Movete con estrategia:</strong> saltá sobre las fichas rivales y liberá el tablero paso a paso.</li>
-    <li><strong>Escenarios temáticos:</strong> jugá en tableros inspirados en lugares icónicos como Gotham City o Metrópolis.</li>
-    <li><strong>Desafíos especiales:</strong> algunos niveles incluyen obstáculos como kriptonita o trampas del Joker que cambian las reglas del juego.</li>
-    <li><strong>Explorá y descubrí:</strong> cada partida es diferente; buscá la mejor forma de resolver el tablero con ingenio.</li>
+    <li><strong>Objetivo:</strong> colocá todas las piezas en el tablero sin superponer ni salirte de los bordes.</li>
+    <li><strong>Cómo jugar:</strong> gira las piezas hasta que encajen en el tablero.</li>
+    <li><strong>Rotación:</strong> usá clic izquierdo para rotar a la izquierda y clic derecho para rotar a la derecha.</li>
+    <li><strong>Reglas:</strong> no se permiten solapamientos ni celdas fuera del tablero.</li>
+    <li><strong>Estrategia:</strong> empezá por esquinas y espacios grandes; reservá las piezas largas para cerrar líneas.</li>
+    <li><strong>Progreso:</strong> cada nivel trae un set de piezas distinto; pensá varios pasos por adelantado.</li>
+    <li><strong>Victoria:</strong> completá el tablero sin huecos. Si no quedan movimientos, reiniciá y probá otra ruta.</li>
   </ul>
 </section>
 
