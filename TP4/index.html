@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PixelPlay · Home</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/home.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+</head>
+<body>
+<div id="loading-overlay">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <div class="loading-percent" id="loading-percent">0%</div>
+    <div class="loading-text">Cargando...</div>
+  </div>
+</div>
+<div class="app">
+  <header class="topbar">
+    <div class="header-left">
+      <a
+        id="hamburger"
+        class="logo"
+        href="#"
+        role="button"
+        aria-label="MenuDeHamburguesa"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        <img src="img/IconosHeader/IconoMenuHamburguesa.png" alt="Abrir menú lateral" />
+      </a>
+    </div>
+
+    <div class="header-center">
+      <a class="brand" href="index.html" aria-label="PixelPlay">
+        <img src="img/IconosHeader/IconoLogoPixelPlay.png" alt="PixelPlay" />
+        <span>PixelPlay</span>
+      </a>
+    </div>
+
+    <div class="header-right">
+      <button class="avatar" type="button" aria-label="Usuario">
+        <!-- antes había un solo <img>; ahora agregamos ambos -->
+        <img id="IconoUsuario2" src="img/IconosHeader/IconoUsuario2.png" alt="Usuario" />
+        <img id="IconoUsuario"  src="img/IconosHeader/IconoUsuario.png"  alt="Usuario activo" />
+      </button>
+    </div>
+  </header>
+
+  <!-- Menú de usuario: ahora en el HTML -->
+  <div id="user-menu" class="user-menu">
+    <div class="user-menu-avatar">
+      <img src="img/IconosHeader/IconoUsuario2.png" alt="Usuario" />
+    </div>
+    <ul class="user-menu-list">
+      <li><a href="#">Perfil</a></li>
+      <li><a href="#">Configuración</a></li>
+      <li><a href="#">Unirse al premium</a></li>
+      <li><a href="login.html" class="cerrar-sesion">Cerrar sesión</a></li>
+    </ul>
+  </div>
+  <div class="layout">
+    <aside id="sidebar" class="sidebar" aria-label="Navegación principal">
+      <nav class="nav">
+        <a class="nav-btn" href="index.html" aria-label="Inicio">
+          <img src="img/IconosBarraLateral/IconoCasa.png" alt="Inicio" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Recientes">
+          <img src="img/IconosBarraLateral/IconoReloj.png" alt="Recientes" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Nuevos">
+          <img src="img/IconosBarraLateral/IconoEstrellas.png" alt="Nuevos" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="De moda">
+          <img src="img/IconosBarraLateral/IconoFuego.png" alt="De moda" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Multiplayer">
+          <img src="img/IconosBarraLateral/IconoPersonas.png" alt="Multiplayer" />
+        </a>
+      </nav>
+      <nav class="nav">
+        <a class="nav-btn" href="#" aria-label="Acción">
+          <img src="img/IconosBarraLateral/IconoEspada.png" alt="Acción" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Aventura">
+          <img src="img/IconosBarraLateral/IconoBrujula.png" alt="Aventura" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Baloncesto">
+          <img src="img/IconosBarraLateral/IconoPelotaBasket.png" alt="Baloncesto" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Billar">
+          <img src="img/IconosBarraLateral/IconoBolaDe8.png" alt="Billar" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Cartas">
+          <img src="img/IconosBarraLateral/IconoCartasPoker.png" alt="Cartas" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Controller">
+          <img src="img/IconosBarraLateral/IconoJoystick.png" alt="Controller" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Defensa">
+          <img src="img/IconosBarraLateral/IconoCastillo.png" alt="Defensa" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Carreras">
+          <img src="img/IconosBarraLateral/IconoAuto.png" alt="Carreras" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Fútbol">
+          <img src="img/IconosBarraLateral/IconoPelotaFutbol.png" alt="Fútbol" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Minecraft">
+          <img src="img/IconosBarraLateral/IconoMinecraft.png" alt="Minecraft" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Motos">
+          <img src="img/IconosBarraLateral/IconoMoto.png" alt="Motos" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="CS:GO">
+          <img src="img/IconosBarraLateral/IconoPistola.png" alt="CS:GO" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Terror">
+          <img src="img/IconosBarraLateral/IconoFantasma.png" alt="Terror" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Disparo">
+          <img src="img/IconosBarraLateral/IconoMira.png" alt="Disparo" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Deportes">
+          <img src="img/IconosBarraLateral/IconoPelotaRugby.png" alt="Deportes" />
+        </a>
+      </nav>
+    </aside>
+
+    <main class="page" role="main">
+      <section class="hero-carousel">
+        <div class="hero-track" id="hero-track">
+          <div class="hero-slide" id="hero-slide">
+              <article class="hero-card hero-primary" id="hero-big">
+                <a href="juego.html" class="hero-link" aria-label="Abrir Peg Soliatire">
+                  <img class="hero-logo" src="img/imagenesCard/blocka.png" alt="blocka" loading="lazy" />
+                  <img class="hero-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+                  <div class="hero-title">Blocka</div>
+                </a>
+              </article>
+            <article class="hero-card hero-primary">
+              <img src="img/imagenesCard/minecraft.jpeg" alt="Minecraft" loading="lazy" />
+              <img class="hero-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+              <div class="hero-title">Minecraft</div>
+            </article>
+            <article class="hero-card hero-promo">
+              <img src="img/imagenesCard/premium.png" alt="Premium" loading="lazy" />
+              <div class="hero-title">Premium</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== RAILS (estáticos) ===== -->
+      <section class="rail" aria-label="Lo más jugado">
+        <header class="rail-head">
+          <h2>Juegos para vos!</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-pop" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-pop">
+          <article class="game-card" data-id="pop-1">
+            <img class="card-img" src="img/imagenesCard/fifa23.webp" alt="FIFA 23" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">FIFA 23</div>
+          </article>
+          <article class="game-card" data-id="pop-2">
+            <img class="card-img" src="img/imagenesCard/minecraft.jpeg" alt="Minecraft" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Minecraft</div>
+          </article>
+          <article class="game-card" data-id="pop-3">
+            <img class="card-img" src="img/imagenesCard/gta5.jpeg" alt="GTA V" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">GTA V</div>
+          </article>
+          <article class="game-card" data-id="pop-4">
+            <img class="card-img" src="img/imagenesCard/valorant.jpeg" alt="Valorant" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Valorant</div>
+          </article>
+          <article class="game-card" data-id="pop-5">
+            <img class="card-img" src="img/imagenesCard/fortnite.jpeg" alt="Fortnite" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Fortnite</div>
+          </article>
+          <article class="game-card" data-id="pop-6">
+            <img class="card-img" src="img/imagenesCard/lol.jpeg" alt="League of Legends" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">League of Legends</div>
+          </article>
+          <article class="game-card" data-id="pop-7">
+            <img class="card-img" src="img/imagenesCard/csgo.jpeg" alt="Counter Strike" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Counter Strike</div>
+          </article>
+          <article class="game-card" data-id="pop-8">
+            <img class="card-img" src="img/imagenesCard/amongus.jpeg" alt="Among Us" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Among Us</div>
+          </article>
+        </div>
+        <button class="rail-arrow right" data-rail="rail-pop" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <section class="rail" aria-label="Juegos de autos">
+        <header class="rail-head">
+          <h2>Juegos de autos</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-cars" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-cars">
+          <!-- CARS -->
+          <article class="game-card" data-id="car-1">
+            <img class="card-img" src="img/imagenesCard/granTurismo7.jpeg" alt="Gran Turismo 7" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Gran Turismo 7</div>
+          </article>
+          <article class="game-card" data-id="car-2">
+            <img class="card-img" src="img/imagenesCard/forza.jpeg" alt="Forza Horizon 5" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Forza Horizon 5</div>
+          </article>
+          <article class="game-card" data-id="car-3">
+            <img class="card-img" src="img/imagenesCard/nfs.jpeg" alt="Need for Speed Heat" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Need for Speed Heat</div>
+          </article>
+          <article class="game-card" data-id="car-4">
+            <img class="card-img" src="img/imagenesCard/f12022.jpeg" alt="F1 2022" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">F1 2022</div>
+          </article>
+          <article class="game-card" data-id="car-5">
+            <img class="card-img" src="img/imagenesCard/mariokart.jpeg" alt="Mario Kart 8" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Mario Kart 8</div>
+          </article>
+          <article class="game-card" data-id="car-6">
+            <img class="card-img" src="img/imagenesCard/rl.jpeg" alt="Rocket League" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Rocket League</div>
+          </article>
+          <article class="game-card" data-id="car-7">
+            <img class="card-img" src="img/imagenesCard/wrc10.jpeg" alt="WRC 10" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">WRC 10</div>
+          </article>
+          <article class="game-card" data-id="car-8">
+            <img class="card-img" src="img/imagenesCard/acorsa.jpeg" alt="Assetto Corsa" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Assetto Corsa</div>
+          </article>
+        </div>
+        <button class="rail-arrow right" data-rail="rail-cars" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <section class="rail" aria-label="Juegos originales">
+        <header class="rail-head">
+          <h2>Juegos originales</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-orig" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-orig">
+          <!-- ORIG -->
+          <article class="game-card" data-id="ori-1">
+            <img class="card-img" src="img/imagenesCard/juego12.jpeg" alt="Hades" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Hades</div>
+          </article>
+          <article class="game-card" data-id="ori-2">
+            <img class="card-img" src="img/imagenesCard/juego13.jpeg" alt="Celeste" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Celeste</div>
+          </article>
+          <article class="game-card" data-id="ori-3">
+            <img class="card-img" src="img/imagenesCard/juego16.jpeg" alt="Hollow Knight" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Hollow Knight</div>
+          </article>
+          <article class="game-card" data-id="ori-4">
+            <img class="card-img" src="img/imagenesCard/juego20.jpeg" alt="Undertale" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Undertale</div>
+          </article>
+          <article class="game-card" data-id="ori-5">
+            <img class="card-img" src="img/imagenesCard/juego18.jpeg" alt="Cuphead" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Cuphead</div>
+          </article>
+          <article class="game-card" data-id="ori-6">
+            <img class="card-img" src="img/imagenesCard/juego19.jpeg" alt="Ori and the Blind Forest" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Ori and the Blind Forest</div>
+          </article>
+          <article class="game-card" data-id="ori-7">
+            <img class="card-img" src="img/imagenesCard/juego3.jpeg" alt="Stardew Valley" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Stardew Valley</div>
+          </article>
+          <article class="game-card" data-id="ori-8">
+            <img class="card-img" src="img/imagenesCard/ludo.jpeg" alt="Ludo" loading="lazy" />
+            <img class="card-hover-icon" src="img/IconosCard/IconoPlay.png" alt="Jugar" />
+            <div class="card-title">Ludo</div>
+          </article>
+        </div>
+        <button class="rail-arrow right" data-rail="rail-orig" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <section class="rail rail--premium" aria-label="Sección Premium">
+        <header class="rail-head">
+          <h2>Sección Premium</h2>
+        </header>
+        <button class="rail-arrow left" data-rail="rail-premium" aria-label="Anterior">&#8592;</button>
+        <div class="rail-track" id="rail-premium">
+          <!-- PREMIUM -->
+          <article class="game-card premium-hover" data-id="prem-1">
+            <img class="card-img" src="img/imagenesCard/gwr.jpeg" alt="God of War Ragnarok" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">God of War Ragnarok</span>
+            </div>
+            <div class="card-title">God of War Ragnarok</div>
+          </article>
+          <article class="game-card premium-hover" data-id="prem-2">
+            <img class="card-img" src="img/imagenesCard/theLast2.jpeg" alt="The Last of Us Part II" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">The Last of Us Part II</span>
+            </div>
+            <div class="card-title">The Last of Us Part II</div>
+          </article>
+          <article class="game-card premium-hover" data-id="prem-3">
+            <img class="card-img" src="img/imagenesCard/juego21.jpeg" alt="Red Dead Redemption 2" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Red Dead Redemption 2</span>
+            </div>
+            <div class="card-title">Red Dead Redemption 2</div>
+          </article>
+          <article class="game-card premium-hover" data-id="prem-4">
+            <img class="card-img" src="img/imagenesCard/elden.jpeg" alt="Elden Ring" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Elden Ring</span>
+            </div>
+            <div class="card-title">Elden Ring</div>
+          </article>
+          <article class="game-card premium-hover" data-id="prem-5">
+            <img class="card-img" src="img/imagenesCard/cyberpunk.jpeg" alt="Cyberpunk 2077" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Cyberpunk 2077</span>
+            </div>
+            <div class="card-title">Cyberpunk 2077</div>
+          </article>
+          <article class="game-card premium-hover" data-id="prem-6">
+            <img class="card-img" src="img/imagenesCard/horizonfw.jpeg" alt="Horizon Forbidden West" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Horizon Forbidden West</span>
+            </div>
+            <div class="card-title">Horizon Forbidden West</div>
+          </article>
+          <article class="game-card premium-hover" data-id="prem-7">
+            <img class="card-img" src="img/imagenesCard/spidermanmm.jpeg" alt="Spider-Man Miles Morales" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Spider-Man Miles Morales</span>
+            </div>
+            <div class="card-title">Spider-Man Miles Morales</div>
+          </article>
+          <article class="game-card premium-hover" data-id="prem-8">
+            <img class="card-img" src="img/imagenesCard/rev.jpeg" alt="Resident Evil Village" loading="lazy" />
+            <img class="premium-badge" src="img/IconosCard/IconoPremium.png" alt="Premium" />
+            <div class="premium-overlay">
+              <span class="obtener-text">OBTENER</span>
+              <span class="premium-title">Resident Evil Village</span>
+            </div>
+            <div class="card-title">Resident Evil Village</div>
+          </article>
+        </div>
+        <button class="rail-arrow right" data-rail="rail-premium" aria-label="Siguiente">&#8594;</button>
+      </section>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div class="footer-main">
+          <div class="footer-col footer-desc">
+            <h4>Título</h4>
+            <p>Llevá tu experiencia gamer al próximo nivel con nuestra plataforma. Descubrí, jugá y compartí en un mundo conectado por la pasión por los videojuegos.</p>
+            <ul>
+              <li><strong>Multiplataforma</strong><br>Accedé desde PC, consola o móvil con la misma cuenta.</li>
+              <li><strong>Comunidad Online</strong><br>Unite a torneos, clanes y chats en vivo con jugadores de todo el mundo.</li>
+              <li><strong>Game Streaming</strong><br>Mirá partidas en directo o transmití tus propios juegos con un clic.</li>
+            </ul>
+          </div>
+          <div class="footer-col footer-features">
+            <ul>
+              <li><strong>Game Pass</strong><br>Suscribite para acceder a una librería con cientos de títulos nuevos y clásicos.</li>
+              <li><strong>Eventos Exclusivos</strong><br>Participá en lanzamientos, betas anticipadas y promociones especiales.</li>
+            </ul>
+          </div>
+          <div class="footer-flex">
+            <div class="footer-col footer-links">
+              <h4>Juegos</h4>
+              <ul>
+                <li><a href="#">Juegos</a></li>
+                <li><a href="#">Categorías</a></li>
+                <li><a href="#">Game Pass</a></li>
+                <li><a href="#">Comunidad</a></li>
+                <li><a href="#">Soporte</a></li>
+                <li><a href="#">Noticias</a></li>
+                <li><a href="#">Torneos</a></li>
+                <li><a href="#">Blog</a></li>
+              </ul>
+            </div>
+            <div class="footer-col footer-about">
+              <h4>ABOUT</h4>
+              <ul>
+                <li><a href="#">Nosotros</a></li>
+                <li><a href="#">Estudios asociados</a></li>
+                <li><a href="#">Prensa</a></li>
+                <li><a href="#">Oficinas</a></li>
+                <li><a href="#">Carreras</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-col footer-contact">
+            <a href="#" class="footer-btn">CONTACTANOS</a>
+            <div class="footer-phone">
+              <span>📞</span> 1-800-GAMER-24
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-brand">
+            <img src="img/IconosHeader/IconoLogoPixelPlay.png" alt="PixelPlay" style="height:32px;vertical-align:middle;">
+            <span class="footer-brand-name">PixelPlay</span>
+          </div>
+          <div class="footer-legal">
+            <a href="#">Términos de uso</a> |
+            <a href="#">Política de privacidad</a> |
+            <a href="#">Licencias</a>
+            <span>© 2025 GamerWorld Inc. Todos los derechos reservados.</span>
+          </div>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><img src="img/social/Instagram.png" alt="Instagram" /></a>
+            <a href="#" aria-label="Email"><img src="img/social/Mail.png" alt="Email" /></a>
+            <a href="#" aria-label="Twitter"><img src="img/social/Twitter.png" alt="Twitter" /></a>
+            <a href="#" aria-label="YouTube"><img src="img/social/Youtube.png" alt="YouTube" /></a>
+            <a href="#" aria-label="Facebook"><img src="img/social/Facebook.png" alt="Facebook" /></a>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+</div>
+</body>
+<script src="jspages/home.js" defer></script>
+
+</body>
+</html>
