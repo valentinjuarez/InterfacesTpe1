@@ -1,17 +1,29 @@
 'use strict';
 
 /**
- * normalizeText
- * Normaliza un string a minúsculas y sin acentos para comparaciones robustas.
+ * Módulo: Menú previo al juego de Blocka.
+ * - Renderiza un menú en el canvas con selección de dificultad y rompecabezas.
+ * - Ofrece ruleta de selección cuando se elige "Random".
+ * - Lanza el panel del juego o el panel de instrucciones según la interacción.
+ */
+
+/* =========================
+   UTILIDADES (fuera del scope del menú)
+   ========================= */
+/**
+ * Normaliza un texto para comparaciones (minúsculas, sin acentos).
+ * @param {string} s
+ * @returns {string}
  */
 function normalizeText(s) {
   return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 /**
- * piecesFromDifficulty
- * Devuelve la cantidad de piezas según la dificultad elegida.
+ * Devuelve cantidad de piezas estimada según dificultad.
  * Fácil=4, Normal=6, Difícil=8.
+ * @param {string} diff
+ * @returns {number}
  */
 function piecesFromDifficulty(diff) {
   const d = normalizeText(diff);
@@ -20,21 +32,22 @@ function piecesFromDifficulty(diff) {
   return 6; // normal
 }
 
+/* =========================
+   PUNTO DE ENTRADA DEL MENÚ
+   ========================= */
 /**
- * loadMenu
- * Punto de entrada del menú previo al juego.
- * - Renderiza panel con: título, selección de dificultad, grilla de imágenes y botón “JUGAR”.
- * - Maneja la ruleta cuando se elige “Random”.
- * - Lanza el gamePanel correspondiente con la configuración elegida.
+ * Carga y muestra el menú en el canvas principal.
+ * - Prepara estado/UI, assets e interacciones.
+ * - Al pulsar JUGAR, lanza el panel del juego.
  */
 function loadMenu() {
-  // Bootstrap canvas
+  // Referencias base
   const canvas = document.getElementById('myCanvas');
   if (!canvas) return;
   canvas.style.background = 'center / cover no-repeat url("assets/fondoIngame2.png")';
   const ctx = canvas.getContext('2d');
 
-  // Estado UI del menú: dificultad, lista de imágenes y selección actual
+  // Estado UI
   const ui = {
     selectedDifficulty: 'Normal',
     imagesSrc: [
@@ -44,117 +57,140 @@ function loadMenu() {
       'assets/rompecabezasNieve.png',
       'assets/rompecabezasMontaña.png',
       'assets/rompecabezasPlaya.png',
-      'assets/rompecabezasRandom.png'
+      'assets/rompecabezasRandom.png' // último = Random
     ],
     images: [],
     imageIndex: 0
   };
 
-  // Panel base y helpers de centrado (faltaban)
+  // Layout base (panel)
   const panel = { x: 0, y: 0, w: 800, h: 680 };
+  /**
+   * Centra el panel dentro del canvas.
+   */
   function centerPanel() {
     panel.x = Math.round((canvas.width - panel.w) / 2);
     panel.y = Math.round((canvas.height - panel.h) / 2);
   }
-  function centerX(w) { return Math.round(panel.x + panel.w / 2 - w / 2); }
 
-  // Variables de layout/inputs (faltaban)
+  /**
+   * Calcula X centrado para un ancho dado dentro del panel.
+   * @param {number} w
+   * @returns {number}
+   */
+  function centerX(w) {
+    return Math.round(panel.x + panel.w / 2 - w / 2);
+  }
+
+  // Elementos interactivos
+  
   let diffButtons = [];
-  let thumbsArea;              // se setea en recalcLayout
+
+  let thumbsArea;
+
   let thumbTiles = [];
+
   let hoverIndex = -1;
+ 
   let btnJugar = { x: 0, y: 0, w: 200, h: 46, label: 'JUGAR' };
+ 
   let linkInstruccionesRect = null;
 
-  // Evitar doble inicio del panel de juego
+  // Flags de control
   let gamePanelLoaded = false;
 
-  // ------------------------------------------------------
-  // Ruleta de imágenes (agrupado) — mover arriba de los handlers
-  // ------------------------------------------------------
-
-  // Estado de ruleta y timers (controlan el ciclo/espera de la animación)
+  /* =========================
+     RULETA RANDOM (estado y control)
+     ========================= */
   let isRoulette = false;
   let rouletteTimer = null;
   let rouletteEndTimer = null;
 
   /**
-   * playRandomRoulette
-   * Anima una “ruleta” sobre las miniaturas excluyendo “Random”.
-   * 1) Cicla visualmente por las opciones (120 ms) por ~1.4s.
-   * 2) Detiene en una imagen al azar (no “Random”).
-   * 3) Espera ~2.2s para suavizar la transición y ejecuta el callback con el índice final.
+   * Ejecuta la ruleta de selección para "Random".
+   * - Cicla por miniaturas (excluye la de Random) durante ~1.4s.
+   * - Se detiene en una miniatura aleatoria y, tras ~2.2s, llama al callback.
+   * @param {(finalIdx:number)=>void} done
    */
-  function playRandomRoulette(done) {
-    if (isRoulette) return;
-    isRoulette = true;
-    const total = ui.imagesSrc.length;
-    const pool = Array.from({ length: Math.max(0, total - 1) }, (_, i) => i); // 0..n-2
-    if (pool.length === 0) { isRoulette = false; done?.(0); return; }
+  // ...existing code...
+function playRandomRoulette(done) {
+  // Evita múltiples ruletas simultáneas
+  if (isRoulette) return;
+  isRoulette = true;
 
-    let i = 0;
-    rouletteTimer = setInterval(() => {
-      ui.imageIndex = pool[i++ % pool.length];
-      drawForm();
-    }, 120);
-
-    rouletteEndTimer = setTimeout(() => {
-      clearInterval(rouletteTimer); rouletteTimer = null;
-      const finalIdx = pool[Math.floor(Math.random() * pool.length)];
-      ui.imageIndex = finalIdx;
-      drawForm();
-      setTimeout(() => {
-        done?.(finalIdx); // loadGamePanel() limpiará isRoulette y timers
-      }, 2200);
-    }, 1400);
+  // Arma la lista de índices válidos (excluye el último = "Random")
+  const total = ui.imagesSrc.length;
+  const pool = Array.from({ length: Math.max(0, total - 1) }, (_, i) => i);//Todas las miniaturas menos la última
+  if (pool.length === 0) { // no hay nada para sortear
+    isRoulette = false;
+    done?.(0);
+    return;
   }
 
-  // ------------------------------------------------------
-  // Lanzadores de paneles
-  // ------------------------------------------------------
+  // Hace “girar” las miniaturas rápidamente
+  let i = 0;
+  rouletteTimer = setInterval(() => {
+    ui.imageIndex = pool[i++ % pool.length]; // avanza en bucle
+    drawForm(); // refresca UI
+  }, 120);
 
-  /**
-   * loadGamePanel
-   * Limpia listeners/timers del menú y carga el script de juego, iniciándolo con config.
-   */
+  // Programa la detención del giro
+  rouletteEndTimer = setTimeout(() => {
+    clearInterval(rouletteTimer); rouletteTimer = null;
+
+    // Selección final aleatoria
+    const finalIdx = pool[Math.floor(Math.random() * pool.length)];
+    ui.imageIndex = finalIdx;
+    drawForm();
+
+    // Espera para que el usuario vea el resultado y luego continúa
+    setTimeout(() => {
+      done?.(finalIdx); // loadGamePanel limpiará flags/timers
+    }, 2200);
+  }, 1400);
+}
+
   function loadGamePanel(config) {
     if (gamePanelLoaded) return;
     gamePanelLoaded = true;
 
-    // NUEVO: limpiar ruleta si estaba corriendo
+    // Detener ruleta si estaba corriendo
     if (rouletteTimer) { clearInterval(rouletteTimer); rouletteTimer = null; }
     if (rouletteEndTimer) { clearTimeout(rouletteEndTimer); rouletteEndTimer = null; }
     isRoulette = false;
 
-    const canvas = document.getElementById('myCanvas');
+    // Desregistrar eventos del menú
     if (canvas) {
       canvas.removeEventListener('click', onCanvasClick);
       canvas.removeEventListener('mousemove', onCanvasMove);
       canvas.removeEventListener('mouseleave', onCanvasLeave);
     }
 
+    // Feedback de carga
     try {
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#111827';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#fff';
-      ctx.font = '600 18px Poppins, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('Cargando juego...', canvas.width / 2, canvas.height / 2);
+      const ctx2 = canvas.getContext('2d');
+      ctx2.clearRect(0, 0, canvas.width, canvas.height);
+      ctx2.fillStyle = '#12347eff';
+      ctx2.fillRect(0, 0, canvas.width, canvas.height);
+      ctx2.fillStyle = '#fff';
+      ctx2.font = '600 18px Poppins, sans-serif';
+      ctx2.textAlign = 'center';
+      ctx2.textBaseline = 'middle';
+      ctx2.fillText('Cargando juego...', canvas.width / 2, canvas.height / 2);
     } catch {}
 
+    // Guardar config
     window.__gameConfig = config;
     try { sessionStorage.setItem('gameConfig', JSON.stringify(config)); } catch {}
 
+    // Cargar script del panel del juego
     const script = document.createElement('script');
     script.src = 'js/game/gamePanel.js';
     script.onload = () => {
       if (typeof window.startGamePanel === 'function') {
         try {
-          const ctx = canvas.getContext('2d');
-          window.startGamePanel(canvas, ctx, config);
+          const ctx2 = canvas.getContext('2d');
+          window.startGamePanel(canvas, ctx2, config);
         } catch (e) {
           console.error('Error al iniciar el panel de juego:', e);
         }
@@ -165,12 +201,9 @@ function loadMenu() {
   }
 
   /**
-   * loadInstructionsPanel
    * Limpia listeners del menú y muestra el panel de instrucciones.
    */
   function loadInstructionsPanel() {
-    // quitar listeners del menú
-    const canvas = document.getElementById('myCanvas');
     if (canvas) {
       canvas.removeEventListener('click', onCanvasClick);
       canvas.removeEventListener('mousemove', onCanvasMove);
@@ -181,8 +214,8 @@ function loadMenu() {
     script.onload = () => {
       if (typeof window.startInstructionsPanel === 'function') {
         try {
-          const ctx = canvas.getContext('2d');
-          window.startInstructionsPanel(canvas, ctx);
+          const ctx2 = canvas.getContext('2d');
+          window.startInstructionsPanel(canvas, ctx2);
         } catch (e) { console.error('Error al iniciar instrucciones:', e); }
       }
     };
@@ -190,16 +223,14 @@ function loadMenu() {
     document.head.appendChild(script);
   }
 
-  // ------------------------------------------------------
-  // Layout del panel principal (posiciones y medidas)
-  // ------------------------------------------------------
-
+  /* =========================
+     LAYOUT DEL PANEL
+     ========================= */
   /**
-   * recalcLayout
-   * Recalcula posiciones del panel y controles según el tamaño del canvas.
+   * Recalcula posiciones (dificultad, grilla, botón JUGAR) según el canvas.
    */
   function recalcLayout() {
-    const dW = 120, dH = 40, dGap = 30, dY = panel.y + 200;
+    const dW = 120, dH = 40, dGap = 30, dY = panel.y + 200;//btn dificulta
     const dMidX = centerX(dW);
     diffButtons = [
       { x: dMidX - (dW + dGap), y: dY, w: dW, h: dH, label: 'Fácil',   value: 'Fácil',   group: 'diff' },
@@ -208,28 +239,31 @@ function loadMenu() {
     ];
 
     const marginX = 40;
-    thumbsArea = { x: panel.x + marginX, y: panel.y + 320, w: panel.w - marginX * 2, h: 180 };
+    thumbsArea = { x: panel.x + marginX, y: panel.y + 340, w: panel.w - marginX * 2, h: 180 };//posición grilla
 
     btnJugar = { x: centerX(200), y: panel.y + 550, w: 200, h: 46, label: 'JUGAR' };
   }
 
-  // ------------------------------------------------------
-  // Carga asíncrona de imágenes (título y miniaturas)
-  // ------------------------------------------------------
-
-  // Contador de recursos cargados y callback al completar
-  // checkImagesLoaded: cada imagen que carga avanza el contador; cuando todas están OK, inicia el menú.
+  /* =========================
+     CARGA DE RECURSOS (imágenes)
+     ========================= */
   let imagesLoaded = 0;
   const imgTitulo = new Image();
   const totalToLoad = 1 + ui.imagesSrc.length;
+  /**
+   * Incrementa el contador de cargas y arranca el menú al completar.
+   */
   function checkImagesLoaded() {
     imagesLoaded++;
     if (imagesLoaded === totalToLoad) iniciarMenu();
   }
+
+  // Cargar título
   imgTitulo.addEventListener('load', checkImagesLoaded);
   imgTitulo.addEventListener('error', (e) => { console.error('No se pudo cargar la imagen del título', e); checkImagesLoaded(); });
   imgTitulo.src = 'assets/tituloBlocka.png';
 
+  // Cargar miniaturas
   ui.images = ui.imagesSrc.map(src => {
     const im = new Image();
     im.addEventListener('load', checkImagesLoaded);
@@ -238,14 +272,12 @@ function loadMenu() {
     return im;
   });
 
-  // ------------------------------------------------------
-  // Arranque del menú
-  // ------------------------------------------------------
-
+  /* =========================
+     INICIO DEL MENÚ
+     ========================= */
   /**
-   * iniciarMenu
-   * Inicializa y dibuja el menú una vez que todo está cargado.
-   * Si existe un “startMenu” externo, lo usa para permitir wrappers.
+   * Inicializa layout y dibuja la primera pantalla.
+   * Si existe window.startMenu externo, lo usa.
    */
   function iniciarMenu() {
     centerPanel();
@@ -254,8 +286,9 @@ function loadMenu() {
     if (typeof window.startMenu === 'function') {
       window.startMenu(ctx, canvas);
     } else {
+      // Fallback visual mínimo (no se usa normalmente)
       ctx.save();
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillStyle = 'rgba(108, 54, 54, 0.4)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 32px Poppins, sans-serif';
@@ -265,13 +298,11 @@ function loadMenu() {
     }
   }
 
-  // ------------------------------------------------------
-  // Dibujo principal del formulario y utilitarios
-  // ------------------------------------------------------
-
+  /* =========================
+     DIBUJO DEL FORMULARIO COMPLETO
+     ========================= */
   /**
-   * drawForm
-   * Redibuja el panel del menú completo: panel, título, subtítulos, botones, grilla y botón JUGAR.
+   * Redibuja el menú completo: panel, título, subtítulos, controles y botón JUGAR.
    */
   function drawForm() {
     centerPanel();
@@ -280,45 +311,45 @@ function loadMenu() {
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Fondo del panel
     ctx.fillStyle = 'rgba(25, 99, 195, 0.85)';
     ctx.fillRect(panel.x, panel.y, panel.w, panel.h);
 
+    // Título "Blocka"
     drawTitleImage();
 
+    // Subtítulos
     const subtPad = 24;
-    drawSubtitulo(diffButtons[0] ? diffButtons[0].y - subtPad : panel.y + 150, 'Dificultad');
+    drawSubtitulo(diffButtons[0] ? diffButtons[0].y - subtPad : panel.y + 150, 'Dificultad');//Alineado con botones de dificultad
     drawSubtitulo(thumbsArea.y - subtPad, 'Rompecabezas');
 
+    // Botones de dificultad
     diffButtons.forEach(b => drawButton(b, ui.selectedDifficulty === b.value));
+
+    // Grilla de miniaturas
     drawThumbnailsGrid();
 
-    // Link "Instrucciones" sobre el botón JUGAR
+    // Link "¿Cómo jugar?" y botón JUGAR
     drawLinkInstrucciones();
-
     drawButtonJugar();
 
     ctx.restore();
   }
 
-  /**
-   * pointInRect
-   * Utils de hit-testing para clicks/hover.
-   */
-  function pointInRect(px, py, r) {
+  /* =========================
+     HELPERS / HIT-TEST
+     ========================= */
+ 
+  function pointInRect(px, py, r) {//verifica si un punto está dentro de un rectángulo
     return px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h;
   }
 
-  // ------------------------------------------------------
-  // Interacción (click/hover)
-  // ------------------------------------------------------
-
-  /**
-   * onCanvasClick
-   * Maneja clicks en dificultad, miniaturas, link de instrucciones y botón JUGAR.
-   * Si está seleccionada la imagen random, ejecuta la ruleta antes de lanzar el juego.
-   */
+  /* =========================
+     INTERACCIÓN (event handlers)
+     ========================= */
+  
   function onCanvasClick(ev) {
-    if (isRoulette) return; // bloquear clicks durante ruleta
+    if (isRoulette) return; // bloquear durante ruleta
     centerPanel();
     recalcLayout();
 
@@ -326,7 +357,8 @@ function loadMenu() {
     const mx = (ev.clientX - rect.left) * (canvas.width / rect.width);
     const my = (ev.clientY - rect.top) * (canvas.height / rect.height);
 
-    for (const b of diffButtons) {
+    // Dificultad
+    for (const b of diffButtons) {//verifica si se hizo click en un botón de dificultad
       if (pointInRect(mx, my, b)) {
         ui.selectedDifficulty = b.value;
         drawForm();
@@ -334,7 +366,8 @@ function loadMenu() {
       }
     }
 
-    for (const t of thumbTiles) {
+    // Miniaturas
+    for (const t of thumbTiles) {//verifica si se hizo click en una miniatura
       if (pointInRect(mx, my, t.rect)) {
         ui.imageIndex = t.index;
         drawForm();
@@ -342,18 +375,21 @@ function loadMenu() {
       }
     }
 
+    // Link "¿Cómo jugar?"
+    // Verifica si se hizo click en el link de instrucciones
     if (linkInstruccionesRect && pointInRect(mx, my, linkInstruccionesRect)) {
       loadInstructionsPanel();
       return;
     }
 
+    // Botón JUGAR
     if (pointInRect(mx, my, btnJugar)) {
       const isRandomSelected =
         ui.imageIndex === ui.imagesSrc.length - 1 ||
         (ui.imagesSrc[ui.imageIndex] || '').toLowerCase().includes('random');
 
       if (isRandomSelected) {
-        // Ejecutar ruleta y luego iniciar juego con la imagen elegida
+        // Ruleta y luego iniciar juego con el índice final
         playRandomRoulette((finalIdx) => {
           const config = {
             difficulty: ui.selectedDifficulty,
@@ -366,7 +402,7 @@ function loadMenu() {
         return;
       }
 
-      // Flujo normal (no-random) simplificado
+      // Flujo normal
       const chosenImageIndex = ui.imageIndex;
       const config = {
         difficulty: ui.selectedDifficulty,
@@ -380,17 +416,18 @@ function loadMenu() {
   }
 
   /**
-   * onCanvasMove
-   * Maneja el hover sobre miniaturas (resalta) mientras no esté corriendo la ruleta.
+   * Maneja el movimiento del mouse sobre el canvas.
+   * @param {MouseEvent} ev
    */
-  function onCanvasMove(ev) {
-    if (isRoulette) return; // bloquear hover durante ruleta
+  function onCanvasMove(ev) {//actualiza el hover sobre las miniaturas
+    if (isRoulette) return;
     centerPanel();
     recalcLayout();
 
     const rect = canvas.getBoundingClientRect();
     const mx = (ev.clientX - rect.left) * (canvas.width / rect.width);
     const my = (ev.clientY - rect.top) * (canvas.height / rect.height);
+
     let newHover = -1;
     for (let i = 0; i < thumbTiles.length; i++) {
       if (pointInRect(mx, my, thumbTiles[i].rect)) { newHover = i; break; }
@@ -402,10 +439,9 @@ function loadMenu() {
   }
 
   /**
-   * onCanvasLeave
-   * Limpia el hover al salir del canvas.
+   * Maneja el evento cuando el mouse sale del canvas.
    */
-  function onCanvasLeave() {
+  function onCanvasLeave() {//limpia el hover cuando el mouse sale del canvas
     if (isRoulette) return;
     if (hoverIndex !== -1) {
       hoverIndex = -1;
@@ -413,16 +449,11 @@ function loadMenu() {
     }
   }
 
-  // ------------------------------------------------------
-  // Exponer/arrancar menú
-  // ------------------------------------------------------
-
-  /**
-   * startMenu
-   * Expone el dibujado y registra listeners del menú en el canvas recibido.
-   */
+  /* =========================
+     EXPOSE: startMenu (para wrappers externos)
+     ========================= */
   window.startMenu = function (ctxExtern, canvasExtern) {
-    drawForm();
+    drawForm();//inicia el dibujo del menú
     canvasExtern.removeEventListener('click', onCanvasClick);
     canvasExtern.addEventListener('click', onCanvasClick);
     canvasExtern.removeEventListener('mousemove', onCanvasMove);
@@ -431,13 +462,11 @@ function loadMenu() {
     canvasExtern.addEventListener('mouseleave', onCanvasLeave);
   };
 
-  // ------------------------------------------------------
-  // Dibujo de elementos individuales (controles y grilla)
-  // ------------------------------------------------------
-
+  /* =========================
+     DIBUJO: componentes
+     ========================= */
   /**
-   * drawSubtitulo
-   * Dibuja un subtítulo centrado dentro del panel (ej: “Dificultad”, “Rompecabezas”).
+   * Dibuja un subtítulo en una posición Y dada.
    */
   function drawSubtitulo(y, text) {
     ctx.fillStyle = '#0e0e0e';
@@ -446,11 +475,8 @@ function loadMenu() {
     ctx.fillText(text, panel.x + panel.w / 2, y);
   }
 
-  /**
-   * drawRoundedRect
-   * Construye el path de un rectángulo redondeado (se usa junto a fill/stroke/clip).
-   */
-  function drawRoundedRect(x, y, w, h, r) {
+  
+  function drawRoundedRect(x, y, w, h, r) {//redondea el rectangulo
     ctx.beginPath();
     ctx.moveTo(x + r, y);
     ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -460,29 +486,25 @@ function loadMenu() {
     ctx.closePath();
   }
 
-  /**
-   * drawButton
-   * Dibuja un botón de dificultad (estados: seleccionado / normal).
-   */
+
   function drawButton(b, selected) {
     ctx.save();
     drawRoundedRect(b.x, b.y, b.w, b.h, 10);
-    ctx.fillStyle = selected ? '#7C3AED' : '#FFFFFF';
+    ctx.fillStyle = selected ? '#7C3AED' : '#FFFFFF';//fondo del botón
     ctx.fill();
     ctx.lineWidth = 2;
-    ctx.strokeStyle = selected ? '#4A1F85' : '#C5C2C2';
+    ctx.strokeStyle = selected ? '#4A1F85' : '#C5C2C2';//borde del botón
     ctx.stroke();
-    ctx.fillStyle = selected ? '#fff' : '#1F1D1D';
+    ctx.fillStyle = selected ? '#fff' : '#1F1D1D';//color del texto
     ctx.font = '600 16px Poppins, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(b.label, b.x + b.w / 2, b.y + b.h / 2);
+    ctx.fillText(b.label, b.x + b.w / 2, b.y + b.h / 2);//pos del texto
     ctx.restore();
   }
 
   /**
-   * drawButtonJugar
-   * Dibuja el botón primario “JUGAR”.
+   * Dibuja el botón "JUGAR" con estilo destacado.
    */
   function drawButtonJugar() {
     ctx.save();
@@ -501,38 +523,38 @@ function loadMenu() {
   }
 
   /**
-   * drawTitleImage
-   * Dibuja el logo/título “Blocka” ajustado al ancho del panel.
+   * Dibuja la imagen del título "Blocka" en la parte superior del panel.
    */
   function drawTitleImage() {
     if (!imgTitulo || !imgTitulo.naturalWidth) return;
     const paddingX = 40, topPad = 40, maxH = 100;
+    
     const availW = panel.w - paddingX * 2;
     const scale = Math.min(availW / imgTitulo.width, maxH / imgTitulo.height);
     const destW = Math.round(imgTitulo.width * scale);
     const destH = Math.round(imgTitulo.height * scale);
     const dx = centerX(destW);
     const dy = Math.round(panel.y + topPad);
+
     ctx.save();
-    const prev = ctx.imageSmoothingEnabled;
-    ctx.imageSmoothingEnabled = false;
     ctx.drawImage(imgTitulo, dx, dy, destW, destH);
-    ctx.imageSmoothingEnabled = prev;
     ctx.restore();
   }
 
   /**
-   * drawThumbnailsGrid
-   * Dibuja la grilla de miniaturas de rompecabezas (incluye el marco de selección y hover).
+   * Dibuja la grilla de miniaturas de rompecabezas.
    */
   function drawThumbnailsGrid() {
     const n = ui.images.length;
-    const cols = Math.min(4, Math.max(2, n));
+    const cols = Math.min(4, Math.max(2, n));//cantidad de columnas
     const rows = Math.ceil(n / cols);
     const gap = 12;
-    const tileW = Math.floor((thumbsArea.w - gap * (cols + 1)) / cols);
-    const tileH = Math.floor((thumbsArea.h - gap * (rows + 1)) / rows);
 
+    // Dimension de contenedor
+    const tileW = Math.floor((thumbsArea.w - gap * (cols + 1)) / cols);//ancho de cada miniatura
+    const tileH = Math.floor((thumbsArea.h - gap * (rows + 1)) / rows);//alto de cada miniatura
+
+   
     thumbTiles = [];
     for (let i = 0; i < n; i++) {
       const col = i % cols;
@@ -540,9 +562,12 @@ function loadMenu() {
       const x = Math.round(thumbsArea.x + gap + col * (tileW + gap));
       const y = Math.round(thumbsArea.y + gap + row * (tileH + gap));
 
+      // Imagen con cover
       ctx.save();
       drawRoundedRect(x, y, tileW, tileH, 8);
+      
       ctx.clip();
+      
       const img = ui.images[i];
       if (img && img.complete && img.naturalWidth) {
         const iw = img.naturalWidth, ih = img.naturalHeight;
@@ -558,11 +583,13 @@ function loadMenu() {
       }
       ctx.restore();
 
+      // Borde base
       drawRoundedRect(x, y, tileW, tileH, 8);
       ctx.strokeStyle = '#C5C2C2';
       ctx.lineWidth = 1;
       ctx.stroke();
 
+      // Modo Activo
       if (i === ui.imageIndex) {
         ctx.save();
         drawRoundedRect(x - 2, y - 2, tileW + 4, tileH + 4, 10);
@@ -572,6 +599,7 @@ function loadMenu() {
         ctx.restore();
       }
 
+      // Hover
       if (i === hoverIndex) {
         ctx.save();
         drawRoundedRect(x, y, tileW, tileH, 8);
@@ -590,8 +618,7 @@ function loadMenu() {
   }
 
   /**
-   * drawLinkInstrucciones
-   * Dibuja el link “¿Cómo jugar?” sobre el botón “JUGAR” y guarda su rect para clics.
+   * Dibuja el link de instrucciones "¿Cómo jugar?" sobre el botón JUGAR.
    */
   function drawLinkInstrucciones() {
     const label = '¿Cómo jugar?';
@@ -602,15 +629,15 @@ function loadMenu() {
     ctx.font = '600 16px Poppins, sans-serif';
     const textW = Math.ceil(ctx.measureText(label).width);
     const padX = 8, padY = 6;
-    const rect = { x: Math.round(cx - textW / 2) - padX, y: y - padY, w: textW + padX * 2, h: 22 + padY * 2 };
+    const rect = { x: Math.round(cx - textW / 2) - padX, y: y - padY, w: textW + padX * 2, h: 22 + padY * 2 };//rectangulo clickable
 
-    // texto
+    // Texto
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillText(label, cx, y);
 
-    // subrayado sutil
+    // Subrayado
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -623,20 +650,10 @@ function loadMenu() {
   }
 }
 
-// ------------------------------------------------------
-// Export y bootstrap del menú
-// ------------------------------------------------------
-
-/**
- * loadMenu
- * Se expone globalmente para ser llamado desde otros paneles (volver al menú).
- */
+/* =========================
+   EXPORTS Y BOOTSTRAP
+   ========================= */
 window.loadMenu = loadMenu;
-
-/**
- * DOMContentLoaded
- * Inicializa el menú cuando el DOM está listo.
- */
 document.addEventListener('DOMContentLoaded', () => {
   loadMenu();
 });
