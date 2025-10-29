@@ -25,7 +25,7 @@ const FONT = {
 };
 const ICON = { pad: 12, gap: 8, size: 38 };
 const GRID_GAP = 4;
-const TIMER_LVL3_SECONDS = 60;
+const TIMER_LVL3_SECONDS = 6;
 
 // Normaliza texto a minúsculas y sin acentos
 function normalizarTexto(s) {
