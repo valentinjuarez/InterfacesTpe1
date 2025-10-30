@@ -12,7 +12,7 @@ let iconoAyudita = null;
 
 /** Constantes de UI y juego (reutilizables) */
 const COLORS = {
-  panelBg: 'rgba(25, 99, 195, 0.85)',
+  panelBg: 'rgba(25, 99, 195, 0.5)',
   btnPrimary: '#7C3AED',
   btnPrimaryStroke: '#4A1F85',
   successStroke: '#22C55E',
@@ -27,7 +27,43 @@ const FONT = {
 };
 const ICON = { pad: 12, gap: 8, size: 38 };
 const GRID_GAP = 4;
-const TIMER_LVL3_SECONDS = 6;
+const TIMER_LVL3_SECONDS = 60;
+
+
+
+function aplicarFiltroImagenOffscreen(imagen, nivel) {
+  const w = imagen.naturalWidth || imagen.width;
+  const h = imagen.naturalHeight || imagen.height;
+  const oc = document.createElement('canvas');
+  oc.width = w;
+  oc.height = h;
+  const octx = oc.getContext('2d');
+  octx.drawImage(imagen, 0, 0, w, h);
+
+  const imgData = octx.getImageData(0, 0, w, h);
+  const data = imgData.data;
+  for (let y = 0; y < h; y++) {
+    let idx = y * w * 4;
+    for (let x = 0; x < w; x++, idx += 4) {
+      const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+      if (nivel === 1) {
+        const lum = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+        data[idx] = data[idx + 1] = data[idx + 2] = lum;
+      } else if (nivel === 2) {
+        data[idx] = Math.round(r * 0.3);
+        data[idx + 1] = Math.round(g * 0.3);
+        data[idx + 2] = Math.round(b * 0.3);
+      } else if (nivel === 3) {
+        data[idx] = 255 - r;
+        data[idx + 1] = 255 - g;
+        data[idx + 2] = 255 - b;
+      }
+      // alpha se mantiene
+    }
+  }
+  octx.putImageData(imgData, 0, 0);
+  return oc;
+}
 
 // ========= Utilidades básicas (texto, filtros, grilla, coords) =========
 
@@ -144,48 +180,50 @@ function dibujarImagenConBorde(ctx, imagen, pos, alpha) {
   ctx.restore();
 }
 
-/** Dibuja la imagen en una grilla con separaciones, rotaciones y filtro por nivel. */
+/** Dibuja la imagen en una grilla con separaciones, rotaciones y filtro por nivel aplicado por pixel. */
 function dibujarImagenEnGrilla(ctx, imagen, pos, cols, rows, rotaciones, nivel) {
-  const separacion = GRID_GAP;
-  const iw = imagen.naturalWidth, ih = imagen.naturalHeight;
-  const anchoCelda = (pos.w - (cols - 1) * separacion) / cols;
-  const altoCelda = (pos.h - (rows - 1) * separacion) / rows;
+	const separacion = GRID_GAP;
+	const iw = imagen.naturalWidth, ih = imagen.naturalHeight;
+	const anchoCelda = (pos.w - (cols - 1) * separacion) / cols;
+	const altoCelda = (pos.h - (rows - 1) * separacion) / rows;
 
-  ctx.save();
-  ctx.filter = obtenerFiltroPorNivel(nivel);
-  ctx.beginPath();
-  ctx.rect(Math.round(pos.dx), Math.round(pos.dy), Math.round(pos.w), Math.round(pos.h));//rectángulo de recorte
-  ctx.clip();
+	ctx.save();
+	// Fuente filtrada generada por píxel (doble for)
+	const fuenteFiltrada = aplicarFiltroImagenOffscreen(imagen, nivel);
+	ctx.beginPath();
+	ctx.rect(Math.round(pos.dx), Math.round(pos.dy), Math.round(pos.w), Math.round(pos.h)); // rectángulo de recorte
+	ctx.clip();
 
-  let idx = 0;
-  for (let fila = 0; fila < rows; fila++) {
-    for (let col = 0; col < cols; col++, idx++) {
-      //parte de la imagen recortar
-      const sx0 = Math.floor(col * iw / cols);
-      const sx1 = Math.floor((col + 1) * iw / cols);
-      const sy0 = Math.floor(fila * ih / rows);
-      const sy1 = Math.floor((fila + 1) * ih / rows);
-      const sw = sx1 - sx0, sh = sy1 - sy0;
-      //posición destino en el canvas
-      const dx = pos.dx + col * (anchoCelda + separacion);
-      const dy = pos.dy + fila * (altoCelda + separacion);
-      const cx = Math.round(dx + anchoCelda / 2);
-      const cy = Math.round(dy + altoCelda / 2);
+	let idx = 0;
+	for (let fila = 0; fila < rows; fila++) {
+		for (let col = 0; col < cols; col++, idx++) {
+			// parte de la imagen a recortar (coordenadas en la fuente original)
+			const sx0 = Math.floor(col * iw / cols);
+			const sx1 = Math.floor((col + 1) * iw / cols);
+			const sy0 = Math.floor(fila * ih / rows);
+			const sy1 = Math.floor((fila + 1) * ih / rows);
+			const sw = sx1 - sx0, sh = sy1 - sy0;
+			// posición destino en el canvas
+			const dx = pos.dx + col * (anchoCelda + separacion);
+			const dy = pos.dy + fila * (altoCelda + separacion);
+			const cx = Math.round(dx + anchoCelda / 2);
+			const cy = Math.round(dy + altoCelda / 2);
 
-      const k = rotaciones ? (rotaciones[idx] % 4 + 4) % 4 : Math.floor(Math.random() * 4);
-      const ang = k * Math.PI / 2;//convierte el numero a radiales
-      const destW = Math.round((k % 2) ? altoCelda : anchoCelda);
-      const destH = Math.round((k % 2) ? anchoCelda : altoCelda);
+			const k = rotaciones ? (rotaciones[idx] % 4 + 4) % 4 : Math.floor(Math.random() * 4);
+			const ang = k * Math.PI / 2; // convierte el numero a radiales
+			const destW = Math.round((k % 2) ? altoCelda : anchoCelda);
+			const destH = Math.round((k % 2) ? anchoCelda : altoCelda);
 
-      ctx.save();
-      if (estadoPuzzle?.piezasBloqueadas?.has(idx)) ctx.filter = 'none';
-      ctx.translate(cx, cy);
-      ctx.rotate(ang);
-      ctx.drawImage(imagen, sx0, sy0, sw, sh, Math.round(-destW / 2), Math.round(-destH / 2), destW, destH);
-      ctx.restore();
-    }
-  }
-  ctx.restore();
+			ctx.save();
+			// Si la pieza está bloqueada, dibujamos desde la imagen original (sin filtro).
+			const fuente = (estadoPuzzle?.piezasBloqueadas?.has(idx)) ? imagen : fuenteFiltrada;
+			ctx.translate(cx, cy);
+			ctx.rotate(ang);
+			ctx.drawImage(fuente, sx0, sy0, sw, sh, Math.round(-destW / 2), Math.round(-destH / 2), destW, destH);
+			ctx.restore();
+		}
+	}
+	ctx.restore();
 }
 
 // ========= Timers y badges =========

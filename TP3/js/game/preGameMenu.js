@@ -44,7 +44,7 @@ function loadMenu() {
   // Referencias base
   const canvas = document.getElementById('myCanvas');
   if (!canvas) return;
-  canvas.style.background = 'center / cover no-repeat url("assets/fondoIngame2.png")';
+
   const ctx = canvas.getContext('2d');
 
   // Estado UI
@@ -312,7 +312,7 @@ function playRandomRoulette(done) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Fondo del panel
-    ctx.fillStyle = 'rgba(25, 99, 195, 0.85)';
+    ctx.fillStyle = 'rgba(25, 99, 195, 0.5)';
     ctx.fillRect(panel.x, panel.y, panel.w, panel.h);
 
     // Título "Blocka"
