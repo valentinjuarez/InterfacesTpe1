@@ -91,18 +91,177 @@ export default class Tablero {
         }
         return celda;
   }
+   
+  
     setFichaEn(r, c, ficha) {
     const celda = this.getCelda(r, c);
+
+    // Solo actúa si la celda existe, es válida y ficha no es null
     if (celda !== null && celda.estado !== 'invalida') {
-      celda.ficha = ficha;
-      celda.estado = ficha === null ? 'vacia' : 'ocupada';
+      if (ficha !== null) {
+        celda.ficha = ficha;
+        celda.estado = 'ocupada';
+      }
     }
   }
-    quitarFichaEn(r, c) {
+
+  quitarFichaEn(r, c) {
     const celda = this.getCelda(r, c);
+
+    // Solo actúa si la celda existe, es válida y tiene una ficha
     if (celda !== null && celda.estado !== 'invalida') {
-      celda.ficha = null;
-      celda.estado = 'vacia';
-        }
+      if (celda.ficha !== null) {
+        celda.ficha = null;
+        celda.estado = 'vacia';
+      }
     }
+  }
+
+
+
+  // ---------- Reglas ----------
+  movimientosLegalesDesde(r, c) {
+    const lista = [];
+    const origen = this.getCelda(r, c);
+
+    let puedeCalcular = false;
+    if (origen !== null) {
+      if (origen.estado !== 'invalida') {
+        if (origen.ficha !== null) {
+          puedeCalcular = true;
+        }
+      }
+    }
+
+    if (puedeCalcular) {
+      let i = 0;
+      while (i < DIRS.length) {
+        const d = DIRS[i];
+        const overR = r + d.dr;
+        const overC = c + d.dc;
+        const toR = r + 2 * d.dr;
+        const toC = c + 2 * d.dc;
+
+        const valOver = this.esCoordValida(overR, overC);
+        const valTo = this.esCoordValida(toR, toC);
+
+        if (valOver && valTo) {
+          const over = this.getCelda(overR, overC);
+          const dest = this.getCelda(toR, toC);
+
+          let condOver = false;
+          let condDest = false;
+
+          if (over !== null) {
+            if (over.estado !== 'invalida') {
+              if (over.ficha !== null) {
+                condOver = true;
+              }
+            }
+          }
+          if (dest !== null) {
+            if (dest.estado !== 'invalida') {
+              if (dest.ficha === null) {
+                condDest = true;
+              }
+            }
+          }
+
+          if (condOver && condDest) {
+            const mov = new Movimiento(
+              { r: r, c: c },
+              { r: overR, c: overC },
+              { r: toR, c: toC }
+            );
+            lista.push(mov);
+          }
+        }
+        i = i + 1;
+      }
+    }
+
+    return lista;
+    // (no se usan returns dentro de bucles)
+  }
+
+  aplicarMovimiento(mov) {
+    const from = this.getCelda(mov.from.r, mov.from.c);
+    const over = this.getCelda(mov.over.r, mov.over.c);
+    const to = this.getCelda(mov.to.r, mov.to.c);
+
+    let pieza = null;
+    if (from !== null) {
+      pieza = from.ficha;
+    }
+
+    if (to !== null && to.estado !== 'invalida') {
+      to.ficha = pieza;
+      to.estado = pieza === null ? 'vacia' : 'ocupada';
+    }
+
+    if (from !== null && from.estado !== 'invalida') {
+      from.ficha = null;
+      from.estado = 'vacia';
+    }
+
+    if (over !== null && over.estado !== 'invalida') {
+      over.ficha = null;
+      over.estado = 'vacia';
+    }
+  }
+
+  hayMovimientosPosibles() {
+    let hay = false;
+    let r = 0;
+    while (r < this.rows) {
+      let c = 0;
+      while (c < this.cols) {
+        const celda = this.grid[r][c];
+        let candidata = false;
+
+        if (celda.estado !== 'invalida') {
+          if (celda.ficha !== null) {
+            candidata = true;
+          }
+        }
+
+        if (candidata) {
+          const moves = this.movimientosLegalesDesde(r, c);
+          if (moves.length > 0) {
+            hay = true;
+          }
+        }
+
+        c = c + 1;
+      }
+      r = r + 1;
+    }
+    return hay;
+  }
+
+  contarFichas() {
+    let cnt = 0;
+    let r = 0;
+    while (r < this.rows) {
+      let c = 0;
+      while (c < this.cols) {
+        const celda = this.grid[r][c];
+        if (celda.estado !== 'invalida') {
+          if (celda.ficha !== null) {
+            cnt = cnt + 1;
+          }
+        }
+        c = c + 1;
+      }
+      r = r + 1;
+    }
+    return cnt;
+  }
+
+  dimensiones() {
+    return { rows: this.rows, cols: this.cols };
+  }
+
+  
 }
+
