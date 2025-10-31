@@ -1,84 +1,59 @@
 export default class PreGameMenu {
+  // Clase que representa el menú previo al inicio del juego (pantalla con título y botón "JUGAR")
   constructor(ctx, onStart) {
-    this.ctx = ctx;
-    this.onStart = onStart;
+    this.ctx = ctx;           // contexto 2D del canvas donde se dibuja el menú
+    this.onStart = onStart;   // callback que se ejecuta cuando se pulsa el botón de iniciar
 
-    this.w = ctx.canvas.width;
-    this.h = ctx.canvas.height;
+    this.w = ctx.canvas.width;  // ancho del canvas
+    this.h = ctx.canvas.height; // alto del canvas
 
-    // botón centrado
+    // botón centrado y estado hover mínimo
+    // btn guarda la posición y tamaño del rectángulo clicable del botón
     this.btn = { x: this.w / 2 - 110, y: this.h / 2 + 30, w: 220, h: 60 };
-    this.hover = false;
+    this.hover = false; // indica si el cursor está sobre el botón
   }
 
+  // Actualiza el estado hover en función de la posición del ratón
   onMouseMove(mouseX, mouseY) {
     const b = this.btn;
-    const dentroX = mouseX >= b.x && mouseX <= b.x + b.w;
-    const dentroY = mouseY >= b.y && mouseY <= b.y + b.h;
-    this.hover = (dentroX && dentroY);
+    this.hover = mouseX >= b.x && mouseX <= b.x + b.w &&
+                 mouseY >= b.y && mouseY <= b.y + b.h;
   }
 
+  // Maneja el evento de click: si se hizo click dentro del botón, ejecuta el callback onStart
   onClick(mouseX, mouseY) {
     const b = this.btn;
-    const dentroX = mouseX >= b.x && mouseX <= b.x + b.w;
-    const dentroY = mouseY >= b.y && mouseY <= b.y + b.h;
-    const clicEnBoton = (dentroX && dentroY);
-    if (clicEnBoton) {
+    if (mouseX >= b.x && mouseX <= b.x + b.w &&
+        mouseY >= b.y && mouseY <= b.y + b.h) {
       this.onStart();
     }
   }
 
-  draw(timestamp) {
+  // Dibuja el menú en el canvas: título, botón y texto del botón
+  draw() {
     const ctx = this.ctx;
 
     // Título
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-
     ctx.font = 'bold 56px Arial';
+    // Texto grande centrado en la mitad superior de la pantalla
     ctx.fillText('Peg Solitaire', this.w / 2, this.h / 2 - 60);
 
-    // Botón “JUGAR” (con leve pulso en hover)
+    // Botón simple
     const b = this.btn;
-    let escala = 1.0;
-    if (this.hover) {
-      const t = Math.sin((timestamp || 0) / 200.0);
-      escala = 1.0 + 0.02 * (0.5 + 0.5 * t);
-    }
-
-    const cx = b.x + b.w / 2;
-    const cy = b.y + b.h / 2;
-    const w = b.w * escala;
-    const h = b.h * escala;
-    const x = cx - w / 2;
-    const y = cy - h / 2;
-
-    // botón
-    this._roundRect(ctx, x, y, w, h, 12);
+    // Color del botón cambia si está en estado hover
     ctx.fillStyle = this.hover ? '#ffd60a' : '#ffb703';
-    ctx.fill();
+    ctx.fillRect(b.x, b.y, b.w, b.h);
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#000000';
-    ctx.stroke();
+    ctx.strokeRect(b.x, b.y, b.w, b.h);
 
-    // texto del botón
+    // Texto del botón
     ctx.fillStyle = '#000000';
     ctx.font = 'bold 26px Arial';
-    ctx.fillText('JUGAR', cx, cy);
-  }
-
-  _roundRect(ctx, x, y, w, h, r) {
-    let rr = r;
-    if (w < 2 * rr) { rr = w / 2; }
-    if (h < 2 * rr) { rr = h / 2; }
-
-    ctx.beginPath();
-    ctx.moveTo(x + rr, y);
-    ctx.arcTo(x + w, y,     x + w, y + h, rr);
-    ctx.arcTo(x + w, y + h, x,     y + h, rr);
-    ctx.arcTo(x,     y + h, x,     y,     rr);
-    ctx.arcTo(x,     y,     x + w, y,     rr);
-    ctx.closePath();
+    // Texto centrado dentro del rectángulo del botón
+    ctx.fillText('JUGAR', b.x + b.w / 2, b.y + b.h / 2);
   }
 }
