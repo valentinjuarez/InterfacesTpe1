@@ -27,3 +27,7 @@ export default class AppView {
     }
   }
 }
+
+// MVC: View (orquestador de sub-views)
+// Responsabilidad: dibujar fondo/estructura y delegar a menuView o boardView para sus contenidos.
+// - Evitar que main manipule estilos del canvas; AppView puede aplicar estilos visuales en render().

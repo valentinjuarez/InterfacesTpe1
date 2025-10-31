@@ -1,3 +1,8 @@
+// MVC: Input adapter (no parte estricta del modelo MVC, pero complementa)
+// Responsabilidad: convertir eventos DOM a coordenadas sobre el canvas y delegar a la view correspondiente.
+// - Mantener aquí listeners y el cálculo de escala CSS->canvas.
+// - No implementar reglas de juego aquí; solo delegar a view/controller.
+
 export default class InputController {
   constructor(canvas, menuView, boardView, getEstado) {
     // Referencias esenciales
@@ -9,10 +14,12 @@ export default class InputController {
 
     // Handlers enlazados para poder removerlos luego
     this._onMouseMove = (e) => {
-      // Convierte coordenadas del evento a coordenadas del canvas
-      const r = this.canvas.getBoundingClientRect();
-      const x = e.clientX - r.left;
-      const y = e.clientY - r.top;
+      // Convierte coordenadas del evento a coordenadas del canvas (escala CSS -> canvas)
+      const rect = this.canvas.getBoundingClientRect();
+      const scaleX = this.canvas.width / rect.width;
+      const scaleY = this.canvas.height / rect.height;
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
 
       // Redirige al view correspondiente según el estado
       const estado = this.getEstado();
@@ -24,10 +31,12 @@ export default class InputController {
     };
 
     this._onMouseUp = (e) => {
-      // Igual conversión de coordenadas para clicks
-      const r = this.canvas.getBoundingClientRect();
-      const x = e.clientX - r.left;
-      const y = e.clientY - r.top;
+      // Igual conversión de coordenadas para clicks (escala incluida)
+      const rect = this.canvas.getBoundingClientRect();
+      const scaleX = this.canvas.width / rect.width;
+      const scaleY = this.canvas.height / rect.height;
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
 
       // Redirige al view correspondiente según el estado
       const estado = this.getEstado();
