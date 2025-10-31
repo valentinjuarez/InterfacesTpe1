@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelPlay - Juego</title>
+  <link rel="stylesheet" href="css/juego.css">
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+  <!-- HEADER -->
+  
+<header>
+  <div class="menu-hamburguesa" id="btnHamburguesa">
+    <img src="./assets/icons8-menu-papas-fritas-48.png" alt="Menú" id="iconoMenu">
+  </div>
+
+  <div class="logo">
+    <img src="assets/logo.png" alt="">
+    <h1>PixelPlay</h1>
+  </div>
+
+  <div class="usuario">
+    <img src="./img/IconosHeader/IconoUsuario2.png" alt="Usuario" class="icono-usuario avatar-trigger" role="button" tabindex="0" aria-controls="user-menu" aria-expanded="false" onmouseover="this.dataset.orig=this.dataset.orig||this.src; this.src='img/IconosHeader/IconoUsuario.png'" onmouseout="if(this.dataset.orig) this.src=this.dataset.orig">
+  </div>
+</header>
+
+<!-- Menú de usuario -->
+<div id="user-menu" class="user-menu" role="menu" aria-hidden="true">
+  <ul class="user-menu-list">
+    <li><a href="#" role="menuitem">Perfil</a></li>
+    <li><a href="#" role="menuitem">Configuración</a></li>
+    <li><a href="#" role="menuitem">Unirse al premium</a></li>
+    <li><a href="./login.html" role="menuitem" class="cerrar-sesion">Cerrar sesión</a></li>
+  </ul>
+</div>
+
+<!-- Barra de navegación izquierda (íconos apilados) -->
+<aside class="left-nav" aria-label="Navegación izquierda">
+  <nav class="nav">
+    <a class="nav-btn" href="index.html" aria-label="Inicio">
+      <img src="img/IconosBarraLateral/IconoCasa.png" alt="Inicio" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Recientes">
+      <img src="img/IconosBarraLateral/IconoReloj.png" alt="Recientes" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Nuevos">
+      <img src="img/IconosBarraLateral/IconoEstrellas.png" alt="Nuevos" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="De moda">
+      <img src="img/IconosBarraLateral/IconoFuego.png" alt="De moda" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Multiplayer">
+      <img src="img/IconosBarraLateral/IconoPersonas.png" alt="Multiplayer" />
+    </a>
+  </nav>
+  <nav class="nav">
+    <a class="nav-btn" href="#" aria-label="Acción">
+      <img src="img/IconosBarraLateral/IconoEspada.png" alt="Acción" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Aventura">
+      <img src="img/IconosBarraLateral/IconoBrujula.png" alt="Aventura" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Baloncesto">
+      <img src="img/IconosBarraLateral/IconoPelotaBasket.png" alt="Baloncesto" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Billar">
+      <img src="img/IconosBarraLateral/IconoBolaDe8.png" alt="Billar" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Cartas">
+      <img src="img/IconosBarraLateral/IconoCartasPoker.png" alt="Cartas" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Controller">
+      <img src="img/IconosBarraLateral/IconoJoystick.png" alt="Controller" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Defensa">
+      <img src="img/IconosBarraLateral/IconoCastillo.png" alt="Defensa" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Carreras">
+      <img src="img/IconosBarraLateral/IconoAuto.png" alt="Carreras" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Fútbol">
+      <img src="img/IconosBarraLateral/IconoPelotaFutbol.png" alt="Fútbol" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="Minecraft">
+      <img src="img/IconosBarraLateral/IconoMinecraft.png" alt="Minecraft" />
+    </a>
+    <a class="nav-btn" href="#" aria-label="CS:GO">
+          <img src="img/IconosBarraLateral/IconoPistola.png" alt="CS:GO" />
+        </a>
+    <a class="nav-btn" href="#" aria-label="Terror">
+          <img src="img/IconosBarraLateral/IconoFantasma.png" alt="Terror" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Disparo">
+          <img src="img/IconosBarraLateral/IconoMira.png" alt="Disparo" />
+        </a>
+        <a class="nav-btn" href="#" aria-label="Deportes">
+          <img src="img/IconosBarraLateral/IconoPelotaRugby.png" alt="Deportes" />
+        </a>
+  </nav>
+</aside>
+
+
+
+
+
+
+  <!-- MAIN -->
+  <main>
+    <section class="navegacion">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#">Juegos de mesa</a></li>
+          <li aria-current="page">Blocka</li>
+        </ol>
+      </nav>
+    </section> 
+    
+    <!-- Juego -->
+    <section class="juego">
+      <div>
+        <div class="thumbnail-container">
+          <canvas id="myCanvas" width="1205" height="705"></canvas>
+        </div>
+        <!-- <div class="button-jugar">
+          <button id="btnJugar">JUGAR AHORA</button>
+        </div> -->
+      </div>
+
+    
+</section>
+<!-- Publicidad Premium -->
+<section class="premium-publicidad">
+    <div class="contenido-premium">
+      <img src="./assets/iconoPremium.png" alt="Premium">
+        <h2>¡Hazte Premium!</h2>
+        <p>Accede a contenido exclusivo, elimina anuncios y disfruta de beneficios adicionales.</p>
+        <button>Comprar Ahora</button>
+    </div>
+</section>
+<!-- Botonera -->
+    <div class="botonera">
+        <div class="premium">
+        <img src="./assets/iconoPremium.png" alt="Premium">
+        <span class="promo">¡Hazte Premium!</span>
+        </div>
+        <img src="./assets/logo.png" alt="">
+        <div class="acciones">
+            
+            <div class="accion-circulo"><img src="./assets/icons8-star-26.png" alt="Juego"></div>
+            <div class="accion-circulo"><img src="./assets/icons8-expandir-50.png" alt="expandir"></div>
+            <div class="accion-circulo compartir-btn" id="btnCompartir">
+              <img src="./assets/icons8-compartir-64.png" alt="compartir">
+            </div>
+
+              <div class="ventana-compartir" id="ventanaCompartir">
+                <a href="https://www.instagram.com/" target="_blank">
+                  <img src="./assets/icons8-instagram-48.png" alt="Instagram">
+                </a>
+                <a href="https://t.me/" target="_blank">
+                  <img src="./assets/icons8-aplicación-telegrama-96.png "alt="Telegram">
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://tusitio.com" target="_blank">
+                  <img src="./assets/icons8-facebook-96.png" alt="Facebook">
+                </a>
+            </div>
+            
+        </div>
+    </div>
+
+<section class="controles">
+    <div class="titulo">
+        <img src="./assets/icons8-controlador-ps-100.png" alt="">
+        <h2>Controles del Juego</h2>    
+
+    </div>
+  <div class="instrucciones"> 
+      <div class="instruccion">
+        <h3>Rotar imagen a la izquierda</h3>
+        <img src="./assets/icons8-left-click-100.png" alt="Rotar a la izquierda">
+      </div>
+          
+      <div class="instruccion">
+        <h3>Rotar imagen a la derecha</h3>
+        <img src="./assets/icons8-right-click-100.png" alt="Rotar a la derecha">
+      </div>
+    </div> 
+
+</section>
+
+
+
+ <!-- Descripción -->
+<section class="descripcion">
+  <div class="titulo">
+    <img src="./assets/icono-informacion.png" alt="icono información">
+    <h2>¿Cómo jugar?</h2>
+  </div>
+  <ul>
+    <li><strong>Objetivo:</strong> colocá todas las piezas en el tablero sin superponer ni salirte de los bordes.</li>
+    <li><strong>Cómo jugar:</strong> gira las piezas hasta que encajen en el tablero.</li>
+    <li><strong>Rotación:</strong> usá clic izquierdo para rotar a la izquierda y clic derecho para rotar a la derecha.</li>
+    <li><strong>Reglas:</strong> no se permiten solapamientos ni celdas fuera del tablero.</li>
+    <li><strong>Estrategia:</strong> empezá por esquinas y espacios grandes; reservá las piezas largas para cerrar líneas.</li>
+    <li><strong>Progreso:</strong> cada nivel trae un set de piezas distinto; pensá varios pasos por adelantado.</li>
+    <li><strong>Victoria:</strong> completá el tablero sin huecos. Si no quedan movimientos, reiniciá y probá otra ruta.</li>
+  </ul>
+</section>
+
+
+
+
+    <section class="jugadas">
+      <div class="titulo">
+        <img src="./assets/icono-multimedia.png" alt="">
+        <h2>Jugadas Destacadas</h2>
+      </div>
+
+      <div class="videos">
+        <iframe class="video" src="https://www.youtube.com/embed/2OncUTC3P3s" frameborder="0" allowfullscreen></iframe>
+        <iframe class="video" src="https://www.youtube.com/embed/2OncUTC3P3s" frameborder="0" allowfullscreen></iframe>
+        <iframe class="video" src="https://www.youtube.com/embed/2OncUTC3P3s" frameborder="0" allowfullscreen></iframe>
+        <iframe class="video" src="https://www.youtube.com/embed/2OncUTC3P3s" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </section>
+
+
+    <!-- Comentarios y comunidad -->
+    <section class="comentarios">
+      <div class="titulo">
+        <img src="./assets/icono-cometarios.png" alt="">
+        <h2>Comentarios</h2>
+      </div>
+      
+        <div class="interaccion">
+          <img src="./assets/usuario.png" alt="Usuario" class="icono-usuario">
+          <input type="text" placeholder="Agrega un comentario…">
+          <button >
+            <img src="./assets/icons8-enviar-24.png" alt="Enviar" >
+          </button>
+        </div>
+
+        <div class="comentario">
+          <div class="comentario-header">
+            <img src="./assets/Gemini_Generated_Image_53gy2h53gy2h53gy.png" alt="Usuario" class="icono-usuario">
+            <span class="nombre-usuario">Usuario456</span>
+            <span class="fecha-comentario">Hace 1 día</span>
+          </div>
+          <p>Este juego es una joya oculta. La combinación de estrategia y diversión lo hace perfecto para todas las edades. ¡Recomendado!</p>
+          <div class="reacciones">
+            <button class="btn-like" title="Me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Like" style="width:22px;vertical-align:middle;">
+              <span class="like-count">12</span>
+            </button>
+            <button class="btn-dislike" title="No me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Dislike" >
+            </button>
+          </div>
+        </div>
+        <div class="comentario">
+          <div class="comentario-header">
+            <img src="./assets/avatar.png" alt="Usuario" class="icono-usuario">
+            <span class="nombre-usuario">GamerPro</span>
+            <span class="fecha-comentario">Hace 3 días</span>
+          </div>
+          <p>¡Excelente desafío mental! Me encanta cómo cada partida es diferente y te obliga a pensar nuevas estrategias.</p>
+          <div class="reacciones">
+            <button class="btn-like" title="Me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Like" >
+              <span class="like-count">8</span>
+            </button>
+            <button class="btn-dislike" title="No me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Dislike" >
+            </button>
+          </div>
+        </div>
+        <div class="comentario">
+          <div class="comentario-header">
+            <img src="./assets/avatar.png" alt="Usuario" class="icono-usuario">
+            <span class="nombre-usuario">SofiGamer</span>
+            <span class="fecha-comentario">Hace 5 días</span>
+          </div>
+          <p>¡Muy divertido! Los gráficos y la música hacen que la experiencia sea súper entretenida. ¡Sigan así!</p>
+          <div class="reacciones">
+            <button class="btn-like" title="Me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Like" style="width:22px;vertical-align:middle;">
+              <span class="like-count">15</span>
+            </button>
+            <button class="btn-dislike" title="No me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Dislike" >
+            </button>
+          </div>
+        </div>
+        <div class="comentario">
+          <div class="comentario-header">
+            <img src="./assets/Gemini_Generated_Image_53gy2h53gy2h53gy.png" alt="Usuario" class="icono-usuario">
+            <span class="nombre-usuario">MaxiRetro</span>
+            <span class="fecha-comentario">Hace 1 semana</span>
+          </div>
+          <p>Me recuerda a los juegos clásicos de mesa, de esos que te atrapaban durante horas y que siempre generaban anécdotas divertidas. Es ideal para pasar el rato en cualquier momento, ya sea solo para entrenar la mente o acompañado para desafiar a mis amigos en una competencia amistosa. La dinámica es sencilla de entender, pero lo suficientemente estratégica como para que cada partida sea distinta y desafiante. Además, tiene ese toque nostálgico que lo hace aún más entretenido. ¡Muy recomendable para quienes disfrutan de los desafíos y la buena compañía!</p>
+          <div class="reacciones">
+            <button class="btn-like" title="Me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Like" style="width:22px;vertical-align:middle;">
+              <span class="like-count">6</span>
+            </button>
+            <button class="btn-dislike" title="No me gusta">
+              <img src="./assets/icons8-me-gusta-100.png" alt="Dislike" >
+            </button>
+          </div>
+    
+    </section>
+    
+  </main>
+
+  <!-- FOOTER -->
+
+  <!-- FATFOOTER MODERNO -->
+  <footer class="site-footer">
+        <div class="footer-main">
+          <div class="footer-col footer-desc">
+            <h4>Título</h4>
+            <p>Llevá tu experiencia gamer al próximo nivel con nuestra plataforma. Descubrí, jugá y compartí en un mundo conectado por la pasión por los videojuegos.</p>
+            <ul>
+              <li><strong>Multiplataforma</strong><br>Accedé desde PC, consola o móvil con la misma cuenta.</li>
+              <li><strong>Comunidad Online</strong><br>Unite a torneos, clanes y chats en vivo con jugadores de todo el mundo.</li>
+              <li><strong>Game Streaming</strong><br>Mirá partidas en directo o transmití tus propios juegos con un clic.</li>
+            </ul>
+          </div>
+          <div class="footer-col footer-features">
+            <ul>
+              <li><strong>Game Pass</strong><br>Suscribite para acceder a una librería con cientos de títulos nuevos y clásicos.</li>
+              <li><strong>Eventos Exclusivos</strong><br>Participá en lanzamientos, betas anticipadas y promociones especiales.</li>
+            </ul>
+          </div>
+          <div class="footer-flex">
+            <div class="footer-col footer-links">
+              <h4>Juegos</h4>
+              <ul>
+                <li><a href="#">Juegos</a></li>
+                <li><a href="#">Categorías</a></li>
+                <li><a href="#">Game Pass</a></li>
+                <li><a href="#">Comunidad</a></li>
+                <li><a href="#">Soporte</a></li>
+                <li><a href="#">Noticias</a></li>
+                <li><a href="#">Torneos</a></li>
+                <li><a href="#">Blog</a></li>
+              </ul>
+            </div>
+            <div class="footer-col footer-about">
+              <h4>ABOUT</h4>
+              <ul>
+                <li><a href="#">Nosotros</a></li>
+                <li><a href="#">Estudios asociados</a></li>
+                <li><a href="#">Prensa</a></li>
+                <li><a href="#">Oficinas</a></li>
+                <li><a href="#">Carreras</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-col footer-contact">
+            <a href="#" class="footer-btn">CONTACTANOS</a>
+            <div class="footer-phone">
+              <span>📞</span> 1-800-GAMER-24
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-brand">
+            <img src="img/IconosHeader/IconoLogoPixelPlay.png" alt="PixelPlay" style="height:32px;vertical-align:middle;">
+            <span class="footer-brand-name">PixelPlay</span>
+          </div>
+          <div class="footer-legal">
+            <a href="#">Términos de uso</a> |
+            <a href="#">Política de privacidad</a> |
+            <a href="#">Licencias</a>
+            <span>© 2025 GamerWorld Inc. Todos los derechos reservados.</span>
+          </div>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><img src="img/social/Instagram.png" alt="Instagram" /></a>
+            <a href="#" aria-label="Email"><img src="img/social/Mail.png" alt="Email" /></a>
+            <a href="#" aria-label="Twitter"><img src="img/social/Twitter.png" alt="Twitter" /></a>
+            <a href="#" aria-label="YouTube"><img src="img/social/Youtube.png" alt="YouTube" /></a>
+            <a href="#" aria-label="Facebook"><img src="img/social/Facebook.png" alt="Facebook" /></a>
+          </div>
+        </div>
+      </footer>
+
+
+<!-- Botón Volver Arriba -->
+<button id="btnScrollTop" class="scroll-top-btn" title="Volver arriba">
+  <img src="./assets/icons8-arriba-50.png" alt="Arriba" style="width:28px;height:28px;">
+</button>
+</body>
+
+
+
+<script src="jspages/juego.js"></script>
+<script type="module" src="./js/main.js"></script>
+
+
+</html>
