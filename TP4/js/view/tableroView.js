@@ -11,6 +11,89 @@ export default class TableroView {
     this.tablero = tablero;       // modelo Tablero
     this.controller = controller; // controller (opcional) para selección/targets
     this.hoverCell = null;       // celda bajo el cursor (r,c) o null
+
+    // Imágenes de fichas: A (primera) y B (segunda)
+    this.pieceImages = [null, null];
+    this.setPieceImages(
+      'C:\\InterfacesTpe1\\TP4\\assets\\9b1af14b2d6c3551009a643fcc28b916-removebg-preview.png', // ficha A
+      'C:\\InterfacesTpe1\\TP4\\assets\\de7b3a5f381325fc915de434d53ad8ae-removebg-preview.png'  // ficha B
+    );
+
+    // Asignación estable A/B por identidad de ficha
+    this._objIds = new WeakMap();        // ficha(obj) -> id estable
+    this._assignCacheObj = new WeakMap(); // ficha(obj) -> 0/1
+    this._assignCachePrim = new Map();    // key(string) -> 0/1
+    this._nextObjId = 1;
+  }
+
+  // Cargar dos imágenes (URL o Image). Normaliza rutas Windows -> assets/...
+  setPieceImages(srcA, srcB) {
+    const mk = (src) => {
+      if (!src) return null;
+      if (src instanceof Image) {
+        if (!src.onload) src.onload = () => this.draw();
+        return src;
+      }
+      let s = src;
+      if (typeof s === 'string') {
+        const m = s.match(/assets[\\/].+$/i);
+        if (m) s = m[0].replace(/\\/g, '/');
+      }
+      const img = new Image();
+      img.onload = () => this.draw();
+      img.onerror = () => { if (s !== src) { img.onerror = null; img.src = src; } };
+      img.src = s;
+      return img;
+    };
+    this.pieceImages[0] = mk(srcA); // A
+    this.pieceImages[1] = mk(srcB); // B
+  }
+
+  // Hash simple para claves primitivas (estable)
+  _hashKey(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h |= 0;
+    }
+    return h >>> 0;
+  }
+
+  // Devuelve 0 (A) o 1 (B) de forma estable por ficha
+  _getAssignedImageIndex(ficha) {
+    const imgsCount = this.pieceImages.filter(Boolean).length;
+    if (imgsCount < 2) return 0;
+
+    if (ficha && typeof ficha === 'object') {
+      if (this._assignCacheObj.has(ficha)) return this._assignCacheObj.get(ficha);
+      let id = this._objIds.get(ficha);
+      if (!id) { id = this._nextObjId++; this._objIds.set(ficha, id); }
+      const idx = id % 2; // reparte 50/50 aprox y es estable
+      this._assignCacheObj.set(ficha, idx);
+      return idx;
+    } else {
+      const key = String(ficha);
+      if (this._assignCachePrim.has(key)) return this._assignCachePrim.get(key);
+      const idx = this._hashKey(key) & 1; // 0/1 estable por valor
+      this._assignCachePrim.set(key, idx);
+      return idx;
+    }
+  }
+
+  // Dibujar imagen recortada en círculo
+  _drawPieceImage(ctx, x, y, cellW, cellH, img) {
+    const pad = Math.min(cellW, cellH) * 0.12;
+    const iw = cellW - pad * 2;
+    const ih = cellH - pad * 2;
+    const cx = x + cellW / 2;
+    const cy = y + cellH / 2;
+    const radius = Math.min(iw, ih) / 2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(img, cx - iw / 2, cy - ih / 2, iw, ih);
+    ctx.restore();
   }
 
   // Dibuja el tablero según el modelo; si no hay modelo dibuja un placeholder
@@ -47,6 +130,9 @@ export default class TableroView {
     ctx.fillStyle = '#2b2b2b';
     ctx.fillRect(ox - 8, oy - 8, boardSize + 16, boardSize + 16);
 
+    // Índice de celdas ocupadas para repartir A/B equitativamente
+    let occupiedIdx = 0;
+
     // Iterar celdas desde el modelo
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
@@ -65,16 +151,25 @@ export default class TableroView {
         ctx.fillStyle = '#cfcfcf';
         ctx.fillRect(x + 2, y + 2, cellW - 4, cellH - 4);
 
-        // Si hay ficha, dibujar un círculo
+        // Si hay ficha, elegir A/B de forma estable según identidad de la ficha
         if (celda.ficha !== null) {
-          ctx.beginPath();
-          const cx = x + cellW / 2;
-          const cy = y + cellH / 2;
-          const radius = Math.min(cellW, cellH) * 0.34;
-          ctx.fillStyle = '#004e89'; // color ficha
-          ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.closePath();
+          const imgs = this.pieceImages.filter(Boolean);
+          const idx = this._getAssignedImageIndex(celda.ficha);
+          const pick = imgs[Math.min(idx, imgs.length - 1)];
+
+          if (pick && pick.complete && pick.naturalWidth > 0) {
+            this._drawPieceImage(ctx, x, y, cellW, cellH, pick);
+          } else {
+            // Fallback: círculo gris mientras cargan
+            ctx.beginPath();
+            const cx = x + cellW / 2;
+            const cy = y + cellH / 2;
+            const radius = Math.min(cellW, cellH) * 0.34;
+            ctx.fillStyle = '#777';
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.closePath();
+          }
         }
       }
     }
