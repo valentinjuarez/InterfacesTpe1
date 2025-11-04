@@ -24,6 +24,16 @@ export default class TableroView {
     this._assignCacheObj = new WeakMap(); // ficha(obj) -> 0/1
     this._assignCachePrim = new Map();    // key(string) -> 0/1
     this._nextObjId = 1;
+    // Mensaje de fin de juego (null = no mostrar)
+    this.gameOverMessage = null;
+    // Iconos UI (se pueden configurar desde main): rutas relativas dentro de assets/
+    this.iconHomeImg = this._mkIcon('assets/iconoHomeJuego.png');
+    this.iconResetImg = this._mkIcon('assets/iconoResetJuego.png');
+    // Hotspots calculados en draw: {home:{x,y,w,h}, reset:{...}}
+    this._iconHotspots = { home: null, reset: null };
+    // Callbacks que puede asignar el orquestador (main.js)
+    this.onHome = null;   // function() -> volver al menú
+    this.onReset = null;  // function() -> reiniciar partida
   }
 
   // Cargar dos imágenes (URL o Image). Normaliza rutas Windows -> assets/...
@@ -47,6 +57,18 @@ export default class TableroView {
     };
     this.pieceImages[0] = mk(srcA); // A
     this.pieceImages[1] = mk(srcB); // B
+  }
+
+  // Cargar iconos UI (home/reset)
+  _mkIcon(src) {
+    if (!src) return null;
+    if (src instanceof Image) return src;
+    let s = src;
+    const m = s.match(/assets[\\/].+$/i);
+    if (m) s = m[0].replace(/\\/g, '/');
+    const img = new Image();
+    img.src = s;
+    return img;
   }
 
   // Hash simple para claves primitivas (estable)
@@ -198,6 +220,74 @@ export default class TableroView {
         ctx.fillRect(x + 4, y + 4, cellW - 8, cellH - 8);
       }
     }
+
+      // Si hay mensaje de fin de juego, dibujar overlay
+      if (this.gameOverMessage) {
+        ctx.save();
+        // Fondo semitransparente
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.fillRect(0, 0, w, h);
+
+        // Panel central
+        const panelW = Math.min(420, w * 0.6);
+        const panelH = 140;
+        const px = (w - panelW) / 2;
+        const py = (h - panelH) / 2;
+        ctx.fillStyle = '#222';
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.fillRect(px, py, panelW, panelH);
+        ctx.strokeRect(px, py, panelW, panelH);
+
+        // Texto principal
+        ctx.fillStyle = '#fff';
+        ctx.font = '28px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.gameOverMessage, w / 2, py + panelH / 2 - 10);
+
+        // Texto secundario (instrucción)
+        ctx.font = '14px Arial';
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.fillText('Recarga la página o vuelve al menú para reiniciar', w / 2, py + panelH / 2 + 28);
+
+        ctx.restore();
+        }
+
+      // Dibujar iconos UI en la esquina superior derecha (si existen)
+      try {
+        const padding = Math.max(8, Math.min(w, h) * 0.015);
+        const iconSize = Math.min(56, Math.max(32, Math.floor(Math.min(w, h) * 0.07)));
+        // Posicionar: home a la derecha, reset a su izquierda
+        const spacing = 8;
+        const rightX = w - padding;
+        const homeX = rightX - iconSize; // x position of home icon (left)
+        const homeY = padding;
+        const resetX = homeX - spacing - iconSize; // reset to the left of home
+        const resetY = padding;
+
+        // Dibujar reset
+        if (this.iconResetImg && this.iconResetImg.complete && this.iconResetImg.naturalWidth > 0) {
+          ctx.drawImage(this.iconResetImg, resetX, resetY, iconSize, iconSize);
+        } else {
+          // fallback: rectángulo simple
+          ctx.fillStyle = '#444';
+          ctx.fillRect(resetX, resetY, iconSize, iconSize);
+        }
+        // Dessine home
+        if (this.iconHomeImg && this.iconHomeImg.complete && this.iconHomeImg.naturalWidth > 0) {
+          ctx.drawImage(this.iconHomeImg, homeX, homeY, iconSize, iconSize);
+        } else {
+          ctx.fillStyle = '#444';
+          ctx.fillRect(homeX, homeY, iconSize, iconSize);
+        }
+
+        // Actualizar hotspots para detección de clicks
+        this._iconHotspots.reset = { x: resetX, y: resetY, w: iconSize, h: iconSize };
+        this._iconHotspots.home = { x: homeX, y: homeY, w: iconSize, h: iconSize };
+      } catch (e) {
+        // En entornos restringidos, no bloquear el dibujo principal
+      }
  }
 
   // Calcula métricas del tablero (misma lógica usada en draw)
@@ -230,6 +320,22 @@ export default class TableroView {
 
   // Handler llamado por InputController con coordenadas ya escaladas al canvas
   onClick(x, y) {
+    // Comprobar primero clics sobre iconos UI
+    const h = this._iconHotspots;
+    if (h && h.home && x >= h.home.x && x <= h.home.x + h.home.w && y >= h.home.y && y <= h.home.y + h.home.h) {
+      if (typeof this.onHome === 'function') {
+        this.onHome();
+        return;
+      }
+    }
+    if (h && h.reset && x >= h.reset.x && x <= h.reset.x + h.reset.w && y >= h.reset.y && y <= h.reset.y + h.reset.h) {
+      if (typeof this.onReset === 'function') {
+        this.onReset();
+        return;
+      }
+    }
+
+    // Si no fue un clic en iconos, delegar a la celda
     const cell = this.cellAt(x, y);
     if (!cell) return;
     // Delegar acción al controller (éste maneja lógica de selección/movimiento)
@@ -240,6 +346,14 @@ export default class TableroView {
 
   // Mostrar hover para feedback visual
   onMouseMove(x, y) {
+    // Mostrar cursor pointer si estamos sobre un icono
+    const canvas = this.ctx && this.ctx.canvas;
+    const h = this._iconHotspots;
+    let overIcon = false;
+    if (h && h.home && x >= h.home.x && x <= h.home.x + h.home.w && y >= h.home.y && y <= h.home.y + h.home.h) overIcon = true;
+    if (h && h.reset && x >= h.reset.x && x <= h.reset.x + h.reset.w && y >= h.reset.y && y <= h.reset.y + h.reset.h) overIcon = true;
+    if (canvas) canvas.style.cursor = overIcon ? 'pointer' : '';
+
     const cell = this.cellAt(x, y);
     const changed = JSON.stringify(cell) !== JSON.stringify(this.hoverCell);
     if (changed) {
@@ -247,5 +361,17 @@ export default class TableroView {
       // opcional: la vista ya redibuja selección/destinos; usamos draw para actualizar hover
       this.draw();
     }
+  }
+
+  // Mostrar mensaje de fin de juego (ej. 'Perdiste') y forzar redraw
+  showGameOver(msg) {
+    this.gameOverMessage = String(msg || 'Fin del juego');
+    this.draw();
+  }
+
+  // Limpiar mensaje de fin de juego
+  clearGameOver() {
+    this.gameOverMessage = null;
+    this.draw();
   }
 }

@@ -18,6 +18,17 @@ export default class TableroController {
     // No se crean listeners aquí: la conversión de eventos -> celdas la hace InputController/main
     // Primer dibujo
     if (this.view) this.view.draw();
+    // Si al iniciar no hay movimientos posibles, avisar (perdiste)
+    if (this.tablero && typeof this.tablero.hayMovimientosPosibles === 'function') {
+      if (!this.tablero.hayMovimientosPosibles()) {
+        if (this.view && typeof this.view.showGameOver === 'function') {
+          this.view.showGameOver('Perdiste');
+        } else if (this.view) {
+          this.view.gameOverMessage = 'Perdiste';
+          this.view.draw();
+        }
+      }
+    }
   }
 
   // Maneja activación de una celda (p. ej. click) usando coordenadas r,c de celda
@@ -34,6 +45,14 @@ export default class TableroController {
       const match = this.legalMoves.find(m => m.to.r === r && m.to.c === c);
       if (match) {
         this.tablero.aplicarMovimiento(match);
+        // Tras aplicar movimiento, comprobar si quedan movimientos
+        if (!this.tablero.hayMovimientosPosibles()) {
+          if (this.view && typeof this.view.showGameOver === 'function') {
+            this.view.showGameOver('Perdiste');
+          } else if (this.view) {
+            this.view.gameOverMessage = 'Perdiste';
+          }
+        }
       }
       // limpiar selección siempre (implementación simple)
       this.selected = null;
