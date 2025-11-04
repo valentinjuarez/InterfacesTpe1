@@ -24,12 +24,17 @@ export default class Tablero {
     this.rows = 0;
     this.cols = 0;
     this._idSeq = 1; // para asignar ids de ficha
+    // Layout base recordado (último usado en reiniciar)
+    this._layoutBase = null;
     const base = Array.isArray(layoutInicial) ? layoutInicial : Tablero.layoutClasico7x7();
     this.reiniciar(base);
   }
 
   // ---------- Inicialización ----------
   reiniciar(layoutMatriz) {
+    // Recordar el layout base para futuros reinicios
+    this._layoutBase = layoutMatriz;
+
     this.rows = layoutMatriz.length;
     this.cols = this.rows > 0 ? layoutMatriz[0].length : 0;
     this.grid = [];
@@ -76,7 +81,28 @@ export default class Tablero {
     ];
   }
 
-   // ---------- Utilidades ----------
+  // Nuevo preset: tablero casi resuelto (una jugada para ganar)
+  static layoutCasiResuelto7x7() {
+    // Movimiento ganador: (3,1) salta sobre (3,2) hacia (3,3)
+    return [
+      [-1, -1, 0, 0, 0, -1, -1],
+      [-1, -1, 0, 0, 0, -1, -1],
+      [ 0,  0, 0, 0, 0,  0,  0],
+      [ 0,  1, 1, 0, 0,  0,  0],
+      [ 0,  0, 0, 0, 0,  0,  0],
+      [-1, -1, 0, 0, 0, -1, -1],
+      [-1, -1, 0, 0, 0, -1, -1],
+    ];
+  }
+
+  // Permite reiniciar al último layout base usado (clásico o "casi resuelto")
+  reiniciarAlLayoutBase() {
+    if (this._layoutBase) {
+      this.reiniciar(this._layoutBase);
+    }
+  }
+
+  // ---------- Utilidades ----------
   esCoordDentro(r, c) {
     return r >= 0 && r < this.rows && c >= 0 && c < this.cols;
   }

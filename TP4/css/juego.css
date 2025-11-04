@@ -418,8 +418,8 @@ main {
   gap: 0.75rem; 
 }
 .instruccion img { 
-  width: 120px; 
-  height: 120px; 
+  width: 100px; 
+  height: 100px; 
 }
 .instruccion p {
   font-size: 0.95rem;

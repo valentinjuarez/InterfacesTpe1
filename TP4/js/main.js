@@ -4,38 +4,43 @@ import PreGameMenu from './view/preGameMenu.js';
 import TableroView from './view/tableroView.js';
 import InputController from './controller/inputController.js';
 import Tablero from './model/tablero.js';
-import TableroController from './controller/tableroController.js';
+import JuegoController from './controller/juegoController.js';
 
-// Estado inicial
-let estado = 'menu'; // 'menu' | 'jugando'
-
-// Obtenemos el canvas que ya está en tu HTML
+// Obtener canvas y contexto 2D antes de crear vistas/controladores
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
-// Función llamada cuando se hace clic en "JUGAR"
-function iniciarJuego() {
-  estado = 'jugando';
-}
+// Flag para cargar un tablero "casi resuelto" (activar con ?victoria en la URL)
+const MODO_VICTORIA = typeof window !== 'undefined' && window.location?.search?.includes('victoria');
+
+// Crear modelo y view del tablero con ctx disponible
+const tablero = new Tablero(MODO_VICTORIA ? Tablero.layoutCasiResuelto7x7() : undefined); // modelo
+const boardView = new TableroView(ctx, tablero);      // view con modelo
+
+// Declarar juego para poder referenciarlo desde el callback del menú
+let juego;
+// Callback de menú que arranca el juego usando el orquestador
+const iniciarJuego = () => {
+  juego.startJuego(tablero, boardView);
+};
 
 // Creamos las vistas
 const menuView = new PreGameMenu(ctx, iniciarJuego);
 
-// Crear modelo y view del tablero
-const tablero = new Tablero();                        // modelo
-const boardView = new TableroView(ctx, tablero);      // view con modelo
+// InputController se encarga de los eventos del canvas y delega a JuegoController
+const inputController = new InputController(canvas, null);
 
-// Crear controller que maneja la lógica del tablero (sin canvas)
-const tableroController = new TableroController(tablero, boardView);
+// Orquestador principal
+juego = new JuegoController({ inputController, menuView, boardView, tablero });
 
 // Conectar callbacks UI desde la vista hacia la orquestación (reiniciar / volver al menú)
 boardView.onReset = () => {
-  // Reiniciar modelo al layout clásico y limpiar estado
-  tablero.reiniciar(Tablero.layoutClasico7x7());
-  if (tableroController && typeof tableroController.clearSelection === 'function') {
-    tableroController.clearSelection();
+  // Reiniciar modelo al layout elegido y limpiar estado
+  tablero.reiniciar(MODO_VICTORIA ? Tablero.layoutCasiResuelto7x7() : Tablero.layoutClasico7x7());
+  if (juego.tableroController?.clearSelection) {
+    juego.tableroController.clearSelection();
   }
-  if (boardView && typeof boardView.clearGameOver === 'function') {
+  if (boardView?.clearGameOver) {
     boardView.clearGameOver();
   }
   // Forzar redraw
@@ -44,21 +49,17 @@ boardView.onReset = () => {
 
 boardView.onHome = () => {
   // Volver al menú principal
-  estado = 'menu';
-  // limpiar overlays/selección
-  if (tableroController && typeof tableroController.clearSelection === 'function') tableroController.clearSelection();
-  if (boardView && typeof boardView.clearGameOver === 'function') boardView.clearGameOver();
+  if (juego.tableroController?.clearSelection) juego.tableroController.clearSelection();
+  if (boardView?.clearGameOver) boardView.clearGameOver();
+  juego.irAlMenu();
 };
 
 // Composición de la App (AppView orquesta sub-views)
 const appView = new AppView(ctx, menuView, boardView, '#5b2def'); // color de fondo gestionado por AppView
 
-// InputController se encarga de los eventos del canvas y delega a las views/controllers
-const inputController = new InputController(canvas, menuView, boardView, () => estado);
-
 // Bucle principal
 function loop(ts) {
-  appView.render(estado, ts || 0);
+  appView.render(juego.getEstado(), ts || 0);
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);

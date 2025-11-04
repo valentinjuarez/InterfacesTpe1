@@ -1,6 +1,6 @@
 export default class PreGameMenu {
   // Clase que representa el menú previo al inicio del juego (pantalla con título y botón "JUGAR")
-  constructor(ctx, onStart, bgSrc = 'assets/Gemini_Generated_Image_85hthm85hthm85ht.png') {
+  constructor(ctx, onStart, bgSrc = 'assets/fondoPregame.png') {
     this.ctx = ctx;           // contexto 2D del canvas donde se dibuja el menú
     this.onStart = onStart;   // callback que se ejecuta cuando se pulsa el botón de iniciar
 
@@ -23,22 +23,44 @@ export default class PreGameMenu {
     this.bgLoaded = false;
     this.bgImage.onload = () => { this.bgLoaded = true; };
     this.bgImage.src = bgSrc;
+
+    // Fila de dificultad (3 botones)
+    this.diffs = [
+      { key: 'facil',  label: 'FÁCIL (10 min)',  minutes: 10 },
+      { key: 'normal', label: 'NORMAL (5 min)', minutes: 5 },
+      { key: 'dificil',label: 'DIFÍCIL (3 min)',minutes: 3 },
+    ];
+    this.diffBtnW = 150; this.diffBtnH = 40; this.diffGap = 16;
+    const totalW = this.diffs.length * this.diffBtnW + (this.diffs.length - 1) * this.diffGap;
+    const startX = this.w / 2 - totalW / 2;
+    const y = this.btn.y - 90;
+    this.diffBtns = this.diffs.map((d, i) => ({
+      key: d.key, x: startX + i * (this.diffBtnW + this.diffGap), y, w: this.diffBtnW, h: this.diffBtnH
+    }));
+    this.diffHover = null;
+    this.diffSelected = 'normal'; // por defecto 5 min
   }
 
-  // Actualiza el estado hover en función de la posición del ratón
-  onMouseMove(mouseX, mouseY) {
+  // Helpers para que el controller maneje los eventos
+  hitButton(x, y) {
     const b = this.btn;
-    this.hover = mouseX >= b.x && mouseX <= b.x + b.w &&
-                 mouseY >= b.y && mouseY <= b.y + b.h;
+    return x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h;
   }
-
-  // Maneja el evento de click: si se hizo click dentro del botón, ejecuta el callback onStart
-  onClick(mouseX, mouseY) {
-    const b = this.btn;
-    if (mouseX >= b.x && mouseX <= b.x + b.w &&
-        mouseY >= b.y && mouseY <= b.y + b.h) {
-      this.onStart();
+  setHover(hover) {
+    this.hover = !!hover;
+  }
+  // Dificultad: helpers MVC
+  hitDifficulty(x, y) {
+    for (const b of this.diffBtns) {
+      if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return b.key;
     }
+    return null;
+  }
+  setDifficultyHover(keyOrNull) {
+    this.diffHover = keyOrNull || null;
+  }
+  setSelectedDifficulty(key) {
+    if (this.diffs.some(d => d.key === key)) this.diffSelected = key;
   }
 
   // Dibuja el menú en el canvas: título, botón y texto del botón
@@ -53,8 +75,8 @@ export default class PreGameMenu {
       ctx.fillRect(0, 0, this.w, this.h);
     }
 
-    // Overlay semi-transparente para mejorar contraste
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    // Overlay semi-transparente para mejorar contraste (más oscuro)
+    ctx.fillStyle = 'rgba(0,0,0,0.75)';
     ctx.fillRect(0, 0, this.w, this.h);
 
     // Título
@@ -65,7 +87,38 @@ export default class PreGameMenu {
     // Texto grande centrado en la mitad superior de la pantalla
    // ctx.fillText('Peg Solitaire', this.w / 2, this.h / 2 - 60);
 
-    // Botón con estilo tipo CSS .button-jugar
+    // Botones de dificultad
+    for (const b of this.diffBtns) {
+      const isHover = this.diffHover === b.key;
+      const isSelected = this.diffSelected === b.key;
+
+      // estilo: seleccionado/hover en blanco, sino gradiente
+      const grad = ctx.createLinearGradient(b.x, b.y, b.x + b.w, b.y + b.h);
+      // Cambiar a paleta relacionada con fondoPregame.png (azules/teal)
+      grad.addColorStop(0, '#0D1B2A'); // deep navy
+      grad.addColorStop(1, '#2e65c4ff'); // teal
+
+      ctx.save();
+      ctx.shadowColor = isHover || isSelected ? '#f357a855' : '#7a3ef055';
+      ctx.shadowBlur = isHover || isSelected ? 28 : 18;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = isHover || isSelected ? 8 : 5;
+
+      ctx.fillStyle = (isHover || isSelected) ? '#ffffff' : grad;
+      roundRect(ctx, b.x, b.y, b.w, b.h, b.h / 2, true, false);
+
+      // texto centrado
+      ctx.shadowColor = 'transparent';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '600 16px Poppins, Arial, sans-serif';
+      ctx.fillStyle = (isHover || isSelected) ? '#222222' : '#ffffff';
+      const label = this.diffs.find(d => d.key === b.key)?.label || '';
+      ctx.fillText(label, b.x + b.w / 2, b.y + b.h / 2);
+      ctx.restore();
+    }
+
+    // Botón "JUGAR"
     const b = this.btn;
 
     // Animación "breathing" 2.2s (idle). En hover: escala fija 1.07 (sin breathing).
@@ -100,10 +153,10 @@ export default class PreGameMenu {
 
     // Fondo del botón:
     // - hover: blanco (#fff)
-    // - normal: gradiente 135deg (#1D1D7D -> #7a3ef0)
+    // - normal: gradiente azul/teal relacionado con fondoPregame.png
     const grad = ctx.createLinearGradient(b.x, b.y, b.x + b.w, b.y + b.h);
-    grad.addColorStop(0, '#1D1D7D');
-    grad.addColorStop(1, '#7a3ef0');
+    grad.addColorStop(0, '#0D1B2A'); // deep navy
+    grad.addColorStop(1, '#2e65c4ff'); // teal
 
     ctx.fillStyle = this.hover ? '#ffffff' : grad;
     roundRect(ctx, b.x, b.y, b.w, b.h, this.btnRadius, true, false);

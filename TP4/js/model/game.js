@@ -30,6 +30,27 @@ export default class Juego {
     }
   }
 
+  // Helpers de tiempo
+  setTiempoRestante(segundos) {
+    // Setea el tiempo restante y vuelve a estado "jugando"
+    const s = Math.max(0, Math.floor(Number(segundos) || 0));
+    this.tiempoRestante = s;
+    this.estado = 'jugando';
+  }
+
+  setTiempoDesdeMinutos(minutos) {
+    const m = Math.max(0, Math.floor(Number(minutos) || 0));
+    this.setTiempoRestante(m * 60);
+  }
+
+  getTiempoRestante() {
+    return this.tiempoRestante;
+  }
+
+  isTiempoAgotado() {
+    return this.estado === 'tiempoAgotado';
+  }
+
   // Intenta soltar la ficha seleccionada en una nueva posición
   intentarSoltar(rDestino, cDestino) {
     const haySeleccion = this.seleccion !== null;
@@ -85,7 +106,7 @@ export default class Juego {
   tickTimer() {
     const sigueJugando = this.estado === 'jugando';
     if (sigueJugando) {
-      this.tiempoRestante = this.tiempoRestante - 1;
+      this.tiempoRestante = Math.max(0, this.tiempoRestante - 1);
       if (this.tiempoRestante <= 0) {
         this.estado = 'tiempoAgotado';
       }
