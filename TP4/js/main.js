@@ -28,6 +28,28 @@ const boardView = new TableroView(ctx, tablero);      // view con modelo
 // Crear controller que maneja la lógica del tablero (sin canvas)
 const tableroController = new TableroController(tablero, boardView);
 
+// Conectar callbacks UI desde la vista hacia la orquestación (reiniciar / volver al menú)
+boardView.onReset = () => {
+  // Reiniciar modelo al layout clásico y limpiar estado
+  tablero.reiniciar(Tablero.layoutClasico7x7());
+  if (tableroController && typeof tableroController.clearSelection === 'function') {
+    tableroController.clearSelection();
+  }
+  if (boardView && typeof boardView.clearGameOver === 'function') {
+    boardView.clearGameOver();
+  }
+  // Forzar redraw
+  boardView.draw();
+};
+
+boardView.onHome = () => {
+  // Volver al menú principal
+  estado = 'menu';
+  // limpiar overlays/selección
+  if (tableroController && typeof tableroController.clearSelection === 'function') tableroController.clearSelection();
+  if (boardView && typeof boardView.clearGameOver === 'function') boardView.clearGameOver();
+};
+
 // Composición de la App (AppView orquesta sub-views)
 const appView = new AppView(ctx, menuView, boardView, '#5b2def'); // color de fondo gestionado por AppView
 
