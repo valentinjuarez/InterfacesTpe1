@@ -1,3 +1,8 @@
+// MVC: Model
+// Responsabilidad: almacenar estado del tablero y aplicar reglas del juego.
+// - No debe dibujar ni manejar eventos DOM.
+// - Proveer API pura (getCelda, movimientosLegalesDesde, aplicarMovimiento, dimensiones, etc.)
+
 import Celda from './celda.js';
 import Ficha from './ficha.js';
 import { Movimiento } from './movimiento.js';

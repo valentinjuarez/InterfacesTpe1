@@ -3,6 +3,9 @@ import AppView from './view/appView.js';
 import PreGameMenu from './view/preGameMenu.js';
 import TableroView from './view/tableroView.js';
 import InputController from './controller/inputController.js';
+import Tablero from './model/tablero.js';
+import TableroController from './controller/tableroController.js';
+
 // Estado inicial
 let estado = 'menu'; // 'menu' | 'jugando'
 
@@ -18,14 +21,17 @@ function iniciarJuego() {
 // Creamos las vistas
 const menuView = new PreGameMenu(ctx, iniciarJuego);
 
-// TableroView contiene la responsabilidad visual del tablero (estilos aquí, no en main)
-const boardView = new TableroView(ctx);
+// Crear modelo y view del tablero
+const tablero = new Tablero();                        // modelo
+const boardView = new TableroView(ctx, tablero);      // view con modelo
+
+// Crear controller que maneja la lógica del tablero (sin canvas)
+const tableroController = new TableroController(tablero, boardView);
 
 // Composición de la App (AppView orquesta sub-views)
-const appView = new AppView(ctx, menuView, boardView, '#5b2def'); // color de fondo queda en AppView param
+const appView = new AppView(ctx, menuView, boardView, '#5b2def'); // color de fondo gestionado por AppView
 
 // InputController se encarga de los eventos del canvas y delega a las views/controllers
-// Le pasamos menuView, boardView y un getter del estado para que delegue según pantalla activa
 const inputController = new InputController(canvas, menuView, boardView, () => estado);
 
 // Bucle principal
@@ -34,3 +40,6 @@ function loop(ts) {
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
+
+// Orquestador: crea model, views y controllers y conecta InputController.
+// Recomendación: evitar manipular tamaño/estilos del canvas aquí; hacerlo vía CSS o en AppView si es necesario.
