@@ -408,8 +408,8 @@ main {
 .instrucciones { 
   display: flex; 
   flex-direction: column;
-  gap: 8rem;
-  padding: 2rem 1.5rem;
+  gap: 2rem;
+  padding: 1rem 1.5rem;
 }
 .instruccion { 
   display: flex; 
@@ -418,8 +418,8 @@ main {
   gap: 0.75rem; 
 }
 .instruccion img { 
-  width: 100px; 
-  height: 100px; 
+  width: 90px; 
+  height: 90px; 
 }
 .instruccion p {
   font-size: 0.95rem;

@@ -40,6 +40,21 @@ export default class InputController {
     this.canvas.addEventListener('pointerdown', this._onPointerDown);
     this.canvas.addEventListener('pointermove', this._onPointerMove);
     this.canvas.addEventListener('pointerup', this._onPointerUp);
+
+    /**
+     * Teclado: mapea atajos globales y delega al Controller.
+     * - R: resetear juego (si se está jugando).
+     * - M: ir al menú.
+     */
+    this._onKeyDown = (e) => {
+      const k = e.key?.toLowerCase();
+      if (k === 'r') {
+        this.juegoController?.resetJuego?.();
+      } else if (k === 'm') {
+        this.juegoController?.irAlMenu?.();
+      }
+    };
+    window.addEventListener('keydown', this._onKeyDown);
   }
 
   // Permite actualizar el juegoController si es necesario
@@ -47,10 +62,13 @@ export default class InputController {
     this.juegoController = juegoController;
   }
 
-  // Quitar listeners para evitar fugas de memoria
+  /**
+   * Libera todos los listeners del adapter (incluye teclado).
+   */
   dispose() {
     this.canvas.removeEventListener('pointerdown', this._onPointerDown);
     this.canvas.removeEventListener('pointermove', this._onPointerMove);
     this.canvas.removeEventListener('pointerup', this._onPointerUp);
+    window.removeEventListener('keydown', this._onKeyDown);
   }
 }

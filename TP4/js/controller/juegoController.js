@@ -248,6 +248,17 @@ export default class JuegoController {
     if (this.boardView?.draw) this.boardView.draw();
   }
 
+  /**
+   * Reset público invocable desde el InputController (teclado).
+   * Respeta el patrón MVC: el Controller decide cuándo y cómo resetear.
+   * Solo actúa si se está jugando, para no alterar el estado de menú.
+   */
+  resetJuego() {
+    if (this.state === 'jugando') {
+      this._resetJuegoYTimer();
+    }
+  }
+
   // Pointer routing desde InputController (estado -> controller)
   onPointerMove(x, y) {
     if (this.state === 'menu') {
