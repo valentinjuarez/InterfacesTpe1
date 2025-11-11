@@ -24,30 +24,30 @@ export default class TableroController {
 
     // Si al iniciar hay victoria o no hay movimientos, avisar (delegado)
     if (this.tablero) {
-      if (this._isWin()) {
-        this._notifyGameWin('Ganaste');
+      if (this._esVictoria()) {
+        this._notificarVictoria('Ganaste');
       } else if (typeof this.tablero.hayMovimientosPosibles === 'function') {
         if (!this.tablero.hayMovimientosPosibles()) {
-          this._notifyGameOver('Sin movimientos posibles. Perdiste');
+          this._notificarFinJuego('Sin movimientos posibles. Perdiste');
         }
       }
     }
   }
 
-  _notifyGameOver(msg) {
+  _notificarFinJuego(msg) {
     if (typeof this.onGameOver === 'function') {
       this.onGameOver(msg, this);
     }
   }
 
-  _notifyGameWin(msg) {
+  _notificarVictoria(msg) {
     if (typeof this.onGameWin === 'function') {
       this.onGameWin(msg, this);
     }
   }
 
   // Intenta inferir victoria de forma robusta según el modelo disponible
-  _isWin() {
+  _esVictoria() {
     const t = this.tablero;
     if (!t) return false;
     // Métodos comunes
@@ -62,7 +62,7 @@ export default class TableroController {
   }
 
   // Maneja activación de una celda (p. ej. click) usando coordenadas r,c de celda
-  handleCellActivated(r, c) {
+  manejarCeldaActivada(r, c) {
     const celdaModel = this.tablero.getCelda(r, c);
     // Si no hay selección y hay ficha -> seleccionar y calcular moves
     if (!this.selected) {
@@ -76,10 +76,10 @@ export default class TableroController {
       if (match) {
         this.tablero.aplicarMovimiento(match);
         // Tras aplicar movimiento: primero victoria, luego derrota si no quedan movimientos
-        if (this._isWin()) {
-          this._notifyGameWin('Ganaste');
+        if (this._esVictoria()) {
+          this._notificarVictoria('Ganaste');
         } else if (!this.tablero.hayMovimientosPosibles()) {
-          this._notifyGameOver('Sin movimientos posibles. Perdiste');
+          this._notificarFinJuego('Sin movimientos posibles. Perdiste');
         }
       }
       // limpiar selección siempre (implementación simple)
@@ -92,24 +92,24 @@ export default class TableroController {
   }
 
   // Alias más descriptivo
-  selectCell(r, c) {
-    return this.handleCellActivated(r, c);
+  seleccionarCelda(r, c) {
+    return this.manejarCeldaActivada(r, c);
   }
 
   // Obtener movimientos legales (útil para mostrar hints desde la UI)
-  getLegalMovesFor(r, c) {
+  obtenerMovimientosLegalesPara(r, c) {
     return this.tablero.movimientosLegalesDesde(r, c);
   }
 
   // Limpiar selección y solicitar redraw
-  clearSelection() {
+  limpiarSeleccion() {
     this.selected = null;
     this.legalMoves = [];
     if (this.view) this.view.draw();
   }
 
   // Liberar referencias (no había listeners)
-  destroy() {
+  destruir() {
     if (this.view && this.view.controller === this) this.view.controller = null;
     this.tablero = null;
     this.view = null;
@@ -117,7 +117,7 @@ export default class TableroController {
 
   // Drag & drop API: seleccionar, arrastrar (opcional) y soltar.
   // - startDragAt: si hay ficha en (r,c), selecciona y calcula movimientos y marca origen de drag.
-  startDragAt(r, c) {
+  iniciarArrastreEn(r, c) {
     const celda = this.tablero?.getCelda(r, c);
     if (celda && celda.ficha !== null) {
       this.selected = { r, c };
@@ -132,20 +132,20 @@ export default class TableroController {
   }
 
   // - dragOver: aquí podríamos actualizar feedback adicional. Mantener simple.
-  dragOver(r, c) {
+  arrastreSobre(r, c) {
     // Sin cambios de estado por celda en esta versión mínima.
   }
 
   // - dropAt: si (r,c) es destino legal, aplica movimiento y verifica estado del juego.
-  dropAt(r, c) {
+  soltarEn(r, c) {
     if (this.selected && Array.isArray(this.legalMoves)) {
       const match = this.legalMoves.find(m => m.to.r === r && m.to.c === c);
       if (match) {
         this.tablero.aplicarMovimiento(match);
-        if (this._isWin()) {
-          this._notifyGameWin('Ganaste');
+        if (this._esVictoria()) {
+          this._notificarVictoria('Ganaste');
         } else if (this.tablero?.hayMovimientosPosibles && !this.tablero.hayMovimientosPosibles()) {
-          this._notifyGameOver('Sin movimientos posibles. Perdiste');
+          this._notificarFinJuego('Sin movimientos posibles. Perdiste');
         }
       }
     }
@@ -157,7 +157,7 @@ export default class TableroController {
   }
 
   // Helper: mapear coordenadas canvas -> celda usando las métricas de la vista
-  _cellAtXY(x, y) {
+  _celdaEnXY(x, y) {
     // Preferir utilidades de la vista si existen
     if (this.view?.cellAt) return this.view.cellAt(x, y);
     if (!this.view?.tablero || !this.view?._metrics) return null;
@@ -169,28 +169,28 @@ export default class TableroController {
   }
 
   // Drag basado en coordenadas canvas -------------------------------
-  startDragAtXY(x, y) {
-    const cell = this._cellAtXY(x, y);
-    if (!cell) { this.clearSelection(); this.dragging = null; return; }
-    this.startDragAt(cell.r, cell.c);
+  iniciarArrastreEnXY(x, y) {
+    const cell = this._celdaEnXY(x, y);
+    if (!cell) { this.limpiarSeleccion(); this.dragging = null; return; }
+    this.iniciarArrastreEn(cell.r, cell.c);
     if (this.dragging) this.dragging.pos = { x, y };
     this.view?.draw?.();
   }
 
-  dragOverXY(x, y) {
+  arrastreSobreXY(x, y) {
     if (!this.dragging) return;
     this.dragging.pos = { x, y };
     this.view?.draw?.();
   }
 
-  dropAtXY(x, y) {
-    const cell = this._cellAtXY(x, y);
+  soltarEnXY(x, y) {
+    const cell = this._celdaEnXY(x, y);
     if (!cell) {
-      this.clearSelection();
+      this.limpiarSeleccion();
       this.dragging = null;
       this.view?.draw?.();
       return;
     }
-    this.dropAt(cell.r, cell.c);
+    this.soltarEn(cell.r, cell.c);
   }
 }

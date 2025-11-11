@@ -37,8 +37,8 @@ juego = new JuegoController({ inputController, menuView, boardView, tablero });
 boardView.onReset = () => {
   // Reiniciar modelo al layout elegido y limpiar estado
   tablero.reiniciar(MODO_VICTORIA ? Tablero.layoutCasiResuelto7x7() : Tablero.layoutClasico7x7());
-  if (juego.tableroController?.clearSelection) {
-    juego.tableroController.clearSelection();
+  if (juego.tableroController?.limpiarSeleccion) {
+    juego.tableroController.limpiarSeleccion();
   }
   if (boardView?.clearGameOver) {
     boardView.clearGameOver();
@@ -49,7 +49,7 @@ boardView.onReset = () => {
 
 boardView.onHome = () => {
   // Volver al menú principal
-  if (juego.tableroController?.clearSelection) juego.tableroController.clearSelection();
+  if (juego.tableroController?.limpiarSeleccion) juego.tableroController.limpiarSeleccion();
   if (boardView?.clearGameOver) boardView.clearGameOver();
   juego.irAlMenu();
 };

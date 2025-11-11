@@ -22,8 +22,8 @@ export default class JuegoController {
 
     // Vincular input -> juego
     this.inputController = deps.inputController || null;
-    if (this.inputController && typeof this.inputController.setJuegoController === 'function') {
-      this.inputController.setJuegoController(this);
+    if (this.inputController && typeof this.inputController.establecerControladorJuego === 'function') {
+      this.inputController.establecerControladorJuego(this);
     }
 
     // Si ya tenemos tablero+vista, crear controller del tablero
@@ -142,8 +142,8 @@ export default class JuegoController {
   destroy() {
     this._destroyTableroController();
     this._stopTimer();
-    if (this.inputController && typeof this.inputController.setJuegoController === 'function') {
-      this.inputController.setJuegoController(null);
+    if (this.inputController && typeof this.inputController.establecerControladorJuego === 'function') {
+      this.inputController.establecerControladorJuego(null);
     }
     this.inputController = null;
     this.menuView = null;
@@ -155,8 +155,8 @@ export default class JuegoController {
   _createTableroController(tablero, view) {
     if (!tablero || !view) return;
     this.tableroController = new TableroController(tablero, view, {
-      onGameOver: (msg) => this._handleGameOver(msg),
-      onGameWin:  (msg)  => this._handleGameWin(msg),
+      onGameOver: (msg) => this._manejarFinJuego(msg),
+      onGameWin:  (msg)  => this._manejarVictoria(msg),
     });
     // Enlazar acciones de la vista (reset/menu) al orquestador
     view.onReset = () => this._resetJuegoYTimer();
@@ -165,7 +165,7 @@ export default class JuegoController {
 
   _destroyTableroController() {
     if (this.tableroController) {
-      this.tableroController.destroy();
+      this.tableroController.destruir();
       this.tableroController = null;
     }
   }
@@ -189,7 +189,7 @@ export default class JuegoController {
     this._syncTimerToView();
     if (this.juego.estado === 'tiempoAgotado') {
       this._stopTimer();
-      this._handleGameOver('Tiempo agotado');
+      this._manejarFinJuego('Tiempo agotado');
     }
   }
 
@@ -206,7 +206,7 @@ export default class JuegoController {
     if (this.boardView.draw) this.boardView.draw();
   }
 
-  _handleGameOver(msg) {
+  _manejarFinJuego(msg) {
     // Detener timer en fin de juego
     this._stopTimer();
     // Mostrar mensaje en la vista del tablero
@@ -218,23 +218,19 @@ export default class JuegoController {
         if (this.boardView.draw) this.boardView.draw();
       }
     }
-    // Política de estado tras game over: quedarse en 'jugando' o volver al menú
-    // this.irAlMenu();
   }
 
-  _handleGameWin(msg) {
+  _manejarVictoria(msg) {
     // Detener timer si se gana
     this._stopTimer();
     if (this.boardView) {
       if (typeof this.boardView.showGameWin === 'function') {
         this.boardView.showGameWin(msg || 'Ganaste');
       } else {
-        // Fallback: usar gameOverMessage con tono genérico
         this.boardView.gameWinMessage = msg || 'Ganaste';
         if (this.boardView.draw) this.boardView.draw();
       }
     }
-    // Política de estado: permanecer en 'jugando' hasta que el usuario elija menú
   }
 
   // Reinicia tablero y timer según la dificultad actual
@@ -260,7 +256,7 @@ export default class JuegoController {
   }
 
   // Pointer routing desde InputController (estado -> controller)
-  onPointerMove(x, y) {
+  onPointerMover(x, y) {
     if (this.state === 'menu') {
       // Hover de botón/dificultad en el menú
       if (this.menuView?.hitButton && this.menuView?.setHover) {
@@ -274,11 +270,11 @@ export default class JuegoController {
       this.menuView?.draw?.();
     } else if (this.state === 'jugando') {
       // Actualizar posición del drag para que la vista dibuje la ficha siguiendo el puntero
-      this.tableroController?.dragOverXY?.(x, y);
+      this.tableroController?.arrastreSobreXY?.(x, y);
     }
   }
 
-  onPointerDown(x, y) {
+  onPointerPresionar(x, y) {
     if (this.state === 'menu') {
       // Selección de dificultad
       if (this.menuView?.hitDifficulty) {
@@ -309,13 +305,13 @@ export default class JuegoController {
       if (h?.home && x >= h.home.x && x <= h.home.x + h.home.w && y >= h.home.y && y <= h.home.y + h.home.h) { v.onHome?.(); return; }
       if (h?.reset && x >= h.reset.x && x <= h.reset.x + h.reset.w && y >= h.reset.y && y <= h.reset.y + h.reset.h) { v.onReset?.(); return; }
       // 2) No fue UI -> iniciar drag en tablero (controlador del tablero)
-      this.tableroController?.startDragAtXY?.(x, y);
+      this.tableroController?.iniciarArrastreEnXY?.(x, y);
     }
   }
 
-  onPointerUp(x, y) {
+  onPointerSoltar(x, y) {
     if (this.state === 'jugando') {
-      this.tableroController?.dropAtXY?.(x, y);
+      this.tableroController?.soltarEnXY?.(x, y);
     }
   }
 }

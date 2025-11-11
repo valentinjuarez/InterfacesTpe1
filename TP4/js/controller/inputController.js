@@ -24,15 +24,15 @@ export default class InputController {
     this._onPointerDown = (e) => {
       const { x, y } = toCanvasXY(e);
       try { this.canvas.setPointerCapture?.(e.pointerId); } catch {}
-      if (this.juegoController?.onPointerDown) this.juegoController.onPointerDown(x, y);
+      if (this.juegoController?.onPointerPresionar) this.juegoController.onPointerPresionar(x, y);
     };
     this._onPointerMove = (e) => {
       const { x, y } = toCanvasXY(e);
-      if (this.juegoController?.onPointerMove) this.juegoController.onPointerMove(x, y);
+      if (this.juegoController?.onPointerMover) this.juegoController.onPointerMover(x, y);
     };
     this._onPointerUp = (e) => {
       const { x, y } = toCanvasXY(e);
-      if (this.juegoController?.onPointerUp) this.juegoController.onPointerUp(x, y);
+      if (this.juegoController?.onPointerSoltar) this.juegoController.onPointerSoltar(x, y);
       try { this.canvas.releasePointerCapture?.(e.pointerId); } catch {}
     };
 
@@ -58,7 +58,7 @@ export default class InputController {
   }
 
   // Permite actualizar el juegoController si es necesario
-  setJuegoController(juegoController) {
+  establecerControladorJuego(juegoController) {
     this.juegoController = juegoController;
   }
 
