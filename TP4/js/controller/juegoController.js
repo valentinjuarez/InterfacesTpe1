@@ -39,66 +39,6 @@ export default class JuegoController {
   setEstado(estado) {
     this.state = estado;
   }
-
-  // Ruteo de input desde InputController
-  onMouseMove(x, y) {
-    if (this.state === 'menu') {
-      if (this.menuView?.hitButton && this.menuView?.setHover) {
-        const isHover = this.menuView.hitButton(x, y);
-        this.menuView.setHover(isHover);
-      }
-      if (this.menuView?.hitDifficulty && this.menuView?.setDifficultyHover) {
-        const k = this.menuView.hitDifficulty(x, y);
-        this.menuView.setDifficultyHover(k);
-      }
-      if (this.menuView?.draw) this.menuView.draw();
-    } else if (this.state === 'jugando' && this.boardView?.onMouseMove) {
-      this.boardView.onMouseMove(x, y);
-    }
-  }
-
-  onClick(x, y) {
-    if (this.state === 'menu') {
-      // Click en dificultad
-      if (this.menuView?.hitDifficulty) {
-        const key = this.menuView.hitDifficulty(x, y);
-        if (key) {
-          this.menuView?.setSelectedDifficulty?.(key);
-          // guardar minutos según selección
-          this.difficulty = {
-            key,
-            minutes: key === 'facil' ? 10 : key === 'dificil' ? 3 : 5
-          };
-          this.menuView?.draw?.();
-          return;
-        }
-      }
-      // Click en "JUGAR"
-      if (this.menuView?.hitButton && this.menuView.hitButton(x, y)) {
-        if (typeof this.menuView.onStart === 'function') {
-          this.menuView.onStart();
-        }
-      }
-    } else if (this.state === 'jugando' && this.boardView) {
-      // Solo UI en click (no mueve fichas)
-      const v = this.boardView;
-      // Overlays
-      if (v.gameWinMessage && v.menuButtonRect) {
-        const r = v.menuButtonRect;
-        if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) { v.onHome?.(); return; }
-      }
-      if (v.gameOverMessage && v.retryButtonRect) {
-        const r = v.retryButtonRect;
-        if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) { v.onReset?.(); return; }
-      }
-      // Iconos
-      const h = v._iconHotspots;
-      if (h?.home && x >= h.home.x && x <= h.home.x + h.home.w && y >= h.home.y && y <= h.home.y + h.home.h) { v.onHome?.(); return; }
-      if (h?.reset && x >= h.reset.x && x <= h.reset.x + h.reset.w && y >= h.reset.y && y <= h.reset.y + h.reset.h) { v.onReset?.(); return; }
-      // No hay acción en tablero por click
-    }
-  }
-
   // Arrancar juego (puede reusar tablero/boardView o crear nuevos)
   startJuego(tablero, boardView) {
     if (tablero) this.tablero = tablero;

@@ -60,42 +60,6 @@ export default class TableroController {
     if (typeof t.contarFichas === 'function') return t.contarFichas() === 1;
     return false;
   }
-
-  // Maneja activación de una celda (p. ej. click) usando coordenadas r,c de celda
-  manejarCeldaActivada(r, c) {
-    const celdaModel = this.tablero.getCelda(r, c);
-    // Si no hay selección y hay ficha -> seleccionar y calcular moves
-    if (!this.selected) {
-      if (celdaModel && celdaModel.ficha !== null) {
-        this.selected = { r: r, c: c };
-        this.legalMoves = this.tablero.movimientosLegalesDesde(r, c);
-      }
-    } else {
-      // Si hay selección, ver si la activación corresponde a un destino legal
-      const match = this.legalMoves.find(m => m.to.r === r && m.to.c === c);
-      if (match) {
-        this.tablero.aplicarMovimiento(match);
-        // Tras aplicar movimiento: primero victoria, luego derrota si no quedan movimientos
-        if (this._esVictoria()) {
-          this._notificarVictoria('Ganaste');
-        } else if (!this.tablero.hayMovimientosPosibles()) {
-          this._notificarFinJuego('Sin movimientos posibles. Perdiste');
-        }
-      }
-      // limpiar selección siempre (implementación simple)
-      this.selected = null;
-      this.legalMoves = [];
-    }
-
-    // Notificar a la view que debe redibujar
-    if (this.view) this.view.draw();
-  }
-
-  // Alias más descriptivo
-  seleccionarCelda(r, c) {
-    return this.manejarCeldaActivada(r, c);
-  }
-
   // Obtener movimientos legales (útil para mostrar hints desde la UI)
   obtenerMovimientosLegalesPara(r, c) {
     return this.tablero.movimientosLegalesDesde(r, c);
@@ -130,12 +94,7 @@ export default class TableroController {
     }
     this.view?.draw?.();
   }
-
-  // - dragOver: aquí podríamos actualizar feedback adicional. Mantener simple.
-  arrastreSobre(r, c) {
-    // Sin cambios de estado por celda en esta versión mínima.
-  }
-
+  
   // - dropAt: si (r,c) es destino legal, aplica movimiento y verifica estado del juego.
   soltarEn(r, c) {
     if (this.selected && Array.isArray(this.legalMoves)) {

@@ -33,27 +33,6 @@ const inputController = new InputController(canvas, null);
 // Orquestador principal
 juego = new JuegoController({ inputController, menuView, boardView, tablero });
 
-// Conectar callbacks UI desde la vista hacia la orquestación (reiniciar / volver al menú)
-boardView.onReset = () => {
-  // Reiniciar modelo al layout elegido y limpiar estado
-  tablero.reiniciar(MODO_VICTORIA ? Tablero.layoutCasiResuelto7x7() : Tablero.layoutClasico7x7());
-  if (juego.tableroController?.limpiarSeleccion) {
-    juego.tableroController.limpiarSeleccion();
-  }
-  if (boardView?.clearGameOver) {
-    boardView.clearGameOver();
-  }
-  // Forzar redraw
-  boardView.draw();
-};
-
-boardView.onHome = () => {
-  // Volver al menú principal
-  if (juego.tableroController?.limpiarSeleccion) juego.tableroController.limpiarSeleccion();
-  if (boardView?.clearGameOver) boardView.clearGameOver();
-  juego.irAlMenu();
-};
-
 // Composición de la App (AppView orquesta sub-views)
 const appView = new AppView(ctx, menuView, boardView, '#5b2def'); // color de fondo gestionado por AppView
 
