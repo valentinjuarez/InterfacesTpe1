@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PixelPlay - Juego</title>
   <link rel="stylesheet" href="css/juego.css">
+  <link rel="stylesheet" href="css/dragonRush.css">
   <link rel="icon" href="assets/logo.png" type="image/png" />
   
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -123,14 +124,47 @@
     
     <!-- Juego -->
     <section class="juego">
-      <div>
-        <div class="thumbnail-container">
-          <canvas id="myCanvas" width="1205" height="705"></canvas>
+      <!-- UI mínima de selección -->
+      <div class="ui-wrapper">
+        <button class="btn-play">Jugar</button>
+
+        <div class="grupo">
+          <h3>Elegir mapa</h3>
+          <div class="map-carousel" role="listbox" aria-label="Seleccionar mapa">
+            <div class="map-item selected" role="option" aria-selected="true" tabindex="0">
+              <img src="./assetsJuego/previews/previewmapa/previewmapa1.png" alt="Mapa 1">
+            </div>
+            <div class="map-item" role="option" aria-selected="false" tabindex="0">
+              <img src="./assetsJuego/previews/previewmapa/previewmapa2.png" alt="Mapa 2">
+            </div>
+            <div class="map-item" role="option" aria-selected="false" tabindex="0">
+              <img src="./assetsJuego/previews/previewmapa/previewmapa3.png" alt="Mapa 3">
+            </div>
+            <div class="map-item" role="option" aria-selected="false" tabindex="0">
+              <img src="./assetsJuego/previews/previewmapa/previewmapa4.png" alt="Mapa 4">
+            </div>
+          </div>
+        </div>
+
+        <div class="grupo">
+          <h3>Elegir personaje</h3>
+            <div class="char-carousel" role="listbox" aria-label="Seleccionar personaje">
+              <div class="char-item selected" role="option" aria-selected="true" tabindex="0">
+                <img src="./assetsJuego/previews/previewcharacter/characterPreview1.png" alt="Personaje 1">
+              </div>
+              <div class="char-item" role="option" aria-selected="false" tabindex="0">
+                <img src="./assetsJuego/previews/previewcharacter/characterPreview2.png" alt="Personaje 2">
+              </div>
+              <div class="char-item" role="option" aria-selected="false" tabindex="0">
+                <img src="./assetsJuego/previews/previewcharacter/characterPreview3.png" alt="Personaje 3">
+              </div>
+              <div class="char-item" role="option" aria-selected="false" tabindex="0">
+                <img src="./assetsJuego/previews/previewcharacter/characterPreview4.png" alt="Personaje 4">
+              </div>
+            </div>
         </div>
       </div>
-
-    
-</section>
+    </section>
 <!-- Publicidad Premium -->
 <section class="premium-publicidad">
     <div class="contenido-premium">
@@ -408,6 +442,4 @@
 
 <script src="jspages/juego.js"></script>
 <script type="module" src="./js/main.js"></script>
-
-
 </html>

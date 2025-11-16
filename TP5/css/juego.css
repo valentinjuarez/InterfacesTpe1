@@ -275,62 +275,6 @@ main {
   gap: 2rem;
 }
 
-/* =========================
-   JUEGO (área principal)
-   ========================= */
-.juego {
-  grid-area: juego;
-  border: 2px solid black;
-  position: relative;
-  height: 700px;
-  width: 1205px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image: url('../assets/fondojuego1.png');
-  background-size: cover;
-  background-position: center;
-}
-
-/* Botón grande centrado (JUGAR) */
-.button-jugar {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.button-jugar button {
-  background: linear-gradient(135deg, #1D1D7D 0%, var(--secondary-light-1) 100%);
-  color: #fff;
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  padding: 18px 54px;
-  border: none;
-  border-radius: var(--btn-radius);
-  box-shadow: 0 6px 32px #7a3ef055, 0 1.5px 0 #fff3 inset;
-  cursor: pointer;
-  outline: none;
-  letter-spacing: 1px;
-  transition: background 0.38s, color 0.38s, transform 0.28s, box-shadow 0.38s;
-  animation: breathing 2.2s ease-in-out infinite;
-}
-@keyframes breathing {
-  0% { box-shadow: 0 6px 32px #7a3ef055, 0 1.5px 0 #fff3 inset; transform: scale(1); }
-  50% { box-shadow: 0 12px 48px #f357a855, 0 2.5px 0 #fff5 inset; transform: scale(1.045); }
-  100% { box-shadow: 0 6px 32px #7a3ef055, 0 1.5px 0 #fff3 inset; transform: scale(1); }
-}
-.button-jugar button:hover {
-  background: #fff;
-  color: #222;
-  box-shadow: 0 10px 40px #f357a855, 0 2.5px 0 #fff5 inset;
-  transform: scale(1.07);
-}
-.button-jugar button:active { transform: scale(0.93); }
 
 /* =========================
    BOTONERA (barra inferior del juego)
