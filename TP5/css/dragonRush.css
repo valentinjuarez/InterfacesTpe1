@@ -16,6 +16,7 @@
   background-image: url('../assetsJuego/menu/menubg.png');
   background-size: cover;
   background-position: center;
+  overflow: hidden; /* evita desborde visual del contenido */
 }
 
 /* UI mínima dentro del área .juego */
@@ -109,17 +110,71 @@
 /* =========================
    PARALLAX (fondo del juego)
    ========================= */
-.parallax-stage{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-  z-index:0;
+.hidden {
+    display: none;
 }
-.parallax-layer{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  pointer-events:none;
+
+#game {
+    position: relative;
+    width: 100%;   /* antes: 100vw */
+    height: 100%;  /* antes: 100vh */
+    overflow: hidden;
 }
+
+#parallax-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.parallax-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(var(--tile-w, 512px) * 2);   /* 2× tile para loop perfecto */
+    height: 100%;
+    background-repeat: repeat-x;
+    background-size: var(--tile-w, 512px) 100%; /* cada repetición = tile exacto */
+    background-position: 0 0;
+    animation: scrollX linear infinite;        /* animamos transform */
+    will-change: transform;                    /* optimiza GPU */
+}
+
+/* Animación suave sin cortes: mueve exactamente 1 tile (50% del ancho de la capa) */
+@keyframes scrollX {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* ======================
+   PLAYER (DRAGÓN)
+   ====================== */
+
+#player {
+    position: absolute;
+    left: 15%;
+    /* quitar transform: translateY(-50%); */
+    /* top será controlado desde JS */
+
+    width: 144px;
+    height: 128px;
+
+    background-repeat: no-repeat;
+    background-size: 432px 512px;
+    background-position: 0px -128px;
+    image-rendering: pixelated;
+    animation: dragonFly 0.6s steps(3) infinite;
+    z-index: 3; /* sobre obstáculos y fondo */
+}
+
+/* 3 frames → 144×3 = 432px */
+@keyframes dragonFly {
+    from { background-position:    0px -128px; }
+    to   { background-position: -432px -128px; }
+}
+
+
+
+
+
+
