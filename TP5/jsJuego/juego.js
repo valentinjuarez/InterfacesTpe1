@@ -1,130 +1,213 @@
 (() => {
+  let running = false;
+  let velocity = 0;
+  let playerY = 300;
+  const gravity = 0.4;
+  const impulse = -8;
 
-    /* =========================
-       ESTADO DEL JUEGO
-    ========================= */
-    let running = false;
-    let velocity = 0;
-    let playerY = 300;
+  // Buffer para hitbox (ajustable)
+  const HITBOX_BUFFER = {
+    DRAGON_X: 12, // px a recortar a izquierda/derecha
+    DRAGON_Y: 10, // px a recortar arriba/abajo
+    OBSTACLE_X: 2,
+    OBSTACLE_Y: 2
+  };
 
-    const gravity = 0.4;
-    const impulse = -8;
+  // Inset de un DOMRect sin mutarlo
+  function shrinkRect(rect, insetX = 0, insetY = 0) {
+    return {
+      left: rect.left + insetX,
+      right: rect.right - insetX,
+      top: rect.top + insetY,
+      bottom: rect.bottom - insetY
+    };
+  }
 
+  /* ===== PARALLAX ===== */
 
-    /* =========================
-       PARALLAX
-    ========================= */
-    function createLayer(src, speed) {
-        const layer = document.createElement("div");
-        layer.className = "parallax-layer";
-        layer.style.backgroundImage = `url('${src}')`;
-        layer.style.animationDuration = `${speed}s`;
-        return layer;
-    }
+  function createLayer(src, speed) {
+	const layer = document.createElement("div");
+	layer.className = "parallax-layer";
+	layer.style.backgroundImage = `url('${src}')`;
+	layer.style.animationDuration = `${speed}s`;
+	return layer;
+  }
 
-    function setTileSize(layer, img, cont) {
-        const h = cont.clientHeight;
-        const tw = Math.round((img.naturalWidth * h) / img.naturalHeight);
-        layer.style.setProperty("--tile-w", `${tw}px`);
-    }
+  function setTileSize(layer, img, cont) {
+	const h = cont.clientHeight;
+	const tw = Math.round((img.naturalWidth * h) / img.naturalHeight);
+	layer.style.setProperty("--tile-w", `${tw}px`);
+  }
 
-    function loadParallax(map) {
-        const cont = document.getElementById("parallax-container");
-        if (!cont) return;
-        cont.innerHTML = "";
+  function loadParallax(map) {
+	const cont = document.getElementById("parallax-container");
+	cont.innerHTML = "";
+	let i = 1;
+	const base = `./assetsJuego/background/${map}/`;
+	const load = () => {
+	  const img = new Image();
+	  img.src = `${base}${i}.png`;
+	  img.onload = () => {
+		const layer = createLayer(img.src, 8 + i * 2);
+		cont.appendChild(layer);
+		setTileSize(layer, img, cont);
+		i++;
+		load();
+	  };
+	};
+	load();
+  }
 
-        let i = 1;
-        const base = `./assetsJuego/background/${map}/`;
+  /* ===== CHARACTER ===== */
+  function loadCharacter(id) {
+    const p = document.getElementById("dragon");
+    const game = document.getElementById("game");
+    p.style.backgroundImage = `url('./assetsJuego/character/144x128/dragon${id}.png')`;
+    const pH = p.clientHeight;
+    const gH = game.clientHeight;
+    playerY = (gH - pH) / 2;
+    velocity = 0;
+    p.style.top = `${playerY}px`;
+  }
 
-        const load = () => {
-            const img = new Image();
-            img.src = `${base}${i}.png`;
+  /* ===== OBSTÁCULOS PNG ===== */
 
-            img.onload = () => {
-                const layer = createLayer(img.src, 8 + i * 2);
-                cont.appendChild(layer);
-                setTileSize(layer, img, cont);
-                i++; load();
-            };
-        };
+  const obstacles = [];
+  const OBSTACLE_SPEED = 3;
+  const DIST_BETWEEN = 360; // más separados
+  const GAP = 200; // gap más chico (obstáculos más cerca)
+  const PNG_WIDTH = 130; // ajustalo si tu PNG tiene otro tamaño
 
-        load();
+  function createObstacle() {
+	const game = document.getElementById("game");
+	const container = document.getElementById("obstacles");
+	const gH = game.clientHeight;
 
-        window.addEventListener("resize", () => {
-            cont.querySelectorAll(".parallax-layer").forEach(layer => {
-                const img = new Image();
-                img.src = layer.style.backgroundImage.replace(/url\(['"]?(.+)['"]?\)/, "$1");
-                img.onload = () => setTileSize(layer, img, cont);
-            });
-        });
-    }
+	// límite donde puede estar el hueco (sin cortar arriba/abajo)
+	const minGapTop = 80;
+	const maxGapTop = gH - GAP - 80;
 
+	// posición aleatoria del hueco
+	const gapY = Math.floor(Math.random() * (maxGapTop - minGapTop)) + minGapTop;
 
-    /* =========================
-       PERSONAJE
-    ========================= */
-    function loadCharacter(id) {
-        const p = document.getElementById("player");
-        const game = document.getElementById("game");
-        if (!p || !game) return;
+	// -------- OBSTÁCULO SUPERIOR (rellena desde arriba hasta el hueco) --------
+	const topObs = document.createElement("div");
+	topObs.className = "obstacle";
+	topObs.style.position = "absolute";
+	topObs.style.width = PNG_WIDTH + "px";
+	topObs.style.left = "1300px";
+	topObs.style.top = "0px";
+	topObs.style.height = `${gapY}px`;
+	topObs.style.backgroundImage = "url('../assetsJuego/extras/obstacle/obstaculo.png')";
+	topObs.style.backgroundRepeat = "repeat-y";
+	topObs.style.backgroundSize = `${PNG_WIDTH}px auto`;
+	// mantener la orientación del sprite superior
+	topObs.style.transform = "scaleY(-1)";
 
-        p.style.backgroundImage = `url('./assetsJuego/character/144x128/dragon${id}.png')`;
-        p.style.backgroundPosition = "0 -128px";
+	// -------- OBSTÁCULO INFERIOR (rellena desde el hueco hasta el piso) --------
+	const bottomTop = gapY + GAP;
+	const bottomHeight = Math.max(0, gH - bottomTop);
 
-        const pH = p.clientHeight;
-        const gH = game.clientHeight;
+	const bottomObs = document.createElement("div");
+	bottomObs.className = "obstacle";
+	bottomObs.style.position = "absolute";
+	bottomObs.style.width = PNG_WIDTH + "px";
+	bottomObs.style.left = "1300px";
+	bottomObs.style.top = `${bottomTop}px`;
+	bottomObs.style.height = `${bottomHeight}px`;
+	bottomObs.style.backgroundImage = "url('../assetsJuego/extras/obstacle/obstaculo.png')";
+	bottomObs.style.backgroundRepeat = "repeat-y";
+	bottomObs.style.backgroundSize = `${PNG_WIDTH}px auto`;
 
-        playerY = (gH - pH) / 2;
-        velocity = 0;
-        p.style.top = `${playerY}px`;
-    }
+	// guardamos y agregamos
+	obstacles.push(topObs, bottomObs);
+	container.appendChild(topObs);
+	container.appendChild(bottomObs);
+  }
 
+  /* ===== CONTROLES ===== */
 
-    /* =========================
-       CONTROLES
-    ========================= */
-    document.addEventListener("keydown", e => {
-        if (e.code === "Space" && running) {
-            e.preventDefault();
-            velocity = impulse;
-        }
-    });
+  document.addEventListener("keydown", e => {
+	if (e.code === "Space" && running) {
+	  e.preventDefault();
+	  velocity = impulse;
+	}
+  });
 
+  /* ===== LOOP ===== */
 
-    /* =========================
-       BUCLE DEL JUEGO
-    ========================= */
-    function update() {
-        if (!running) return;
+  function update() {
+    if (!running) return;
+    const p = document.getElementById("dragon");
+    const game = document.getElementById("game");
 
-        const p = document.getElementById("player");
-        const game = document.getElementById("game");
-        if (!p || !game) return;
+	velocity += gravity;
+	playerY += velocity;
 
-        velocity += gravity;
-        playerY += velocity;
+	const maxY = game.clientHeight - p.clientHeight;
+	if (playerY < 0) {
+	  playerY = 0;
+	  velocity = 0;
+	}
+	if (playerY > maxY) {
+	  playerY = maxY;
+	  velocity = 0;
+	}
 
-        const maxY = game.clientHeight - p.clientHeight;
+	p.style.top = `${playerY}px`;
 
-        if (playerY < 0) { playerY = 0; velocity = 0; }
-        if (playerY > maxY) { playerY = maxY; velocity = 0; }
+	/* mover obstáculos */
+	for (let obs of obstacles) {
+	  let x = parseFloat(obs.style.left) || 0;
+	  obs.style.left = (x - OBSTACLE_SPEED) + "px";
+	}
 
-        p.style.top = `${Math.round(playerY)}px`;
+	// Detección de colisiones con buffer (bounding boxes reducidos)
+	{
+	  const dRect = shrinkRect(
+		p.getBoundingClientRect(),
+		HITBOX_BUFFER.DRAGON_X,
+		HITBOX_BUFFER.DRAGON_Y
+	  );
 
-        requestAnimationFrame(update);
-    }
+	  for (let i = 0; i < obstacles.length; i++) {
+		const o = obstacles[i];
+		if (!o.isConnected) continue;
 
+		const r = shrinkRect(
+		  o.getBoundingClientRect(),
+		  HITBOX_BUFFER.OBSTACLE_X,
+		  HITBOX_BUFFER.OBSTACLE_Y
+		);
 
-    /* =========================
-       API
-    ========================= */
-    function start(map, char) {
-        running = true;
-        loadParallax(map);
-        loadCharacter(char);
-        update();
-    }
+		const overlap =
+		  dRect.left < r.right &&
+		  dRect.right > r.left &&
+		  dRect.top < r.bottom &&
+		  dRect.bottom > r.top;
 
-    window.dragonRush = { start };
+		if (overlap) {
+		  running = false;
+		  if (typeof gameOver === "function") gameOver();
+		  break;
+		}
+	  }
+	}
 
+	requestAnimationFrame(update);
+  }
+
+  /* ===== START ===== */
+
+  function start(map, char) {
+	running = true;
+	loadParallax(map);
+	loadCharacter(char);
+	setInterval(() => {
+	  if (running) createObstacle();
+	}, 2800); // menos frecuentes
+	update();
+  }
+
+  window.dragonRush = { start };
 })();
