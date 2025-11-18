@@ -170,6 +170,36 @@
     <div id="parallax-container"></div>
     <div id="obstacles"></div>
     <div id="dragon"></div>
+
+    <!-- HUD: contador de bonus -->
+    <div id="hud" class="hud">
+      <div id="bonus-counter" class="bonus-counter" aria-live="polite">
+        <img src="./assetsJuego/extras/bonus/bonus1.png" alt="Bonus" class="bonus-icon">
+        <span id="bonus-counter-text">0/3</span>
+      </div>
+    </div>
+
+    <!-- Overlay: Game Over -->
+    <div id="overlay-gameover" class="overlay" aria-hidden="true" role="dialog" aria-labelledby="go-title">
+      <div class="panel">
+        <h2 id="go-title" class="title gameover">Game Over</h2>
+        <div class="actions">
+          <button id="btnRetry" class="btn">Reintentar</button>
+          <button id="btnMenuFromOver" class="btn btn-secondary">Menu Principal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay: Victoria -->
+    <div id="overlay-gamewin" class="overlay" aria-hidden="true" role="dialog" aria-labelledby="gw-title">
+      <div class="panel">
+        <h2 id="gw-title" class="title win">¡Victoria!</h2>
+        <p class="desc">¡Conseguiste todos los bonus!</p>
+        <div class="actions">
+          <button id="btnMenuFromWin" class="btn btn-secondary">Menu Principal</button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
