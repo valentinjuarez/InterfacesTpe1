@@ -1,290 +1,340 @@
 (() => {
-  /* ======================================================
-     VARIABLES PRINCIPALES
-  ====================================================== */
-  let running = false,
-      velocity = 0,
-      playerY = 300,
-      obstacleTimer = null,
-      lastMap = null,
-      lastChar = null;
 
-  const gravity = 0.4,
-        impulse = -8;
+  /* =============================
+     SELECTORES Y CACHE DE NODOS
+  ==============================*/
+  const $ = id => document.getElementById(id);
 
-  const HITBOX = { DRAGON_X: 24, DRAGON_Y: 24, OBSTACLE_X: 12, OBSTACLE_Y: 12 };
+  const juegoEl = $('game');
+  const dragonEl = $('dragon');
+  const obstaculosEl = $('obstacles');
+  const parallaxEl = $('parallax-container');
+  const hudBonusTxt = $('bonus-counter-text');
 
-  /* Bonus */
-  let obstaclePairCount = 0;
-  let bonuses = [];
+  const overlayFin = $('overlay-gameover');
+  const overlayWin = $('overlay-gamewin');
+  const overlayPause = $('overlay-pause');
+
+  /* =============================
+     CONSTANTES
+  ==============================*/
+  const GRAV = 0.4, IMPULSO = -8;
+  const VEL = 3, GAP = 200, PNG_W = 130;
+  const INTERVALO = 2500, META_BONUS = 3;
+  const HIT = { DX:24, DY:24, OX:12, OY:12 };
+
+  /* =============================
+     ESTADO DEL JUEGO
+  ==============================*/
+  let running = false, paused = false;
+  let velY = 0, posY = 300;
+  let nextSpawn = 0, spawnRest = null, spawnTimer = null;
+  let mapSel = null, charSel = null;
+
+  const obstaculos = [];
+  const bonus = [];
   let bonusSize = null;
   let bonusCount = 0;
-  const BONUS_GOAL = 3;
+  let pairCount = 0;
 
-  /* ======================================================
+  /* =============================
      HELPERS
-  ====================================================== */
+  ==============================*/
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+  const shrink = (r,x,y)=>({left:r.left+x,right:r.right-x,top:r.top+y,bottom:r.bottom-y});
+  const show = el=>el.classList.add('show');
+  const hide = el=>el.classList.remove('show');
 
-  const $ = id => document.getElementById(id);
-  const shrinkRect = (r, x = 0, y = 0) => ({
-    left:r.left+x, right:r.right-x, top:r.top+y, bottom:r.bottom-y
-  });
+  const hideAllOverlays = ()=>{ hide(overlayFin); hide(overlayWin); hide(overlayPause); };
+  const updateHUD = ()=> hudBonusTxt.textContent = `${bonusCount}/${META_BONUS}`;
 
-  const hide = el => el?.classList.remove("show");
-  const show = el => el?.classList.add("show");
-
-  const updateHUD = () => { $("bonus-counter-text").textContent = `${bonusCount}/${BONUS_GOAL}` };
-
-  const clearScene = () => {
-    $("obstacles").innerHTML = "";
-    bonuses.length = 0;
-    bonusCount = 0;
-    obstaclePairCount = 0;
+  const clearScene = ()=>{
+    obstaculosEl.innerHTML='';
+    obstaculos.length=0;
+    bonus.length=0;
+    bonusCount=0;
+    pairCount=0;
     updateHUD();
   };
 
-  /* ======================================================
+  /* =============================
      PARALLAX
-  ====================================================== */
-  function loadParallax(map) {
-    const cont = $("parallax-container");
-    cont.innerHTML = "";
-    let i = 1;
-    const base = `./assetsJuego/background/${map}/`;
+  ==============================*/
+  function cargarParallax(map){
+    parallaxEl.innerHTML='';
+    let i=1;
+    const base=`./assetsJuego/background/${map}/`;
 
-    const loadLayer = () => {
-      const img = new Image();
-      img.src = `${base}${i}.png`;
-      img.onload = () => {
-        const layer = document.createElement("div");
-        layer.className = "parallax-layer";
-        layer.style.backgroundImage = `url('${img.src}')`;
-        layer.style.animationDuration = `${8 + i * 2}s`;
+    (function cargar(){
+      const img=new Image();
+      img.src=`${base}${i}.png`;
+      img.onload=()=>{
+        const capa=document.createElement('div');
+        capa.className='parallax-layer';
+        capa.style.backgroundImage=`url('${img.src}')`;
+        capa.style.animationDuration=`${8+i*2}s`;
 
-        const h = cont.clientHeight;
-        layer.style.setProperty("--tile-w",
-          `${Math.round((img.naturalWidth * h) / img.naturalHeight)}px`
-        );
+        const h=parallaxEl.clientHeight;
+        capa.style.setProperty('--tile-w',`${Math.round((img.naturalWidth*h)/img.naturalHeight)}px`);
 
-        cont.appendChild(layer);
-        i++;
-        loadLayer();
+        parallaxEl.appendChild(capa);
+        i++; cargar();
       };
-    };
-    loadLayer();
+    })();
   }
 
-  /* ======================================================
+  /* =============================
      PERSONAJE
-  ====================================================== */
-  function loadCharacter(id) {
-    const p = $("dragon"), g = $("game");
-    p.style.backgroundImage = `url('./assetsJuego/character/144x128/dragon${id}.png')`;
-    playerY = (g.clientHeight - p.clientHeight) / 2;
-    velocity = 0;
-    p.style.top = `${playerY}px`;
+  ==============================*/
+  function cargarPersonaje(id){
+    dragonEl.style.backgroundImage=`url('./assetsJuego/character/144x128/dragon${id}.png')`;
+    posY=(juegoEl.clientHeight - dragonEl.clientHeight)/2;
+    velY=0;
+    dragonEl.style.top=`${posY}px`;
   }
 
-  /* ======================================================
+  /* =============================
      BONUS
-  ====================================================== */
-
-  // Obtiene tamaño real del bonus solo la primera vez
-  function ensureBonusSize(cb) {
-    if (bonusSize) return cb();
-    const img = new Image();
-    img.src = "./assetsJuego/extras/bonus/bonus1.png";
-    img.onload = () => {
-      bonusSize = { w: img.naturalWidth, h: img.naturalHeight };
-      cb();
-    };
+  ==============================*/
+  function cargarBonusSize(cb){
+    if(bonusSize) return cb();
+    const img=new Image();
+    img.src='./assetsJuego/extras/bonus/bonus1.png';
+    img.onload=()=>{ bonusSize={w:img.naturalWidth,h:img.naturalHeight}; cb(); };
+    img.onerror=()=>{ bonusSize={w:24,h:24}; cb(); };
   }
 
-  // Crea bonus centrado en el hueco
-  function createBonusInGap(gapY) {
-    ensureBonusSize(() => {
-      const b = document.createElement("div");
-      b.className = "bonus";
-      b.style.width = `${bonusSize.w}px`;
-      b.style.height = `${bonusSize.h}px`;
-      b.style.left = "1300px";
-      b.style.top = `${gapY + GAP / 2 - bonusSize.h / 2}px`;
-      $("obstacles").appendChild(b);
-      bonuses.push(b);
+  function crearBonus(){
+    cargarBonusSize(()=>{
+      const b=document.createElement('div');
+      b.className='bonus';
+      b.style.width=`${bonusSize.w}px`;
+      b.style.height=`${bonusSize.h}px`;
+      b.style.left='1100px';
+
+      const h=juegoEl.clientHeight;
+      const y=Math.random()*(h - bonusSize.h - 100) + 50;
+      b.style.top=`${y}px`;
+
+      obstaculosEl.appendChild(b);
+      bonus.push(b);
     });
   }
 
-  // Animación "+" hacia contador
-  function spawnFlyToCounter(fromRect) {
-    const game = $("game");
-    const counter = $("bonus-counter");
+  function animBonus(rect){
+    const fly=document.createElement('div');
+    fly.className='bonus-fly';
+    fly.textContent='+';
 
-    const g = game.getBoundingClientRect();
-    const c = counter.getBoundingClientRect();
+    const g=juegoEl.getBoundingClientRect();
+    const c=$('bonus-counter').getBoundingClientRect();
 
-    const fly = document.createElement("div");
-    fly.className = "bonus-fly";
-    fly.textContent = "+";
+    fly.style.setProperty('--from-x',`${rect.left+rect.width/2 - g.left}px`);
+    fly.style.setProperty('--from-y',`${rect.top+rect.height/2 - g.top}px`);
+    fly.style.setProperty('--to-x',`${c.left+c.width/2 - g.left}px`);
+    fly.style.setProperty('--to-y',`${c.top+c.height/2 - g.top}px`);
+    fly.style.setProperty('--anim-dur','.7s');
 
-    fly.style.setProperty("--from-x", `${fromRect.left + fromRect.width/2 - g.left}px`);
-    fly.style.setProperty("--from-y", `${fromRect.top + fromRect.height/2 - g.top}px`);
-    fly.style.setProperty("--to-x", `${c.left + c.width/2 - g.left}px`);
-    fly.style.setProperty("--to-y", `${c.top + c.height/2 - g.top}px`);
-    fly.style.setProperty("--anim-dur", `.7s`);
+    juegoEl.appendChild(fly);
 
-    game.appendChild(fly);
-
-    fly.addEventListener("animationend", () => {
+    fly.addEventListener('animationend',()=>{
       fly.remove();
       updateHUD();
-      if (bonusCount >= BONUS_GOAL) gameWin();
-    }, { once:true });
+      if(bonusCount>=META_BONUS) victoria();
+    },{once:true});
   }
 
-  /* ======================================================
+  /* =============================
      OBSTÁCULOS
-  ====================================================== */
-  const obstacles = [];
-  const SPEED = 3, GAP = 200, PNG_W = 130;
+  ==============================*/
+  function spawnObstaculos(delay=INTERVALO){
+    clearTimeout(spawnTimer);
+    spawnRest=null;
+    nextSpawn=performance.now()+delay;
 
-  function createObstacle() {
-    const gH = $("game").clientHeight;
-    const cont = $("obstacles");
+    spawnTimer=setTimeout(function tick(){
+      if(running && !paused) crearObstaculo();
+      nextSpawn=performance.now()+INTERVALO;
+      spawnTimer=setTimeout(tick,INTERVALO);
+    },delay);
+  }
 
-    const min = 80, max = gH - GAP - 80;
-    const gapY = Math.random() * (max - min) + min;
+  function stopSpawn(){
+    clearTimeout(spawnTimer);
+    spawnRest=nextSpawn ? Math.max(0,nextSpawn-performance.now()) : null;
+    nextSpawn=0;
+  }
 
-    const mk = (top, h, flip = false) => {
-      const o = document.createElement("div");
-      o.className = "obstacle";
-      o.style = `
-        position:absolute; left:1300px; width:${PNG_W}px;
-        top:${top}px; height:${h}px;
+  function crearObstaculo(){
+    const h=juegoEl.clientHeight;
+    const gapY=Math.random()*(h - GAP - 160)+80;
+
+    const crear=(top,alto,flip)=>{
+      const o=document.createElement('div');
+      o.className='obstacle';
+      o.style.cssText=`
+        position:absolute;
+        left:1300px;
+        width:${PNG_W}px;
+        top:${top}px;
+        height:${alto}px;
         background-image:url('../assetsJuego/extras/obstacle/obstaculo.png');
         background-repeat:repeat-y;
         background-size:${PNG_W}px auto;
-        transform:${flip ? "scaleY(-1)" : "none"};
+        ${flip?'transform:scaleY(-1);':''}
       `;
-      cont.appendChild(o);
-      obstacles.push(o);
+      obstaculosEl.appendChild(o);
+      obstaculos.push(o);
     };
 
-    mk(0, gapY, true);                  // arriba
-    mk(gapY + GAP, gH - (gapY + GAP));  // abajo
+    crear(0,gapY,true);
+    crear(gapY+GAP, h-(gapY+GAP));
 
-    // Bonus cada 6 pares
-    if (++obstaclePairCount % 6 === 0) createBonusInGap(gapY);
+    if(++pairCount % 6 === 0) crearBonus();
   }
 
-  /* ======================================================
-     CONTROLES
-  ====================================================== */
-  document.addEventListener("keydown", e => {
-    if (e.code === "Space" && running) {
+  /* =============================
+     PAUSA / CONTROLES
+  ==============================*/
+  document.addEventListener('keydown',e=>{
+    if(e.code==='Space' && running && !paused){
       e.preventDefault();
-      velocity = impulse;
+      velY=IMPULSO;
     }
+    if(e.code==='Escape' && running) togglePause();
   });
 
-  /* ======================================================
+  function pausar(){
+    if(!running || paused) return;
+    paused=true;
+    stopSpawn();
+    juegoEl.classList.add('paused');
+    hideAllOverlays();
+    show(overlayPause);
+  }
+
+  function reanudar(){
+    if(!running || !paused) return;
+    paused=false;
+    juegoEl.classList.remove('paused');
+    spawnObstaculos( spawnRest ?? INTERVALO );
+    spawnRest=null;
+    hide(overlayPause);
+    requestAnimationFrame(loop);
+  }
+
+  const togglePause=()=> paused ? reanudar() : pausar();
+
+  /* =============================
      LOOP PRINCIPAL
-  ====================================================== */
-  function update() {
-    if (!running) return;
+  ==============================*/
+  function moverEntidad(lista,lim){
+    for(let i=lista.length-1;i>=0;i--){
+      const o=lista[i];
+      const x=parseFloat(o.style.left);
+      o.style.left=(x-VEL)+'px';
+      if(x < lim){ o.remove(); lista.splice(i,1); }
+    }
+  }
 
-    const p = $("dragon"), g = $("game");
+  function loop(){
+    if(!running || paused) return;
 
-    // Físicas
-    velocity += gravity;
-    playerY = Math.max(0, Math.min(playerY + velocity, g.clientHeight - p.clientHeight));
-    p.style.top = `${playerY}px`;
+    velY+=GRAV;
+    posY=clamp(posY+velY,0, juegoEl.clientHeight - dragonEl.clientHeight);
+    dragonEl.style.top=`${posY}px`;
 
-    // Movimiento
-    [...obstacles, ...bonuses].forEach(o => {
-      if (o.isConnected) o.style.left = (parseFloat(o.style.left) - SPEED) + "px";
-    });
+    moverEntidad(obstaculos,-PNG_W);
+    moverEntidad(bonus,-50);
 
-    // Hitbox dragón
-    const dRect = shrinkRect(
-      p.getBoundingClientRect(),
-      HITBOX.DRAGON_X, HITBOX.DRAGON_Y
-    );
+    const d=shrink(dragonEl.getBoundingClientRect(),HIT.DX,HIT.DY);
 
-    // Colisión con obstáculos
-    for (const o of obstacles) {
-      if (!o.isConnected) continue;
-      const r = shrinkRect(o.getBoundingClientRect(), HITBOX.OBSTACLE_X, HITBOX.OBSTACLE_Y);
-      if (dRect.left < r.right && dRect.right > r.left && dRect.top < r.bottom && dRect.bottom > r.top)
+    // colisión obstáculo
+    for(const o of obstaculos){
+      const r=shrink(o.getBoundingClientRect(),HIT.OX,HIT.OY);
+      if(d.left<r.right && d.right>r.left && d.top<r.bottom && d.bottom>r.top)
         return gameOver();
     }
 
-    // Colisión con bonus
-    for (const b of bonuses) {
-      if (!b.isConnected) continue;
-      const br = b.getBoundingClientRect();
-      const hit =
-        dRect.left < br.right &&
-        dRect.right > br.left &&
-        dRect.top < br.bottom &&
-        dRect.bottom > br.top;
-
-      if (hit) {
+    // colisión bonus
+    for(let i=bonus.length-1;i>=0;i--){
+      const b=bonus[i];
+      const br=b.getBoundingClientRect();
+      if(d.left<br.right && d.right>br.left && d.top<br.bottom && d.bottom>br.top){
         b.remove();
+        bonus.splice(i,1);
         bonusCount++;
-        spawnFlyToCounter(br);
+        animBonus(br);
       }
     }
 
-    requestAnimationFrame(update);
+    requestAnimationFrame(loop);
   }
 
-  /* ======================================================
-     GAME OVER / WIN
-  ====================================================== */
-  function gameOver() {
+  /* =============================
+     GAME OVER / VICTORIA
+  ==============================*/
+  const gameOver = () => {
+    // activar animación de explosión/ fuego en CSS (se mostrará el overlay cuando termine)
     running = false;
-    show($("overlay-gameover"));
-  }
+    if (dragonEl) {
+      // Esperar al fin del fade (animación 'dragonFade') para mostrar el overlay.
+      const onEnd = (ev) => {
+        // Solo reaccionamos al evento de la animación de fade definida en CSS
+        if (ev && ev.animationName !== 'dragonFade') return;
+        dragonEl.removeEventListener('animationend', onEnd);
+        show(overlayFin);
+      };
+      dragonEl.addEventListener('animationend', onEnd);
+      // activar clase que dispara la animación (frames + fade)
+      dragonEl.classList.add('explode-fire');
+    } else {
+      show(overlayFin);
+    }
+  };
 
-  function gameWin() {
-    running = false;
-    show($("overlay-gamewin"));
-  }
+  const victoria = () => { running = false; show(overlayWin); };
 
-  /* Botones overlays */
-  document.addEventListener("click", e => {
-    const id = e.target.id;
-    if (id === "btnRetry") retry();
-    if (id === "btnMenuFromOver" || id === "btnMenuFromWin") window.location.reload();
+  /* =============================
+     BOTONES UI
+  ==============================*/
+  document.addEventListener('click',e=>{
+    const id=e.target.id;
+    if(id==='btnRetry') reiniciar();
+    if(id==='btnResume') reanudar();
+    if(id==='btnMenuFromOver' || id==='btnMenuFromWin' || id==='btnMenuFromPause')
+      location.reload();
   });
 
-  /* ======================================================
-     REINTENTAR / START
-  ====================================================== */
-  function retry() {
-    hide($("overlay-gameover"));
-    hide($("overlay-gamewin"));
+  /* =============================
+     INICIO / REINICIO
+  ==============================*/
+  function reiniciar(){
+    hideAllOverlays();
+    paused=false;
     clearScene();
-    clearInterval(obstacleTimer);
-    start(lastMap, lastChar);
+    stopSpawn();
+    iniciar(mapSel,charSel);
   }
 
-  function start(map, char) {
-    lastMap = map;
-    lastChar = char;
+  function iniciar(map,char){
+    mapSel=map; charSel=char;
+    running=true; paused=false;
 
-    running = true;
-    hide($("overlay-gameover"));
-    hide($("overlay-gamewin"));
+    hideAllOverlays();
     updateHUD();
-    loadParallax(map);
-    loadCharacter(char);
-
-    clearInterval(obstacleTimer);
-    obstacleTimer = setInterval(() => running && createObstacle(), 2800);
-
-    update();
+    cargarParallax(map);
+    cargarPersonaje(char);
+    // asegurarse de quitar la clase de explosión si estaba presente
+    if (dragonEl) {
+      dragonEl.classList.remove('explode-fire');
+      dragonEl.style.opacity = '';
+    }
+    stopSpawn();
+    spawnObstaculos(INTERVALO);
+    requestAnimationFrame(loop);
   }
 
-  window.dragonRush = { start };
+  window.dragonRush = { iniciar, start: iniciar };
+
 })();
