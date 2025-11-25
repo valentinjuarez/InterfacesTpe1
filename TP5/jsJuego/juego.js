@@ -275,25 +275,35 @@
      GAME OVER / VICTORIA
   ==============================*/
   const gameOver = () => {
-    // activar animación de explosión/ fuego en CSS (se mostrará el overlay cuando termine)
     running = false;
+    // Detenemos spawns y loop (loop se detiene porque running=false)
+    stopSpawn();
+    // Permitir animación de explosión antes de congelar
     if (dragonEl) {
-      // Esperar al fin del fade (animación 'dragonFade') para mostrar el overlay.
       const onEnd = (ev) => {
-        // Solo reaccionamos al evento de la animación de fade definida en CSS
-        if (ev && ev.animationName !== 'dragonFade') return;
+        if (ev && ev.animationName !== 'dragonFade' && ev.animationName !== 'explode-fire') {
+          return; // filtra si hubiera otras animaciones
+        }
         dragonEl.removeEventListener('animationend', onEnd);
+        // Congelar todo después de la explosión
+        juegoEl.classList.add('halted');
         show(overlayFin);
       };
       dragonEl.addEventListener('animationend', onEnd);
-      // activar clase que dispara la animación (frames + fade)
       dragonEl.classList.add('explode-fire');
     } else {
+      juegoEl.classList.add('halted');
       show(overlayFin);
     }
   };
 
-  const victoria = () => { running = false; show(overlayWin); };
+  const victoria = () => {
+    running = false;
+    stopSpawn();
+    // Congelar inmediatamente
+    juegoEl.classList.add('halted');
+    show(overlayWin);
+  };
 
   /* =============================
      BOTONES UI
@@ -311,7 +321,9 @@
   ==============================*/
   function reiniciar(){
     hideAllOverlays();
-    paused=false;
+    paused = false;
+    // Quitar congelado previo
+    juegoEl.classList.remove('halted');
     clearScene();
     stopSpawn();
     iniciar(mapSel,charSel);
@@ -320,15 +332,13 @@
   function iniciar(map,char){
     mapSel=map; charSel=char;
     running=true; paused=false;
-
     hideAllOverlays();
+    juegoEl.classList.remove('halted');
     updateHUD();
     cargarParallax(map);
     cargarPersonaje(char);
-    // asegurarse de quitar la clase de explosión si estaba presente
     if (dragonEl) {
       dragonEl.classList.remove('explode-fire');
-      dragonEl.style.opacity = '';
     }
     stopSpawn();
     spawnObstaculos(INTERVALO);
@@ -336,5 +346,4 @@
   }
 
   window.dragonRush = { iniciar, start: iniciar };
-
 })();

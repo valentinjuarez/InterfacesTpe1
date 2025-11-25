@@ -3,7 +3,7 @@
 /* ========================= JUEGO (área principal) ========================= */
 .juego {
   grid-area: juego;
-  border: 2px solid black;
+  border: 1px solid black;
   position: relative;
   height: 700px;
   width: 1205px;
@@ -361,6 +361,15 @@
   animation-play-state: paused !important;
   /* Para propiedades que usen transition en algunos elementos */
   transition: none !important;
+}
+
+/* Pausa global (Escape / Game Over / Win) */
+#game.paused .parallax-layer,
+#game.paused .bonus,
+#game.halted .parallax-layer,
+#game.halted .bonus,
+#game.halted #dragon {
+  animation-play-state: paused !important;
 }
 
 /* =============================

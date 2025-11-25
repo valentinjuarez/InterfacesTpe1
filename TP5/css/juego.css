@@ -285,23 +285,25 @@ main {
   left: 0;
   width: 1205px;
   height: 60px;
-  background: var(--secondary-shadow-1);
+  background: var(--primary-shadow-2); /* antes: var(--secondary-shadow-1) */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  margin-top: -2rem;
+  margin-top: -31px;
+  box-shadow: 0 4px 14px rgba(74,31,133,0.35);
 }
 .botonera .promo { color: var(--accent); font-weight: bold; }
 .botonera .acciones { display: flex; gap: 1rem; }
 .accion-circulo {
   width: 40px; height: 40px;
-  background: #0808A6; border-radius: 50%;
+  background: var(--primary-shadow-1); /* antes: #0808A6 */
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 8px rgba(98,44,182,0.35);
   transition: transform 0.2s;
 }
-.accion-circulo:hover { transform: scale(1.15); background: #6666FF; }
+.accion-circulo:hover { transform: scale(1.15); background: var(--primary-light-1); /* antes: #6666FF */ }
 .accion-circulo:active { transform: scale(0.95); }
 .accion-circulo img { width: 20px; height: 20px; }
 
@@ -320,10 +322,11 @@ main {
   align-items: stretch;       /* estira hijos en ancho disponible */
   justify-content: flex-start;
   gap: 1rem;                  /* espacio entre elementos verticales */
-  padding: 1rem;              /* espacio interior */
+  padding: 2rem 1.75rem;
   background: var(--bg-page);
   border-radius: var(--border-radius);
   margin-bottom: 2rem;
+  min-height: 560px;    /* aumenta altura mínima */
          
 }
 
@@ -332,7 +335,7 @@ main {
   position: absolute;
   bottom: 100px;
   right: 640px;
-  background:var(--secondary-shadow-1);
+  background:var(--primary-shadow-2);
   padding: 10px 15px;
   border-radius: 12px;
   display: flex;
@@ -352,14 +355,17 @@ main {
 .instrucciones { 
   display: flex; 
   flex-direction: column;
-  gap: 2rem;
-  padding: 1rem 1.5rem;
+  gap: 5rem;
+  padding: 2rem 3.5rem;
+  flex: 1;              /* ocupa el espacio vertical disponible */
+  justify-content: flex-start;
 }
 .instruccion { 
   display: flex; 
   flex-direction: column; 
   align-items: center; 
-  gap: 0.75rem; 
+  gap: 2.75rem; 
+  flex: 0 0 auto;
 }
 .instruccion img { 
   width: 90px; 
