@@ -20,7 +20,7 @@
   ==============================*/
   const GRAV = 0.4, IMPULSO = -8;
   const VEL = 3, GAP = 200, PNG_W = 130;
-  const INTERVALO = 2500, META_BONUS = 3;
+  const INTERVALO = 2800, META_BONUS = 3;
   const HIT = { DX:24, DY:24, OX:12, OY:12 };
 
   /* =============================
@@ -153,7 +153,9 @@
     nextSpawn=performance.now()+delay;
 
     spawnTimer=setTimeout(function tick(){
-      if(running && !paused) crearObstaculo();
+      if(running && !paused){
+        crearObstaculo();
+      }
       nextSpawn=performance.now()+INTERVALO;
       spawnTimer=setTimeout(tick,INTERVALO);
     },delay);
@@ -172,13 +174,16 @@
     const crear=(top,alto,flip)=>{
       const o=document.createElement('div');
       o.className='obstacle';
+
+      // calcular left dinámicamente para que funcione en distintos anchos de contenedor
+      const startLeft = juegoEl.clientWidth + 100; // aparece fuera del borde derecho
       o.style.cssText=`
         position:absolute;
-        left:1300px;
+        left:${startLeft}px;
         width:${PNG_W}px;
         top:${top}px;
         height:${alto}px;
-        background-image:url('../assetsJuego/extras/obstacle/obstaculo.png');
+        background-image:url('./assetsJuego/extras/obstacle/obstaculo.png');
         background-repeat:repeat-y;
         background-size:${PNG_W}px auto;
         ${flip?'transform:scaleY(-1);':''}
