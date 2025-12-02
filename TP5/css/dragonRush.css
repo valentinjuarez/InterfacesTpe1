@@ -182,7 +182,10 @@
   z-index: 3; /* Sobre obstáculos y parallax */
 }
 
-/* Aleteo: recorre 3 frames */
+/* Aleteo: recorre 3 frames  
+- 0px, -128px (frame 1)
+-144px, -128px (frame 2)
+-288px, -128px (frame 3) */ 
 @keyframes dragonFly {
   from { background-position: 0px -128px; }
   to   { background-position: -432px -128px; }
