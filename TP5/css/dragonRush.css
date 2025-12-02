@@ -1,31 +1,37 @@
 /*================================RUNNER=====================================*/
 
-/* ========================= JUEGO (área principal) ========================= */
+/* ==========================================================================
+   ÁREA PRINCIPAL DEL JUEGO (.juego)
+   Este div contiene el menú inicial y luego el canvas del juego.
+   Tiene posición relativa para que obstáculos, dragón, etc., se posicionen dentro.
+   ========================================================================== */
 .juego {
   grid-area: juego;
   border: 1px solid black;
-  position: relative;
+  position: relative;            /* Necesario para posicionar elementos absolutos dentro */
   height: 700px;
   width: 1205px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('../assetsJuego/menu/menubg.png');
+  background-image: url('../assetsJuego/menu/menubg.png'); /* Fondo del menú */
   background-size: cover;
   background-position: center;
-  overflow: hidden; /* evita desborde visual del contenido */
+  overflow: hidden; /* Evita que algo que se mueva salido del borde se vea */
 }
 
-/* UI mínima dentro del área .juego */
+/* ==========================================================================
+   UI DEL MENÚ (selección de mapa y personaje dentro de .juego)
+   ========================================================================== */
 .juego .ui-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.1rem;
-  background: rgba(0, 0, 0, .35);
+  background: rgba(0, 0, 0, .35); /* Fondo oscuro transparente */
   padding: 1.2rem 1.4rem;
   border-radius: 14px;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px); /* Efecto vidrio */
   max-width: 650px;
   width: 100%;
 }
@@ -37,8 +43,9 @@
   letter-spacing: .5px;
 }
 
+/* Botón jugar */
 .btn-play {
-  background-color: #4e159e; /* antes: #631ac950 (semi-transparente) */
+  background-color: #4e159e;     /* Nuevo color sólido */
   color: #c4c2c2;
   border: none;
   padding: .75rem 2rem;
@@ -49,9 +56,10 @@
 }
 
 .btn-play:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.1);        /* Efecto hover */
 }
 
+/* Carrusel de mapas y personajes */
 .map-carousel,
 .char-carousel {
   display: flex;
@@ -60,11 +68,12 @@
   flex-wrap: wrap;
 }
 
+/* Cada ítem del carrusel */
 .map-item,
 .char-item {
   width: 120px;
   height: 80px;
-  background: #ffffff18;
+  background: #ffffff18; /* fondo semi blanco transparente */
   border: 1px solid #ffffff30;
   border-radius: 10px;
   display: flex;
@@ -77,6 +86,7 @@
   overflow: hidden;
 }
 
+/* Hover visual */
 .map-item:hover,
 .char-item:hover {
   background: #ffffff35;
@@ -84,23 +94,22 @@
   transform: translateY(-3px);
 }
 
-/* seleccionado */
+/* Estado seleccionado */
 .map-item.selected,
 .char-item.selected {
   background: #631ac950;
-  
-  box-shadow: 0 0 0 2px rgba(151, 35, 245, 0.35), 0 6px 18px rgba(0, 0, 0, .25);
+  box-shadow: 0 0 0 2px rgba(151, 35, 245, 0.35),
+              0 6px 18px rgba(0, 0, 0, .25);
   transform: translateY(-4px);
 }
 
-/* foco visible para navegación con teclado */
+/* Accesibilidad: outline al navegar con teclado */
 .map-item:focus-visible,
 .char-item:focus-visible {
-
   outline-offset: 2px;
 }
 
-/* imágenes dentro de los mapas y personajes */
+/* Imagen dentro de cada tarjeta */
 .map-item img,
 .char-item img {
   width: 100%;
@@ -112,82 +121,87 @@
   user-select: none;
 }
 
-/* ========================= PARALLAX (fondo del juego) ========================= */
+/* ==========================================================================
+   PARALLAX (fondo del juego)
+   ========================================================================== */
 .hidden {
   display: none;
 }
 
 #game {
   position: relative;
-  width: 100%; /* antes: 100vw */
-  height: 100%; /* antes: 100vh */
+  width: 100%; /* Antes 100vw */
+  height: 100%; /* Antes 100vh */
   overflow: hidden;
 }
 
+/* Contenedor que recibe las capas parallax */
 #parallax-container {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
+/* Cada capa individual del parallax */
 .parallax-layer {
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(var(--tile-w, 512px) * 2); /* 2× tile para loop perfecto */
+  width: calc(var(--tile-w, 512px) * 2); /* 2 tiles → permite loop infinito */
   height: 100%;
   background-repeat: repeat-x;
-  background-size: var(--tile-w, 512px) 100%; /* cada repetición = tile exacto */
+  background-size: var(--tile-w, 512px) 100%; /* Tile exacto por capa */
   background-position: 0 0;
-  animation: scrollX linear infinite; /* animamos transform */
-  will-change: transform; /* optimiza GPU */
+  animation: scrollX linear infinite; /* Movimiento horizontal */
+  will-change: transform; /* Optimiza la animación */
 }
 
-/* Animación suave sin cortes: mueve exactamente 1 tile (50% del ancho de la capa) */
+/* Animación de desplazamiento horizontal del fondo */
 @keyframes scrollX {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(-50%); /* Mueve exactamente 1 tile */
   }
 }
 
-/* ====================== PLAYER (DRAGÓN) ====================== */
+/* ==========================================================================
+   DRAGÓN DEL JUEGO
+   ========================================================================== */
 #dragon {
   position: absolute;
-  left: 15%;
-  /* quitar transform: translateY(-50%); */
-  /* top será controlado desde JS */
+  left: 15%; /* Está fijo en X */
   width: 130px;
   height: 108px;
   background-repeat: no-repeat;
-  background-size: 432px 512px;
+  background-size: 432px 512px; /* 3 frames × 144px de ancho */
   background-position: 0px -128px;
   image-rendering: pixelated;
-  animation: dragonFly 0.6s steps(3) infinite;
-  z-index: 3; /* sobre obstáculos y fondo */
+  animation: dragonFly 0.6s steps(3) infinite; /* Animación de aleteo */
+  z-index: 3; /* Sobre obstáculos y parallax */
 }
 
-/* 3 frames → 144×3 = 432px */
+/* Aleteo: recorre 3 frames */
 @keyframes dragonFly {
-  from {
-    background-position: 0px -128px;
-  }
-  to {
-    background-position: -432px -128px;
-  }
+  from { background-position: 0px -128px; }
+  to   { background-position: -432px -128px; }
 }
 
-/* ====================== OBSTÁCULOS ====================== */
+/* ==========================================================================
+   OBSTÁCULOS (tubos)
+   Cada obstáculo se posiciona absolutamente desde JS.
+   ========================================================================== */
 #obstacles {
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  pointer-events: none; /* No interferir con clicks */
   z-index: 2;
 }
 
-/* ====================== BONUS (ANIMADO) ====================== */
+/* ==========================================================================
+   BONUS ANIMADO (frames)
+   ========================================================================== */
 .bonus {
   position: absolute;
   background-repeat: no-repeat;
@@ -195,11 +209,10 @@
   image-rendering: pixelated;
   pointer-events: none;
   z-index: 2;
-  animation: bonusFrames 1s steps(10) infinite;
-  /* El tamaño natural (width/height) lo define JS */
+  animation: bonusFrames 1s steps(10) infinite; /* 10 frames */
 }
 
-/* 10 frames con PNGs individuales */
+/* Animación del bonus (cambia la imagen cada 10%) */
 @keyframes bonusFrames {
   0%   { background-image: url('../assetsJuego/extras/bonus/bonus1.png'); }
   10%  { background-image: url('../assetsJuego/extras/bonus/bonus2.png'); }
@@ -214,13 +227,13 @@
   100% { background-image: url('../assetsJuego/extras/bonus/bonus1.png'); }
 }
 
-/* ====================== HUD (contador) ====================== */
+/* ==========================================================================
+   HUD (contador de bonus)
+   ========================================================================== */
 .hud {
   position: absolute;
   top: 0;
   left: 0;
-  inset-inline-start: 0;
-  inset-block-start: 0;
   width: 100%;
   pointer-events: none;
   z-index: 6;
@@ -253,7 +266,9 @@
   color: #fff;
 }
 
-/* ====================== OVERLAYS ====================== */
+/* ==========================================================================
+   OVERLAYS (Game Over, Win, Pausa)
+   ========================================================================== */
 .overlay {
   position: absolute;
   inset: 0;
@@ -274,14 +289,14 @@
   border: 1px solid #7a41d8;
   border-radius: 16px;
   padding: 24px 22px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.4), 0 0 0 3px rgba(138,43,226,.25) inset;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4),
+              0 0 0 3px rgba(138,43,226,.25) inset;
   text-align: center;
 }
 
 .overlay .title {
   margin: 0 0 10px;
   font: 700 32px 'Poppins', sans-serif;
-  letter-spacing: .5px;
   color: #fff;
 }
 
@@ -315,14 +330,17 @@
   color: #ddd;
   border: 1px solid #555;
 }
-/* ===== Overlay Pausa ===== */
+
+/* Estilo especial del texto "PAUSA" */
 #overlay-pause .title.pause {
-  color: #ffd966; /* un color que simula "pausado" */
+  color: #ffd966;
   font-size: 2.4rem;
   margin-bottom: 15px;
 }
 
-/* ====================== ANIMACIÓN “+” AL CONTADOR ====================== */
+/* ==========================================================================
+   Animación del "+" que vuela hacia el contador
+   ========================================================================== */
 .bonus-fly {
   position: absolute;
   left: 0;
@@ -342,6 +360,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,.35);
 }
 
+/* Keyframe del vuelo hacia el HUD */
 @keyframes flyToCounter {
   from {
     transform: translate(var(--from-x, 0), var(--from-y, 0)) scale(1);
@@ -353,44 +372,39 @@
   }
 }
 
-/* Cuando el juego está en pausa, congelar animaciones CSS relevantes */
+/* ==========================================================================
+   PAUSA GLOBAL – Congela animaciones
+   ========================================================================== */
 #game.paused .parallax-layer,
 #game.paused #dragon,
 #game.paused .bonus,
 #game.paused .bonus-fly {
   animation-play-state: paused !important;
-  /* Para propiedades que usen transition en algunos elementos */
   transition: none !important;
 }
 
-/* Pausa global (Escape / Game Over / Win) */
-#game.paused .parallax-layer,
-#game.paused .bonus,
+/* GAME OVER / WIN → también congela todo */
 #game.halted .parallax-layer,
 #game.halted .bonus,
 #game.halted #dragon {
   animation-play-state: paused !important;
 }
 
-/* =============================
-   ANIMACIÓN GAME OVER (EFECTO FUEGO)
-   Usa los frames en assetsJuego/extras/efectsFire (img_0..img_29.png)
-   La animación reproduce los frames y al final deja el dragón invisible.
-   Minimal CSS: keyframes + clase activadora aplicada por JS.
-============================= */
-/* Use two animations: frames (steps) + smooth fade (linear) */
+/* ==========================================================================
+   ANIMACIÓN DE MUERTE DEL DRAGÓN (explosión + fade)
+   ========================================================================== */
 #dragon.explode-fire {
-  /* reproducir frames con pasos; luego hacer un fade suave (delay sobre fade) */
-  animation: dragonFireFrames 1.0s steps(30) forwards, dragonFade 0.8s linear forwards;
-  animation-delay: 0s, 1.0s; /* fade empieza cuando terminan los frames */
+  animation: dragonFireFrames 1.0s steps(30) forwards,
+             dragonFade 0.8s linear forwards;
+  animation-delay: 0s, 1.0s; /* El fade inicia cuando termina la explosión */
   background-repeat: no-repeat;
   image-rendering: pixelated;
   z-index: 11;
-  /* aumentar tamaño para que la animación sea más visible */
-  background-size: 320px 216px; /* 2x del tamaño del dragon (130x108) */
+  background-size: 320px 216px; /* Más grande para destacar */
   background-position: center;
 }
 
+/* Secuencia de explosión (30 frames) */
 @keyframes dragonFireFrames {
   0%   { background-image: url('../assetsJuego/extras/efectsFire/img_0.png'); }
   3.333%  { background-image: url('../assetsJuego/extras/efectsFire/img_1.png'); }
@@ -425,6 +439,7 @@
   100% { background-image: url('../assetsJuego/extras/efectsFire/img_29.png'); }
 }
 
+/* Fade out final */
 @keyframes dragonFade {
   from { opacity: 1; }
   to   { opacity: 0; }

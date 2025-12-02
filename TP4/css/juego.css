@@ -280,7 +280,7 @@ main {
    ========================= */
 .juego {
   grid-area: juego;
-  border: 2px solid black;
+  border: 1px solid black;
   position: relative;
   height: 700px;
   width: 1205px;
@@ -341,18 +341,19 @@ main {
   left: 0;
   width: 1205px;
   height: 60px;
-  background: var(--secondary-shadow-1);
+  background: var(--primary-shadow-2);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  margin-top: -2rem;
+  margin-top: -31px;
 }
 .botonera .promo { color: var(--accent); font-weight: bold; }
 .botonera .acciones { display: flex; gap: 1rem; }
 .accion-circulo {
   width: 40px; height: 40px;
-  background: #0808A6; border-radius: 50%;
+  background:var(--primary-shadow-1);
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   transition: transform 0.2s;
@@ -388,7 +389,7 @@ main {
   position: absolute;
   bottom: 100px;
   right: 640px;
-  background:var(--secondary-shadow-1);
+  background:var(--primary-shadow-2);
   padding: 10px 15px;
   border-radius: 12px;
   display: flex;

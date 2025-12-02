@@ -267,9 +267,8 @@ main {
   grid-template-columns: 2fr 1fr;
   grid-template-areas:
     "navegacion navegacion"
-    "juego juego"
-    "botonera botonera"
-    "controles controles"
+    "juego controles"
+    "botonera controles"
     "descripcion descripcion"
     "jugadas jugadas"
     "comentarios premium";
@@ -281,7 +280,7 @@ main {
    ========================= */
 .juego {
   grid-area: juego;
-  border: 2px solid black;
+  border: 1px solid black;
   position: relative;
   height: 800px;
   display: flex;
@@ -341,18 +340,19 @@ main {
   left: 0;
   width: 100%;
   height: 60px;
-  background: var(--secondary-shadow-1);
+  background: var(--primary-shadow-2);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  margin-top: -2rem;
+  margin-top: -31px;
 }
 .botonera .promo { color: var(--accent); font-weight: bold; }
 .botonera .acciones { display: flex; gap: 1rem; }
 .accion-circulo {
   width: 40px; height: 40px;
-  background: #0808A6; border-radius: 50%;
+  background: var(--primary-shadow-1); 
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   transition: transform 0.2s;
@@ -369,18 +369,26 @@ main {
    CONTROLES Y VENTANA COMPARTIR
    ========================= */
 .controles {
+   /* cambiado: usar layout de columna y permitir scroll si el contenido es alto */
   grid-area: controles;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;       /* estira hijos en ancho disponible */
+  justify-content: flex-start;
+  gap: 1rem;                  /* espacio entre elementos verticales */
+  padding: 2rem 1.75rem;
   background: var(--bg-page);
   border-radius: var(--border-radius);
   margin-bottom: 2rem;
+  min-height: 560px;
 }
 
 /* Ventana compartir: inicialmente oculta, se muestra añadiendo .activa */
 .ventana-compartir {
   position: absolute;
-  bottom: 70px;
-  right: 20px;
-  background:var(--secondary-shadow-1);
+  bottom: 20px;
+  right: 620px;
+  background:var(--primary-shadow-2);
   padding: 10px 15px;
   border-radius: 12px;
   display: flex;
@@ -394,12 +402,30 @@ main {
 .ventana-compartir a img:hover { transform: scale(1.2); }
 .ventana-compartir.activa { opacity: 1; pointer-events: auto; transform: scale(1); }
 
-/* =========================
-   INSTRUCCIONES (pequeñas tarjetas)
-   ========================= */
-.instrucciones { display: flex; justify-content: space-evenly; }
-.instruccion { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.instruccion img { width: 60px; height: 60px; }
+.instrucciones { 
+  display: flex; 
+  flex-direction: column;
+  gap: 5rem;
+  padding: 2rem 3.5rem;
+  flex: 1;              /* ocupa el espacio vertical disponible */
+  justify-content: flex-start;
+}
+.instruccion { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 2.75rem; 
+  flex: 0 0 auto;
+}
+.instruccion img { 
+  width: 90px; 
+  height: 90px; 
+}
+.instruccion p {
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+}
 
 /* =========================
    PREMIUM / PUBLICIDAD (sidebar)

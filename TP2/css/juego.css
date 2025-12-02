@@ -261,8 +261,8 @@ main {
   grid-template-columns: 2fr 1fr;
   grid-template-areas:
     "navegacion navegacion"
-    "juego juego"
-    "controles controles"
+    "juego controles"
+    "botonera controles"
     "descripcion descripcion"
     "jugadas jugadas"
     "comentarios premium";
@@ -328,17 +328,18 @@ main {
    BOTONERA (barra inferior del juego)
    ========================= */
 .juego .botonera {
-  position: absolute;
+  grid-area: botonera;
   bottom: 0;
   left: 0;
-  width: 100%;
+  width: 1205px;
   height: 60px;
-  background: var(--secondary-shadow-1);
+  background: var(--primary-shadow-2); /* antes: var(--secondary-shadow-1) */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  margin-top: 600px;
+  box-shadow: 0 4px 14px rgba(74,31,133,0.35);
 }
 .botonera .promo { color: var(--accent); font-weight: bold; }
 .botonera .acciones { display: flex; gap: 1rem; }
@@ -372,7 +373,7 @@ main {
   position: absolute;
   bottom: 70px;
   right: 20px;
-  background:var(--secondary-shadow-1);
+  background:var(--primary-shadow-2);
   padding: 10px 15px;
   border-radius: 12px;
   display: flex;
@@ -389,9 +390,30 @@ main {
 /* =========================
    INSTRUCCIONES (pequeñas tarjetas)
    ========================= */
-.instrucciones { display: flex; justify-content: space-evenly; }
-.instruccion { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-.instruccion img { width: 60px; height: 60px; }
+.instrucciones { 
+  display: flex; 
+  flex-direction: column;
+  gap: 5rem;
+  padding: 1rem 2.5rem;
+  flex: 1;              /* ocupa el espacio vertical disponible */
+  justify-content: flex-start;
+}
+.instruccion { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 2.75rem; 
+  flex: 0 0 auto;
+}
+.instruccion img { 
+  width: 50px; 
+  height: 50px; 
+}
+.instruccion p {
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+}
 
 /* =========================
    PREMIUM / PUBLICIDAD (sidebar)
